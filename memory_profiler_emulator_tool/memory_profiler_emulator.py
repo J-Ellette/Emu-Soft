@@ -136,8 +136,18 @@ class MemoryProfiler:
             current, peak = tracemalloc.get_traced_memory()
             return current
         else:
-            # Fallback to simple method
-            return 0
+            # Fallback: try to use resource module if available
+            try:
+                import resource
+                usage = resource.getrusage(resource.RUSAGE_SELF)
+                # maxrss is in kilobytes on most systems, bytes on macOS
+                if sys.platform == 'darwin':
+                    return usage.ru_maxrss
+                else:
+                    return usage.ru_maxrss * 1024
+            except (ImportError, AttributeError):
+                # Last resort: return 0 (profiling won't be accurate)
+                return 0
     
     def snapshot(self, line_number: Optional[int] = None, 
                 filename: Optional[str] = None,
@@ -238,7 +248,8 @@ class LineProfiler:
                 return trace_lines
             
             # Only trace lines in the target function
-            if frame.f_code.co_filename != filename:
+            # Check both filename and that we're in the right code object
+            if frame.f_code.co_filename != filename or frame.f_code != func.__code__:
                 return trace_lines
             
             line_number = frame.f_lineno

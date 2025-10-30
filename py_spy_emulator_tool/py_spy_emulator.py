@@ -208,7 +208,8 @@ class SamplingProfiler:
                     line_number = current_frame.f_lineno
                     
                     # Filter out profiler frames
-                    if 'py_spy_emulator' not in filename:
+                    module_file = Path(__file__).name
+                    if module_file not in filename:
                         stack_frames.append(StackFrame(
                             filename=filename,
                             function=function,
@@ -340,8 +341,9 @@ class TopView:
                 # Get current stats
                 stats = self.profiler.profile_data.get_function_stats()
                 
-                # Clear screen (simple version)
-                print("\033[2J\033[H", end="")
+                # Clear screen (cross-platform)
+                import os
+                os.system('cls' if os.name == 'nt' else 'clear')
                 
                 # Print header
                 elapsed = time.time() - start_time
