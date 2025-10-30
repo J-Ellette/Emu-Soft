@@ -394,9 +394,19 @@ class APISpec:
         
         if isinstance(obj, dict):
             for key, value in obj.items():
-                if isinstance(value, (dict, list)):
+                if isinstance(value, dict):
                     lines.append(f"{indent_str}{key}:")
-                    lines.append(self._dict_to_yaml(value, indent + 1))
+                    yaml_content = self._dict_to_yaml(value, indent + 1)
+                    if yaml_content:
+                        lines.append(yaml_content)
+                elif isinstance(value, list):
+                    if not value:
+                        lines.append(f"{indent_str}{key}: []")
+                    else:
+                        lines.append(f"{indent_str}{key}:")
+                        yaml_content = self._dict_to_yaml(value, indent + 1)
+                        if yaml_content:
+                            lines.append(yaml_content)
                 elif value is None:
                     lines.append(f"{indent_str}{key}: null")
                 elif isinstance(value, bool):
@@ -408,17 +418,42 @@ class APISpec:
                         for line in value.split('\n'):
                             lines.append(f"{indent_str}  {line}")
                     else:
-                        lines.append(f"{indent_str}{key}: \"{value}\"")
+                        # Escape quotes and special characters
+                        escaped_value = value.replace('"', '\\"')
+                        # Use single quotes if string contains special characters
+                        if any(char in value for char in [':', '{', '}', '[', ']', ',', '&', '*', '#', '?', '|', '-', '<', '>', '=', '!', '%', '@', '\\']):
+                            # Use single quotes and escape single quotes
+                            escaped_value = value.replace("'", "''")
+                            lines.append(f"{indent_str}{key}: '{escaped_value}'")
+                        else:
+                            lines.append(f'{indent_str}{key}: "{escaped_value}"')
                 else:
                     lines.append(f"{indent_str}{key}: {value}")
         
         elif isinstance(obj, list):
             for item in obj:
-                if isinstance(item, (dict, list)):
+                if isinstance(item, dict):
+                    # Get first line of dict YAML with dash prefix
+                    dict_yaml = self._dict_to_yaml(item, indent)
+                    if dict_yaml:
+                        dict_lines = dict_yaml.split('\n')
+                        # First line gets the dash
+                        if dict_lines:
+                            first_line = dict_lines[0].lstrip()
+                            lines.append(f"{indent_str}- {first_line}")
+                            # Remaining lines get proper indentation
+                            for line in dict_lines[1:]:
+                                lines.append(f"  {line}")
+                elif isinstance(item, list):
+                    # Nested list
                     lines.append(f"{indent_str}-")
-                    lines.append(self._dict_to_yaml(item, indent + 1))
+                    nested_yaml = self._dict_to_yaml(item, indent + 1)
+                    if nested_yaml:
+                        lines.append(nested_yaml)
                 elif isinstance(item, str):
-                    lines.append(f"{indent_str}- \"{item}\"")
+                    # Escape quotes in strings
+                    escaped_item = item.replace('"', '\\"')
+                    lines.append(f'{indent_str}- "{escaped_item}"')
                 else:
                     lines.append(f"{indent_str}- {item}")
         
