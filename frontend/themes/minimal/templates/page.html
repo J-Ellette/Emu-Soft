@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title|escape }} - {{ site_name|default:"MyCMS" }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: #fff;
+        }
+        
+        header {
+            border-bottom: 2px solid #3498db;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        h1 a {
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        
+        nav {
+            margin-top: 1rem;
+        }
+        
+        nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
+        article {
+            margin-bottom: 3rem;
+        }
+        
+        article h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .page-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .page-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-content a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .page-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            color: #3498db;
+            text-decoration: none;
+            margin-top: 2rem;
+            display: inline-block;
+        }
+        
+        footer {
+            border-top: 1px solid #e0e0e0;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            article h2 {
+                font-size: 2rem;
+            }
+            
+            nav a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">{{ site_name|default:"MyCMS" }}</a></h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/posts/">Blog</a>
+                <a href="/admin/">Admin</a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <article>
+                <h2>{{ page.title|escape }}</h2>
+                <div class="page-content">
+                    {{ page.content|safe }}
+                </div>
+                <a href="/" class="back-link">&larr; Back to Home</a>
+            </article>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 {{ site_name|default:"MyCMS" }} - Powered by MyCMS</p>
+        </div>
+    </footer>
+</body>
+</html>

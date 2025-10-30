@@ -1,0 +1,21 @@
+{
+  "name": "minimal",
+  "display_name": "Minimal Theme",
+  "description": "A clean, minimalist theme with essential styling",
+  "author": "MyCMS Team",
+  "version": "1.0.0",
+  "template_dir": "templates",
+  "responsive": true,
+  "colors": {
+    "primary": "#3498db",
+    "secondary": "#2c3e50",
+    "background": "#ffffff",
+    "text": "#333333"
+  },
+  "features": [
+    "Responsive design",
+    "Clean typography",
+    "Minimal styling",
+    "Fast loading"
+  ]
+}

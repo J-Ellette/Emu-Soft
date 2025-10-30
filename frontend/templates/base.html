@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} - {% endif %}{{ site_name|default:"MyCMS" }}</title>
+    {% if meta_description %}
+    <meta name="description" content="{{ meta_description }}">
+    {% endif %}
+    {% if meta_keywords %}
+    <meta name="keywords" content="{{ meta_keywords }}">
+    {% endif %}
+    
+    <!-- U.S. Web Design System (USWDS) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@uswds/uswds@3.7.1/dist/css/uswds.min.css">
+    
+    {% if extra_styles %}
+    {{ extra_styles|safe }}
+    {% endif %}
+</head>
+<body>
+    <!-- USWDS Government Banner -->
+    <section class="usa-banner" aria-label="Official website of the United States government">
+      <div class="usa-accordion">
+        <header class="usa-banner__header">
+          <div class="usa-banner__inner">
+            <div class="grid-col-auto">
+              <img aria-hidden="true" class="usa-banner__header-flag" src="https://cdn.jsdelivr.net/npm/@uswds/uswds/dist/img/us_flag_small.png" alt="" />
+            </div>
+            <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+              <p class="usa-banner__header-text">
+                An official website of the United States government
+              </p>
+              <p class="usa-banner__header-action">Here's how you know</p>
+            </div>
+            <button type="button" class="usa-accordion__button usa-banner__button" aria-expanded="false" aria-controls="gov-banner-default">
+              <span class="usa-banner__button-text">Here's how you know</span>
+            </button>
+          </div>
+        </header>
+        <div class="usa-banner__content usa-accordion__content" id="gov-banner-default" hidden="">
+          <div class="grid-row grid-gap-lg">
+            <div class="usa-banner__guidance tablet:grid-col-6">
+              <img class="usa-banner__icon usa-media-block__img" src="https://cdn.jsdelivr.net/npm/@uswds/uswds/dist/img/icon-dot-gov.svg" role="img" alt="" aria-hidden="true" />
+              <div class="usa-media-block__body">
+                <p>
+                  <strong>Official websites use .gov</strong><br />A
+                  <strong>.gov</strong> website belongs to an official government
+                  organization in the United States.
+                </p>
+              </div>
+            </div>
+            <div class="usa-banner__guidance tablet:grid-col-6">
+              <img class="usa-banner__icon usa-media-block__img" src="https://cdn.jsdelivr.net/npm/@uswds/uswds/dist/img/icon-https.svg" role="img" alt="" aria-hidden="true" />
+              <div class="usa-media-block__body">
+                <p>
+                  <strong>Secure .gov websites use HTTPS</strong><br />A
+                  <strong>lock</strong> or <strong>https://</strong> means you've safely connected to
+                  the .gov website. Share sensitive information only on official,
+                  secure websites.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- USWDS Header -->
+    <header class="usa-header usa-header--basic">
+      <div class="usa-nav-container">
+        <div class="usa-navbar">
+          <div class="usa-logo">
+            <em class="usa-logo__text">
+              <a href="/" title="Home">{{ site_name|default:"MyCMS" }}</a>
+            </em>
+          </div>
+          <button type="button" class="usa-menu-btn">Menu</button>
+        </div>
+        <nav class="usa-nav">
+          <ul class="usa-nav__primary usa-accordion">
+            <li class="usa-nav__primary-item">
+              <a class="usa-nav__link" href="/"><span>Home</span></a>
+            </li>
+            <li class="usa-nav__primary-item">
+              <a class="usa-nav__link" href="/posts/"><span>Blog</span></a>
+            </li>
+            <li class="usa-nav__primary-item">
+              <a class="usa-nav__link" href="/admin/"><span>Admin</span></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content">
+      <div class="grid-container usa-section">
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="usa-alert usa-alert--info">
+            <div class="usa-alert__body">
+              <p class="usa-alert__text">{{ message }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+        {# Main content block to be overridden by child templates #}
+        <div class="content">
+            <!-- Content goes here -->
+        </div>
+      </div>
+    </main>
+    
+    <!-- USWDS Footer -->
+    <footer class="usa-footer">
+      <div class="usa-footer__secondary-section">
+        <div class="grid-container">
+          <div class="grid-row grid-gap">
+            <div class="usa-footer__contact-links mobile-lg:grid-col-12">
+              <div class="usa-footer__primary-content">
+                <p>&copy; 2024 {{ site_name|default:"MyCMS" }}. All rights reserved.</p>
+                <p>Powered by <a href="https://github.com/J-Ellette/CMS-Home-Grown">MyCMS</a> - A Homegrown Content Management System</p>
+                <p>Design system: <a href="https://designsystem.digital.gov/">U.S. Web Design System</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- USWDS JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@uswds/uswds@3.7.1/dist/js/uswds.min.js"></script>
+    
+    {% if extra_scripts %}
+    {{ extra_scripts|safe }}
+    {% endif %}
+</body>
+</html>
