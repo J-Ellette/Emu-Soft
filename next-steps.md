@@ -169,9 +169,4 @@ Complexity: Medium - simpler than MyPy but requires many rules
 ## selenium - Browser automation
 
 
-### DO NOT IMPLEMENT BELOW THIS LINE, THESE ARE INTERNAL NOTES
-Go through each of the folders and determine the script(s) within each one is emulating - collect the name of that script or group of scripts, or the name of script or group of scripts if they are uniquely new scripts. Regroup the scripts in to new folders, if needed, to keep like types together. Use your best judgement in grouping and naming. If you find redundant scripts, compare and keep the best coded script and delete the other(s). 
-Do all this while ensuring you do not break any scripts. 
-Solo scripts, like those in rhe dev_tools folder ( https://github.com/J-Ellette/Emu-Soft/tree/main/dev_tools ) should be moved to their own folders in the root.
-Make sure each folder in the repo has documentation, readme, etc.,
-Make a new descriptions.md to list the results, grouped by folder name.
+### DO NOT IMPLEMENT BELOW THIS LINE, THIS IS RESERVED FOR INTERNAL NOTES
