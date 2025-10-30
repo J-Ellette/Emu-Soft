@@ -7,6 +7,12 @@ Inspired by:
 - Lighthouse Accessibility Score
 - axe DevTools Score
 - WAVE Summary Score
+
+Enhanced with:
+- WCAG 2.2 compliance checking
+- Modern CSS support (HSL, :focus-visible)
+- Deprecated ARIA detection
+- Live regions support
 """
 
 from typing import Dict, List, Optional

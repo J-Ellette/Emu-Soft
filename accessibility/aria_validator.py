@@ -120,11 +120,9 @@ class ARIAValidator(HTMLParser):
         "aria-describedby",
         "aria-details",
         "aria-disabled",
-        "aria-dropeffect",
         "aria-errormessage",
         "aria-expanded",
         "aria-flowto",
-        "aria-grabbed",
         "aria-haspopup",
         "aria-hidden",
         "aria-invalid",
@@ -158,6 +156,7 @@ class ARIAValidator(HTMLParser):
     }
 
     # Deprecated ARIA attributes (warn users about these)
+    # Note: These are kept separate from VALID_ATTRIBUTES to provide deprecation warnings
     DEPRECATED_ATTRIBUTES = {
         "aria-grabbed": "Deprecated in ARIA 1.2, use drag-and-drop API instead",
         "aria-dropeffect": "Deprecated in ARIA 1.2, use drag-and-drop API instead",
@@ -302,7 +301,7 @@ class ARIAValidator(HTMLParser):
         self, tag: str, attr_name: str, attr_value: str, role: Optional[str], element_info: Dict
     ):
         """Validate ARIA attribute."""
-        # Check if attribute is deprecated
+        # Check if attribute is deprecated first
         if attr_name in self.DEPRECATED_ATTRIBUTES:
             self.issues.append(
                 {
@@ -313,6 +312,8 @@ class ARIAValidator(HTMLParser):
                     "wcag": "Best Practice - Use modern ARIA patterns",
                 }
             )
+            # Don't also flag it as invalid since it's deprecated but still recognized
+            return
         
         # Check if attribute is valid
         if attr_name not in self.VALID_ATTRIBUTES:
