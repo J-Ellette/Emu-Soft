@@ -6,35 +6,48 @@
 
 This directory contains copies of all software, scripts, and code that were created by emulating existing tools and technologies. Components are organized by category for easy navigation and reference.
 
+> **📋 For a comprehensive list of all scripts and their purposes, see [script_descriptions.md](script_descriptions.md)**
+
 ## Directory Structure
 
 ```
 emu-soft/
-├── analysis/           # Code analysis and quality tools
-│   ├── static_analyzer.py
-│   ├── security_scanner.py
-│   └── test_generator.py
-├── assurance/          # ARCOS assurance case components
-│   ├── fragments.py
-│   ├── argtl.py
-│   ├── acql.py
-│   ├── reasoning.py
-│   ├── dependency_tracker.py
-│   └── architecture.py
-├── evidence/           # Evidence collection system
-│   └── collector.py
-├── infrastructure/     # Core infrastructure emulations
-│   ├── cache.py
-│   ├── tasks.py
-│   ├── framework.py
-│   └── graph.py
-├── dev_tools/          # Development tools emulations
-│   ├── pytest_emulator.py
-│   ├── coverage_emulator.py
-│   └── formatter.py
-└── web/               # Web components and visualization
-    ├── badges.py
-    └── dashboard.py
+├── Development Tools (Individual Folders)
+│   ├── pytest_emulator_tool/     # pytest testing framework emulator
+│   ├── coverage_emulator_tool/   # Code coverage tracking
+│   ├── code_formatter_tool/      # Black formatter emulator
+│   ├── live_reload_tool/         # Development auto-reload
+│   └── cms_cli_tool/             # CMS scaffolding CLI
+│
+├── Web Framework & API
+│   ├── framework/                # Core HTTP framework
+│   ├── api/                      # RESTful API framework
+│   ├── admin/                    # Admin interface
+│   └── cache/                    # Caching layer
+│
+├── Frontend & Templates
+│   ├── frontend/                 # USWDS integration & themes
+│   ├── templates/                # Template engine
+│   └── web/                      # Dashboard & badges
+│
+├── Data & Security
+│   ├── database/                 # ORM and database layer
+│   ├── auth/                     # Authentication system
+│   └── security/                 # Security tools
+│
+├── Quality & Analysis
+│   ├── analysis/                 # Code analysis tools
+│   ├── accessibility/            # Accessibility testing
+│   └── seo/                      # SEO optimization
+│
+├── Assurance & Infrastructure
+│   ├── assurance/                # ARCOS assurance system
+│   ├── infrastructure/           # Core infrastructure (cache, tasks, graph)
+│   ├── evidence/                 # Evidence collection
+│   └── edge/                     # Edge computing
+│
+└── Legacy
+    └── dev_tools/                # Original dev tools (kept for compatibility)
 ```
 
 ## Quick Reference by Category
@@ -76,25 +89,32 @@ emu-soft/
 | badges.py | shields.io | SVG badge generation |
 | dashboard.py | USWDS | Federal-compliant dashboards |
 
-### Development Tools (`dev_tools/`)
-| Component | Emulates | Purpose |
-|-----------|----------|---------|
-| pytest_emulator.py | pytest | Test discovery, fixtures, and execution |
-| coverage_emulator.py | Coverage.py | Code coverage tracking with sys.settrace() |
-| formatter.py | Black | AST-based Python code formatter |
+### Development Tools (Now in Individual Folders)
+Development tools have been reorganized into separate folders at the repository root for better organization:
+
+| Tool Folder | Emulates | Purpose |
+|-------------|----------|---------|
+| pytest_emulator_tool/ | pytest | Test discovery, fixtures, and execution |
+| coverage_emulator_tool/ | Coverage.py | Code coverage tracking with sys.settrace() |
+| code_formatter_tool/ | Black | AST-based Python code formatter |
+| live_reload_tool/ | uvicorn --reload | File watching and auto-reload for development |
+| cms_cli_tool/ | Django manage.py, Rails generators | CMS scaffolding and code generation |
+
+**Note:** Original implementations remain in `dev_tools/` for backward compatibility.
 
 ## Documentation
 
-Each subdirectory contains a detailed README.md with:
+All folders now include comprehensive README.md files with:
 - Component descriptions and features
 - Usage examples
 - API documentation
 - Integration guides
 - Performance characteristics
 
-**See also:**
+**Key Documentation Files:**
+- **script_descriptions.md** - Complete listing of all 125+ scripts organized by folder
 - **details.md** - Comprehensive documentation of all components
-- **Subdirectory READMEs** - Category-specific documentation
+- **Folder READMEs** - Detailed documentation for each module
 - **build-docs/** - Step completion documentation
 
 ## Using These Files
