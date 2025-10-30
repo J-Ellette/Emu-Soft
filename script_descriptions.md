@@ -93,6 +93,74 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### mypy_emulator_tool/
+**What it emulates:** MyPy (Static type checker for Python)
+
+**Scripts:**
+- `mypy_emulator.py` - Static type checker implementation
+  - Type inference engine for automatic type detection
+  - Type annotation validation
+  - Function signature checking
+  - Type compatibility checking (Union, Optional, generics)
+  - Strict mode for enforcing type annotations
+  - Error reporting with line numbers
+  
+- `test_mypy_emulator.py` - Test suite for MyPy emulator
+  - Validates type inference
+  - Tests annotated assignment checking
+  - Verifies function type checking
+  - Tests type compatibility rules
+
+**Use:** Provides static type checking without external MyPy dependency, catching type errors early in development and improving code quality through type safety.
+
+---
+
+### flake8_emulator_tool/
+**What it emulates:** Flake8 (Python linting tool combining PyFlakes, pycodestyle, and McCabe)
+
+**Scripts:**
+- `flake8_emulator.py` - Code linting implementation
+  - PEP 8 style checking (E-codes)
+  - PyFlakes error detection (F-codes)
+  - McCabe complexity analysis (C-codes)
+  - Whitespace and indentation rules
+  - Unused import and variable detection
+  - Line length enforcement
+  - Configurable rule thresholds
+  
+- `test_flake8_emulator.py` - Test suite for Flake8 emulator
+  - Validates line length checking
+  - Tests whitespace detection
+  - Tests unused import detection
+  - Tests complexity checking
+
+**Use:** Ensures code quality and style consistency without external linting tools, enforcing PEP 8 standards and detecting common code smells.
+
+---
+
+### uvicorn_emulator_tool/
+**What it emulates:** Uvicorn (Lightning-fast ASGI server)
+
+**Scripts:**
+- `uvicorn_emulator.py` - ASGI server implementation
+  - HTTP/1.1 protocol support
+  - ASGI 3.0 protocol implementation
+  - Async request handling
+  - Auto-reload with file watching
+  - Application hot reloading
+  - Request/response parsing
+  - Socket-based HTTP server
+  
+- `test_uvicorn_emulator.py` - Test suite for Uvicorn emulator
+  - Validates request parsing
+  - Tests ASGI scope conversion
+  - Tests response building
+  - Tests file watching for auto-reload
+
+**Use:** Provides ASGI server capabilities without external dependencies, enabling development and testing of async Python web applications with auto-reload support.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -768,12 +836,15 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ## Summary by Category
 
-### Development Productivity (5 tools)
+### Development Productivity (8 tools)
 - pytest emulator - Testing framework
 - Coverage emulator - Code coverage
 - Code formatter - Style enforcement
 - Live reload - Development auto-reload
 - CMS CLI - Component scaffolding
+- MyPy emulator - Static type checking
+- Flake8 emulator - Code linting
+- Uvicorn emulator - ASGI server
 
 ### Web Development (3 tool groups)
 - Web Framework - Core HTTP framework
@@ -812,8 +883,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **20 major folders/systems**
-- **125+ Python scripts**
+- **23 major folders/systems**
+- **137+ Python scripts**
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
