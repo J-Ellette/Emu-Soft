@@ -5,7 +5,7 @@ Accessibility Simulation Tools Demo
 Demonstrates the capabilities of the accessibility simulation tools.
 """
 
-from mycms.accessibility import (
+from accessibility import (
     ColorBlindnessSimulator,
     ScreenReaderSimulator,
     KeyboardNavigationTester,

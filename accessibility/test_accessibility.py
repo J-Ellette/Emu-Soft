@@ -3,7 +3,7 @@ Tests for Accessibility Simulation Tools
 """
 
 import pytest
-from mycms.accessibility import (
+from accessibility import (
     ColorBlindnessSimulator,
     ScreenReaderSimulator,
     KeyboardNavigationTester,

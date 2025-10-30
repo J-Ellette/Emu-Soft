@@ -169,10 +169,10 @@ Calculates comprehensive accessibility scores with actionable insights.
 
 ## Installation
 
-The accessibility module is part of the FoundryCore CMS:
+The accessibility module can be imported directly:
 
 ```python
-from mycms.accessibility import (
+from accessibility import (
     ColorBlindnessSimulator,
     ScreenReaderSimulator,
     KeyboardNavigationTester,
@@ -188,7 +188,7 @@ from mycms.accessibility import (
 ### Color Blindness Simulation
 
 ```python
-from mycms.accessibility import ColorBlindnessSimulator
+from accessibility import ColorBlindnessSimulator
 
 sim = ColorBlindnessSimulator()
 
@@ -211,7 +211,7 @@ types = sim.get_simulation_types()
 ### Screen Reader Preview
 
 ```python
-from mycms.accessibility import ScreenReaderSimulator
+from accessibility import ScreenReaderSimulator
 
 sim = ScreenReaderSimulator()
 
@@ -238,7 +238,7 @@ issues = sim.check_accessibility_issues(html)
 ### Keyboard Navigation Testing
 
 ```python
-from mycms.accessibility import KeyboardNavigationTester
+from accessibility import KeyboardNavigationTester
 
 tester = KeyboardNavigationTester()
 
@@ -264,7 +264,7 @@ sequence = tester.get_tab_sequence(html)
 ### Contrast Analysis
 
 ```python
-from mycms.accessibility import ContrastAnalyzer
+from accessibility import ContrastAnalyzer
 
 analyzer = ContrastAnalyzer()
 
@@ -291,7 +291,7 @@ results = analyzer.analyze_css_colors(css)
 ### ARIA Validation
 
 ```python
-from mycms.accessibility import ARIAValidator
+from accessibility import ARIAValidator
 
 validator = ARIAValidator()
 
@@ -313,7 +313,7 @@ for issue in result['issues']:
 ### WCAG Compliance Checking
 
 ```python
-from mycms.accessibility import WCAGComplianceChecker
+from accessibility import WCAGComplianceChecker
 
 checker = WCAGComplianceChecker()
 
@@ -342,7 +342,7 @@ print(report)
 ### Comprehensive Accessibility Scoring
 
 ```python
-from mycms.accessibility import AccessibilityScorer
+from accessibility import AccessibilityScorer
 
 scorer = AccessibilityScorer()
 
@@ -378,7 +378,7 @@ print(report)
 ### Complete Page Audit
 
 ```python
-from mycms.accessibility import AccessibilityScorer
+from accessibility import AccessibilityScorer
 
 scorer = AccessibilityScorer()
 
@@ -408,7 +408,7 @@ for recommendation in results['recommendations']:
 ### Preview for Different Users
 
 ```python
-from mycms.accessibility import ColorBlindnessSimulator, ScreenReaderSimulator
+from accessibility import ColorBlindnessSimulator, ScreenReaderSimulator
 
 # Load page
 with open('page.html') as f:
@@ -615,7 +615,7 @@ When adding new accessibility features:
 
 ## License
 
-Part of the FoundryCore CMS, licensed under MIT License.
+Part of the Emu-Soft collection, licensed under MIT License.
 
 ## Version History
 
@@ -632,5 +632,4 @@ Part of the FoundryCore CMS, licensed under MIT License.
 
 ---
 
-*Last Updated: 2025-10-30*  
-*Module: mycms.accessibility*
+*Last Updated: 2025-10-30*
