@@ -118,6 +118,7 @@ def test_dev_tools():
     """Test dev_tools modules."""
     print("\nTesting dev_tools modules...")
     
+    # Test original dev_tools location
     from dev_tools.pytest_emulator import PyTestEmulator, fixture
     pytest_emu = PyTestEmulator()
     print("  ✓ pytest_emulator.py works")
@@ -129,6 +130,14 @@ def test_dev_tools():
     from dev_tools.formatter import Black
     black = Black()
     print("  ✓ formatter.py works")
+    
+    # Test new individual folders (they import from the same modules)
+    import pytest_emulator_tool
+    import coverage_emulator_tool
+    import code_formatter_tool
+    import live_reload_tool
+    import cms_cli_tool
+    print("  ✓ New folder structure works")
 
 if __name__ == "__main__":
     print("=" * 60)
