@@ -233,6 +233,89 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### urllib3_emulator_tool/
+**What it emulates:** urllib3 (Python HTTP library with connection pooling)
+
+**Scripts:**
+- `urllib3_emulator.py` - Lower-level HTTP client implementation
+  - Connection pooling and reuse
+  - Retry logic with exponential backoff
+  - HTTP/HTTPS support with SSL/TLS
+  - Request timeout handling
+  - HTTPConnectionPool for single-host connections
+  - PoolManager for multi-host connection management
+  - HTTPResponse object with multiple access methods
+  - Configurable retry policies with status code filtering
+  - Redirect following support
+  
+- `test_urllib3_emulator.py` - Test suite for urllib3 emulator
+  - Validates connection pooling functionality
+  - Tests retry configuration and backoff
+  - Tests HTTPResponse object methods
+  - Verifies PoolManager multi-host handling
+  - Tests timeout and error handling
+
+**Use:** Provides production-grade HTTP client with advanced connection pooling and retry capabilities without external dependencies, essential for high-performance HTTP operations and resilient network communication.
+
+---
+
+### aiohttp_emulator_tool/
+**What it emulates:** aiohttp (Async HTTP client/server framework)
+
+**Scripts:**
+- `aiohttp_emulator.py` - Async HTTP client and server implementation
+  - ClientSession for async HTTP client with connection pooling
+  - ClientResponse with async read/text/json methods
+  - Async HTTP server with Application and Router
+  - Request/Response abstractions for server handlers
+  - Route matching with path parameters
+  - Cookie handling across async requests
+  - JSON request/response support
+  - Context manager support for cleanup
+  - Route decorators (@get, @post, etc.)
+  
+- `test_aiohttp_emulator.py` - Test suite for aiohttp emulator
+  - Validates async client session management
+  - Tests async request methods (GET, POST, etc.)
+  - Tests server application and routing
+  - Verifies route parameter extraction
+  - Tests JSON request/response handling
+  - Validates context manager lifecycle
+
+**Use:** Enables building modern async web applications and API clients without external async HTTP dependencies, providing both client and server capabilities in a unified async framework suitable for high-concurrency scenarios.
+
+---
+
+### httpx_emulator_tool/
+**What it emulates:** httpx (Modern HTTP client with sync/async support)
+
+**Scripts:**
+- `httpx_emulator.py` - Unified sync/async HTTP client implementation
+  - Client class for synchronous HTTP operations
+  - AsyncClient class for asynchronous HTTP operations
+  - Unified API working in both sync and async contexts
+  - Request/Response objects with rich interface
+  - Case-insensitive Headers dictionary
+  - Status code helpers (is_success, is_error, is_redirect)
+  - JSON encoding/decoding built-in
+  - Query parameter handling
+  - Base URL support for API clients
+  - Redirect following with configurable limits
+  - HTTP/2 concepts (flag available)
+  
+- `test_httpx_emulator.py` - Test suite for httpx emulator
+  - Validates case-insensitive headers
+  - Tests Request object with various body types
+  - Tests Response object methods and properties
+  - Verifies sync Client functionality
+  - Tests async AsyncClient operations
+  - Validates status code helpers
+  - Tests convenience functions
+
+**Use:** Provides next-generation HTTP client with modern API design and unified sync/async support without external dependencies, ideal for applications that need flexible HTTP operations in both blocking and non-blocking contexts with clean, intuitive interfaces.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -925,8 +1008,11 @@ This document lists all scripts and modules in the repository, organized by fold
 - Gunicorn emulator - WSGI server with worker management
 - Nginx emulator - Reverse proxy and load balancing
 
-### Networking & HTTP (1 tool)
-- Requests emulator - HTTP client library
+### Networking & HTTP (4 tools)
+- Requests emulator - Simple HTTP client library
+- urllib3 emulator - Advanced HTTP client with connection pooling
+- aiohttp emulator - Async HTTP client/server framework
+- httpx emulator - Modern unified sync/async HTTP client
 
 ### Frontend & Templates (3 tool groups)
 - Template Engine - HTML generation
@@ -960,8 +1046,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **26 major folders/systems**
-- **143+ Python scripts**
+- **29 major folders/systems** (was 26)
+- **152+ Python scripts** (was 143+)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 

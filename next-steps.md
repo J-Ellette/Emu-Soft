@@ -71,11 +71,11 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## Requests - HTTP library (incredibly popular) (COMPLETE)
 
-## urllib3 - Lower-level HTTP library
+## urllib3 - Lower-level HTTP library (COMPLETE)
 
-## aiohttp - Async HTTP client/server
+## aiohttp - Async HTTP client/server (COMPLETE)
 
-## httpx - Modern async HTTP client
+## httpx - Modern async HTTP client (COMPLETE)
 
 ## psycopg2 - PostgreSQL adapter
 
