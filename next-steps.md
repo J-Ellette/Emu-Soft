@@ -178,19 +178,23 @@ Complexity: Medium - requires proper context management and flexible processing
 
 ## memory_profiler - Memory usage profiler
 
-## isort - Import sorting (COMPLETE)
+## pre-commit - Git hooks framework (COMPLETE)
 Feasibility: High
-Why: Import parsing and sorting using AST or regex is well-understood
-Core Components: Import statement parser, section classifier, sorting logic
-Complexity: Medium - requires proper handling of different import styles and preservation of comments
+Why: Git hook management and configuration parsing are straightforward
+Core Components: Hook installation, YAML config parsing, file filtering, hook execution, result reporting
+Complexity: Medium - requires process management and configuration handling
 
-## pre-commit - Git hooks framework
+## vulture - Dead code finder (COMPLETE)
+Feasibility: High
+Why: AST-based code analysis for finding unused code is well-understood
+Core Components: AST parsing, usage tracking, confidence scoring, whitelist support
+Complexity: Medium - requires AST analysis and usage pattern detection
 
-## bandit - Security linting
-
-## vulture - Dead code finder
-
-## Sphinx - Documentation generator
+## Sphinx - Documentation generator (COMPLETE)
+Feasibility: High
+Why: Docstring extraction and HTML generation are well-understood
+Core Components: AST-based docstring extraction, multiple format parsing (Sphinx/Google/NumPy), HTML generation, index creation
+Complexity: Medium-High - requires parsing multiple docstring formats and generating structured HTML
 
 ## mkdocs - Markdown documentation
 
