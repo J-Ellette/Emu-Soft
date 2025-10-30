@@ -387,13 +387,13 @@ class APISpec:
         """
         return self._dict_to_yaml(self.to_dict())
     
+    # YAML special characters that require quoting
+    _YAML_SPECIAL_CHARS = frozenset({':', '{', '}', '[', ']', ',', '&', '*', '#', '?', '|', '-', '<', '>', '=', '!', '%', '@', '\\'})
+    
     def _dict_to_yaml(self, obj: Any, indent: int = 0) -> str:
         """Simple dict to YAML converter."""
         lines = []
         indent_str = '  ' * indent
-        
-        # Predefined set for YAML special characters
-        YAML_SPECIAL_CHARS = {':', '{', '}', '[', ']', ',', '&', '*', '#', '?', '|', '-', '<', '>', '=', '!', '%', '@', '\\'}
         
         if isinstance(obj, dict):
             for key, value in obj.items():
@@ -423,11 +423,7 @@ class APISpec:
                     else:
                         # Use double quotes and escape backslashes and quotes
                         escaped_value = value.replace('\\', '\\\\').replace('"', '\\"')
-                        # Check if contains special YAML characters
-                        if any(char in YAML_SPECIAL_CHARS for char in value):
-                            lines.append(f'{indent_str}{key}: "{escaped_value}"')
-                        else:
-                            lines.append(f'{indent_str}{key}: "{escaped_value}"')
+                        lines.append(f'{indent_str}{key}: "{escaped_value}"')
                 else:
                     lines.append(f"{indent_str}{key}: {value}")
         
