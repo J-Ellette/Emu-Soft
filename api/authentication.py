@@ -5,10 +5,10 @@ import hashlib
 from typing import Any, Callable, Dict, Optional, Tuple
 from functools import wraps
 from datetime import datetime, timedelta
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, JSONResponse
-from mycms.auth.tokens import JWTTokenManager
-from mycms.auth.models import User
+from framework.request import Request
+from framework.response import Response, JSONResponse
+from auth.tokens import JWTTokenManager
+from auth.models import User
 
 
 def create_token(

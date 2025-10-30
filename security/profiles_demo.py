@@ -8,7 +8,7 @@ This example shows how to use the security hardening profiles feature including:
 - Checking compliance requirements
 """
 
-from mycms.security.profiles import (
+from security.profiles import (
     ProfileManager,
     ProfileFactory,
     SecurityProfile,

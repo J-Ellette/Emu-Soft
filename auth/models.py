@@ -1,7 +1,7 @@
 """User, Role, and Permission models for authentication and authorization."""
 
 from typing import Any, List
-from mycms.core.database.orm import (
+from database.orm import (
     Model,
     CharField,
     IntegerField,
@@ -44,13 +44,13 @@ class Role(Model):
             List of Permission instances
         """
         # Query role_permissions table to get permission IDs
-        from mycms.core.database.query import QueryBuilder
+        from database.query import QueryBuilder
 
         qb = QueryBuilder("role_permissions")
         qb.select("permission_id").where("role_id", "=", self.id)
         query, params = qb.build()
 
-        from mycms.core.database.connection import db
+        from database.connection import db
 
         rows = await db.fetch_all(query, *params)
         permission_ids = [row["permission_id"] for row in rows]
@@ -72,8 +72,8 @@ class Role(Model):
         Args:
             permission: Permission instance to add
         """
-        from mycms.core.database.query import QueryBuilder
-        from mycms.core.database.connection import db
+        from database.query import QueryBuilder
+        from database.connection import db
 
         qb = QueryBuilder("role_permissions")
         qb.insert({"role_id": self.id, "permission_id": permission.id})
@@ -86,8 +86,8 @@ class Role(Model):
         Args:
             permission: Permission instance to remove
         """
-        from mycms.core.database.query import QueryBuilder
-        from mycms.core.database.connection import db
+        from database.query import QueryBuilder
+        from database.connection import db
 
         qb = QueryBuilder("role_permissions")
         qb.delete().where("role_id", "=", self.id).where("permission_id", "=", permission.id)
@@ -125,7 +125,7 @@ class User(Model):
         """
         # Don't allow setting password_hash directly
         if "password" in kwargs:
-            from mycms.auth.password import hash_password
+            from auth.password import hash_password
 
             kwargs["password_hash"] = hash_password(kwargs.pop("password"))
 
@@ -137,7 +137,7 @@ class User(Model):
         Args:
             password: Plain text password
         """
-        from mycms.auth.password import hash_password
+        from auth.password import hash_password
 
         self.password_hash = hash_password(password)
 
@@ -150,7 +150,7 @@ class User(Model):
         Returns:
             True if password matches, False otherwise
         """
-        from mycms.auth.password import verify_password
+        from auth.password import verify_password
 
         return verify_password(password, self.password_hash)
 
@@ -160,8 +160,8 @@ class User(Model):
         Returns:
             List of Role instances
         """
-        from mycms.core.database.query import QueryBuilder
-        from mycms.core.database.connection import db
+        from database.query import QueryBuilder
+        from database.connection import db
 
         qb = QueryBuilder("user_roles")
         qb.select("role_id").where("user_id", "=", self.id)
@@ -185,8 +185,8 @@ class User(Model):
         Args:
             role: Role instance to add
         """
-        from mycms.core.database.query import QueryBuilder
-        from mycms.core.database.connection import db
+        from database.query import QueryBuilder
+        from database.connection import db
 
         qb = QueryBuilder("user_roles")
         qb.insert({"user_id": self.id, "role_id": role.id})
@@ -199,8 +199,8 @@ class User(Model):
         Args:
             role: Role instance to remove
         """
-        from mycms.core.database.query import QueryBuilder
-        from mycms.core.database.connection import db
+        from database.query import QueryBuilder
+        from database.connection import db
 
         qb = QueryBuilder("user_roles")
         qb.delete().where("user_id", "=", self.id).where("role_id", "=", role.id)

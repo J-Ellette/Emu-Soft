@@ -16,8 +16,8 @@ Advanced caching features including smart invalidation, cache warming, content-t
 Invalidate related content together using tags:
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import CacheTag
+from cache.backend import InMemoryCache
+from cache.advanced import CacheTag
 
 cache = InMemoryCache()
 tag_manager = CacheTag(cache)
@@ -38,8 +38,8 @@ tag_manager.invalidate_tag("user:123")  # Invalidates all user's cached data
 ### Pattern-Based Invalidation
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import CacheInvalidator
+from cache.backend import InMemoryCache
+from cache.advanced import CacheInvalidator
 
 cache = InMemoryCache()
 invalidator = CacheInvalidator(cache)
@@ -67,8 +67,8 @@ print(f"Invalidated {count} page keys")
 Pre-populate cache with frequently accessed data:
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import CacheWarmer
+from cache.backend import InMemoryCache
+from cache.advanced import CacheWarmer
 
 cache = InMemoryCache()
 warmer = CacheWarmer(cache)
@@ -100,8 +100,8 @@ status = warmer.get_warming_status()
 Different caching strategies for different content types:
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import ContentTypeCacheManager, CachePolicy
+from cache.backend import InMemoryCache
+from cache.advanced import ContentTypeCacheManager, CachePolicy
 
 cache = InMemoryCache()
 manager = ContentTypeCacheManager(cache)
@@ -140,7 +140,7 @@ cached = manager.get_cached_content("page", "home")
 Monitor cache performance in real-time:
 
 ```python
-from mycms.cache.advanced import CacheStatistics
+from cache.advanced import CacheStatistics
 
 stats = CacheStatistics()
 
@@ -165,8 +165,8 @@ stats.reset()
 Serve stale content while updating in the background:
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import StaleWhileRevalidateCache
+from cache.backend import InMemoryCache
+from cache.advanced import StaleWhileRevalidateCache
 
 cache = InMemoryCache()
 swr_cache = StaleWhileRevalidateCache(cache)
@@ -190,7 +190,7 @@ if is_stale:
 ## Cache Policy Configuration
 
 ```python
-from mycms.cache.advanced import CachePolicy
+from cache.advanced import CachePolicy
 
 policy = CachePolicy(
     timeout=600,                              # Cache for 10 minutes
@@ -206,8 +206,8 @@ policy = CachePolicy(
 Complete example integrating all features:
 
 ```python
-from mycms.cache.backend import InMemoryCache
-from mycms.cache.advanced import (
+from cache.backend import InMemoryCache
+from cache.advanced import (
     CacheTag,
     CacheInvalidator,
     CacheWarmer,

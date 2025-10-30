@@ -1,14 +1,14 @@
 """Frontend module for public-facing views."""
 
-from mycms.frontend.views import FrontendViews
-from mycms.frontend.urls import create_frontend_routes
-from mycms.frontend.themes import (
+from frontend.views import FrontendViews
+from frontend.urls import create_frontend_routes
+from frontend.themes import (
     Theme,
     ThemeManager,
     get_theme_manager,
     set_theme_manager,
 )
-from mycms.frontend.uswds_integration import (
+from frontend.uswds_integration import (
     USWDSConfig,
     USWDSComponentRenderer,
     USWDSFormRenderer,

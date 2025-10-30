@@ -10,30 +10,30 @@ This module provides security features including:
 - Security hardening profiles for different deployment environments
 """
 
-from mycms.security.audit import (
+from security.audit import (
     AuditLog,
     AuditLogger,
     AuditAction,
     audit_log,
 )
-from mycms.security.enhanced_audit import (
+from security.enhanced_audit import (
     EnhancedAuditLogger,
     LoginAttempt,
     SystemChange,
     get_enhanced_audit_logger,
 )
-from mycms.security.middleware import (
+from security.middleware import (
     SecurityHeadersMiddleware,
     CSRFMiddleware,
     RateLimitMiddleware,
 )
-from mycms.security.sanitization import (
+from security.sanitization import (
     sanitize_html,
     sanitize_sql,
     sanitize_path,
     sanitize_command,
 )
-from mycms.security.compliance import (
+from security.compliance import (
     ComplianceManager,
     DataRetentionPolicy,
     ConsentManager,

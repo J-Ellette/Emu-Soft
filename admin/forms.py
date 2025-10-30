@@ -5,7 +5,7 @@ including field validation and data processing.
 """
 
 from typing import Any, Dict, Optional, Type
-from mycms.core.database.orm import Model, Field as OrmField
+from database.orm import Model, Field as OrmField
 
 
 class ValidationError(Exception):
@@ -418,10 +418,10 @@ class ModelForm(Form):
         Returns:
             Form field instance
         """
-        from mycms.core.database.orm import CharField as OrmCharField
-        from mycms.core.database.orm import IntegerField as OrmIntField
-        from mycms.core.database.orm import BooleanField as OrmBoolField
-        from mycms.core.database.orm import TextField as OrmTextField
+        from database.orm import CharField as OrmCharField
+        from database.orm import IntegerField as OrmIntField
+        from database.orm import BooleanField as OrmBoolField
+        from database.orm import TextField as OrmTextField
 
         required = not orm_field.null
 

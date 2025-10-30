@@ -1,4 +1,4 @@
-"""Command-line interface for MyCMS development.
+"""Command-line interface for CMS development.
 
 Provides CLI tools for scaffolding and managing CMS components:
 - Plugin scaffolding
@@ -152,7 +152,7 @@ __all__ = ["{self._to_class_name(name)}"]
         
         content = f'''"""Main plugin implementation for {display_name}."""
 
-from mycms.plugins.base import Plugin, PluginConfig
+from plugins.base import Plugin, PluginConfig
 from typing import Dict, Any
 
 
@@ -312,7 +312,7 @@ To develop this plugin:
         content = f'''"""Tests for {name} plugin."""
 
 import pytest
-from mycms.plugins.base import PluginConfig
+from plugins.base import PluginConfig
 from .plugin import {class_name}
 
 
@@ -650,8 +650,8 @@ class ContentTypeScaffolder:
         
         content = f'''"""Custom content type: {class_name}."""
 
-from mycms.content.custom_post_types import CustomPostType
-from mycms.content.custom_fields import (
+from content.custom_post_types import CustomPostType
+from content.custom_fields import (
     CharField,
     TextField,
     BooleanField,
@@ -706,8 +706,8 @@ class CLI:
     def _create_parser(self) -> argparse.ArgumentParser:
         """Create argument parser."""
         parser = argparse.ArgumentParser(
-            description="MyCMS Development CLI",
-            prog="mycms",
+            description="CMS Development CLI",
+            prog="cms",
         )
         
         subparsers = parser.add_subparsers(dest="command", help="Command to run")

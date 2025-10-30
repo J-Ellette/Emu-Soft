@@ -2,7 +2,7 @@
 
 import pytest
 from datetime import datetime, timezone
-from mycms.security.content_integrity import (
+from security.content_integrity import (
     ContentIntegrityVerifier,
     ContentIntegrityAction,
     IntegrityBlock,

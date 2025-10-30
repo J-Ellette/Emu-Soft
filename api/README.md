@@ -18,9 +18,9 @@ The API layer consists of six main components:
 ### Creating a Simple API Endpoint
 
 ```python
-from mycms.api import APIRouter, APIView
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import JSONResponse
+from api import APIRouter, APIView
+from framework.request import Request
+from framework.response import JSONResponse
 
 # Create a router
 router = APIRouter(prefix="/api/v1")
@@ -51,7 +51,7 @@ The framework provides the core infrastructure for building API endpoints.
 The router manages API endpoints and handles request dispatching.
 
 ```python
-from mycms.api import APIRouter
+from api import APIRouter
 
 # Create a router with a prefix
 router = APIRouter(prefix="/api/v1")
@@ -68,7 +68,7 @@ response = await router.handle(request)
 Base class for class-based API views with RESTful method handlers.
 
 ```python
-from mycms.api import APIView
+from api import APIView
 
 class PostView(APIView):
     allowed_methods = ["GET", "POST", "PUT", "DELETE"]
@@ -88,7 +88,7 @@ class PostView(APIView):
 Represents a single API endpoint with method-specific handlers.
 
 ```python
-from mycms.api import APIEndpoint
+from api import APIEndpoint
 
 endpoint = APIEndpoint("/api/users", methods=["GET", "POST"])
 endpoint.add_handler("GET", get_users_handler)
@@ -104,7 +104,7 @@ Serializers convert between Python objects and JSON.
 Basic serializer for any Python object.
 
 ```python
-from mycms.api import APISerializer
+from api import APISerializer
 
 # Serialize a single object
 serializer = APISerializer(instance=user)
@@ -125,7 +125,7 @@ serializer.exclude = ["password"]   # Exclude these fields
 Specialized serializer for ORM models.
 
 ```python
-from mycms.api import ModelSerializer
+from api import ModelSerializer
 
 class UserSerializer(ModelSerializer):
     model_class = User
@@ -146,7 +146,7 @@ if serializer.validate():
 ### Convenience Functions
 
 ```python
-from mycms.api.serializers import serialize, serialize_many
+from api.serializers import serialize, serialize_many
 
 # Quick serialization
 data = serialize(user, fields=["id", "name"])
@@ -160,7 +160,7 @@ The API layer supports two authentication methods: API keys and JWT tokens.
 ### API Key Authentication
 
 ```python
-from mycms.api import APIKeyAuth, require_api_auth
+from api import APIKeyAuth, require_api_auth
 
 # Create auth handler
 api_key_auth = APIKeyAuth()
@@ -185,7 +185,7 @@ async def protected_endpoint(request: Request) -> Response:
 ### Token Authentication
 
 ```python
-from mycms.api import TokenAuth
+from api import TokenAuth
 
 # Create token auth handler
 token_auth = TokenAuth(secret_key="your-secret-key")
@@ -200,7 +200,7 @@ if payload:
     user_id = payload["user_id"]
 
 # Protect endpoint with bearer token
-from mycms.api.authentication import require_bearer_token
+from api.authentication import require_bearer_token
 
 @require_bearer_token(secret_key="your-secret-key")
 async def protected_endpoint(request: Request) -> Response:
@@ -214,7 +214,7 @@ Control access to API endpoints with permissions.
 ### Built-in Permission Classes
 
 ```python
-from mycms.api.permissions import (
+from api.permissions import (
     IsAuthenticated,
     IsStaff,
     IsSuperuser,
@@ -223,7 +223,7 @@ from mycms.api.permissions import (
 )
 
 # Require authentication
-from mycms.api import require_authenticated
+from api import require_authenticated
 
 @require_authenticated()
 async def user_profile(request: Request) -> Response:
@@ -231,21 +231,21 @@ async def user_profile(request: Request) -> Response:
     return JSONResponse({"username": user.username})
 
 # Require staff access
-from mycms.api import require_staff
+from api import require_staff
 
 @require_staff()
 async def admin_panel(request: Request) -> Response:
     return JSONResponse({"admin": True})
 
 # Require specific permission
-from mycms.api import require_permission
+from api import require_permission
 
 @require_permission("edit_posts")
 async def edit_post(request: Request) -> Response:
     return JSONResponse({"can_edit": True})
 
 # Allow only read operations
-from mycms.api import require_read_only
+from api import require_read_only
 
 @require_read_only()
 async def public_data(request: Request) -> Response:
@@ -255,7 +255,7 @@ async def public_data(request: Request) -> Response:
 ### Custom Permissions
 
 ```python
-from mycms.api import APIPermission, require_api_permission
+from api import APIPermission, require_api_permission
 
 class IsOwner(APIPermission):
     async def has_permission_async(self, request: Request, user: User) -> bool:
@@ -279,7 +279,7 @@ Paginate large result sets efficiently.
 ### Basic Pagination
 
 ```python
-from mycms.api import Paginator
+from api import Paginator
 
 # Simple list pagination
 items = list(range(100))
@@ -295,7 +295,7 @@ print(f"Has next: {result.has_next()}")
 ### Page Number Pagination
 
 ```python
-from mycms.api import PageNumberPagination
+from api import PageNumberPagination
 
 pagination = PageNumberPagination(page_size=10, max_page_size=100)
 
@@ -314,7 +314,7 @@ async def list_items(request: Request) -> Response:
 For large datasets where page numbers become inefficient:
 
 ```python
-from mycms.api import CursorPagination
+from api import CursorPagination
 
 pagination = CursorPagination(page_size=10)
 
@@ -334,7 +334,7 @@ Automatically generate API documentation.
 ### Creating Documentation
 
 ```python
-from mycms.api import APIDocGenerator
+from api import APIDocGenerator
 
 # Create generator
 doc_gen = APIDocGenerator(
@@ -400,7 +400,7 @@ with open("api-docs.html", "w") as f:
 Here's a complete example combining all components:
 
 ```python
-from mycms.api import (
+from api import (
     APIRouter,
     APIView,
     ModelSerializer,
@@ -410,8 +410,8 @@ from mycms.api import (
     PageNumberPagination,
     APIDocGenerator,
 )
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import JSONResponse
+from framework.request import Request
+from framework.response import JSONResponse
 
 # Setup
 router = APIRouter(prefix="/api/v1")

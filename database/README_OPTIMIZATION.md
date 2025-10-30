@@ -16,7 +16,7 @@ Tools for query tracking, performance monitoring, index management, and database
 Track and analyze database queries:
 
 ```python
-from mycms.core.database.optimization import QueryTracker, QueryMetrics
+from database.optimization import QueryTracker, QueryMetrics
 from datetime import datetime, timezone
 
 tracker = QueryTracker(slow_query_threshold=1.0)  # 1 second
@@ -37,7 +37,7 @@ tracker.track_query(metrics)
 ### Using the Decorator
 
 ```python
-from mycms.core.database.optimization import track_query, get_query_tracker
+from database.optimization import track_query, get_query_tracker
 
 tracker = get_query_tracker()
 
@@ -55,7 +55,7 @@ await execute_query("SELECT * FROM users WHERE id = $1")
 Automatically identify and analyze slow queries:
 
 ```python
-from mycms.core.database.optimization import get_query_tracker
+from database.optimization import get_query_tracker
 
 tracker = get_query_tracker()
 
@@ -107,7 +107,7 @@ print(f"Max time: {stats['max_time']}s")
 Manage and optimize database indexes:
 
 ```python
-from mycms.core.database.optimization import IndexManager
+from database.optimization import IndexManager
 
 manager = IndexManager(db_connection)
 
@@ -133,7 +133,7 @@ for rec in recommendations:
 Analyze query execution plans:
 
 ```python
-from mycms.core.database.optimization import QueryOptimizer
+from database.optimization import QueryOptimizer
 
 optimizer = QueryOptimizer(db_connection)
 
@@ -161,7 +161,7 @@ for suggestion in analysis['suggestions']:
 Track connection pool performance:
 
 ```python
-from mycms.core.database.optimization import get_connection_monitor
+from database.optimization import get_connection_monitor
 
 monitor = get_connection_monitor()
 
@@ -184,7 +184,7 @@ print(f"Uptime: {stats['uptime_seconds']}s")
 ## Complete Integration Example
 
 ```python
-from mycms.core.database.optimization import (
+from database.optimization import (
     QueryTracker,
     IndexManager,
     QueryOptimizer,
@@ -241,7 +241,7 @@ print(f"Connection pool health: {pool_stats}")
 ## Query Metrics Data Class
 
 ```python
-from mycms.core.database.optimization import QueryMetrics
+from database.optimization import QueryMetrics
 from datetime import datetime, timezone
 
 metrics = QueryMetrics(

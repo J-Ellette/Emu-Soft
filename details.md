@@ -315,7 +315,7 @@ These components rewrite and perfect advanced ARCOS (Automated Rapid Certificati
 - **Key files:**
   - `live_reload.py` - Live reload server with file watching
   - `cli.py` - Command-line interface for scaffolding
-  - `../mycms_cli.py` - CLI entry point script
+  - `../cli.py` - CLI entry point script
 
   ---
 
@@ -341,21 +341,21 @@ When creating new emulations, add them to this directory and document:
 ### CLI Commands:
 ```bash
 # Create a new plugin
-python mycms_cli.py create-plugin my_plugin --author "Your Name"
+python cli.py create-plugin my_plugin --author "Your Name"
 
 # Create a new theme
-python mycms_cli.py create-theme my_theme --display-name "My Theme"
+python cli.py create-theme my_theme --display-name "My Theme"
 
 # Create a new content type
-python mycms_cli.py create-content-type article
+python cli.py create-content-type article
 ```
 
 ### Live Reload Usage:
 ```python
-from mycms.dev_tools import serve_with_reload
+from dev_tools import serve_with_reload
 
 # Start server with live reload
-serve_with_reload(app, watch_dirs=["mycms", "themes"], port=8000)
+serve_with_reload(app, watch_dirs=["cms", "themes"], port=8000)
 ```
 
 ## Design Philosophy

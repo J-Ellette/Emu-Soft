@@ -88,7 +88,7 @@ Comprehensive deployment utilities.
 The edge rendering module is part of the FoundryCore CMS:
 
 ```bash
-from mycms.edge import (
+from edge import (
     EdgeRenderer,
     EdgeCache,
     GeoRouter,
@@ -102,7 +102,7 @@ from mycms.edge import (
 ### Basic Edge Rendering
 
 ```python
-from mycms.edge import EdgeRenderer, RenderConfig, RenderMode
+from edge import EdgeRenderer, RenderConfig, RenderMode
 
 # Initialize renderer
 config = RenderConfig(
@@ -127,7 +127,7 @@ headers = renderer.get_cache_headers()
 ### Generate Edge Function Code
 
 ```python
-from mycms.edge import EdgeRenderer
+from edge import EdgeRenderer
 
 renderer = EdgeRenderer()
 
@@ -145,7 +145,7 @@ code = renderer.generate_code(template, {}, target="generic")
 ### Edge Caching
 
 ```python
-from mycms.edge import EdgeCache, CacheStrategy
+from edge import EdgeCache, CacheStrategy
 
 # Initialize cache with LRU strategy
 cache = EdgeCache(
@@ -174,7 +174,7 @@ stats = cache.get_stats()
 ### Geographic Caching
 
 ```python
-from mycms.edge import GeoCache
+from edge import GeoCache
 
 # Initialize geo-aware cache
 cache = GeoCache(regions=["us-east", "us-west", "eu-west", "ap-southeast"])
@@ -195,7 +195,7 @@ cache.invalidate("key1", regions=["us-east", "us-west"])
 ### Geographic Routing
 
 ```python
-from mycms.edge import GeoRouter, RoutingStrategy, EdgeLocation
+from edge import GeoRouter, RoutingStrategy, EdgeLocation
 
 # Initialize router
 router = GeoRouter(strategy=RoutingStrategy.GEOGRAPHIC)
@@ -230,7 +230,7 @@ print(f"Routed to: {location.id}")
 ### Custom Routing Rules
 
 ```python
-from mycms.edge import GeoRouter, RoutingRule
+from edge import GeoRouter, RoutingRule
 
 router = GeoRouter()
 
@@ -250,7 +250,7 @@ location = router.route_request({"country": "UK"})
 ### Platform Adapters
 
 ```python
-from mycms.edge import CloudflareWorkerAdapter, LambdaEdgeAdapter, EdgeRequest, EdgeResponse
+from edge import CloudflareWorkerAdapter, LambdaEdgeAdapter, EdgeRequest, EdgeResponse
 
 # Cloudflare Worker Adapter
 cf_adapter = CloudflareWorkerAdapter()
@@ -292,7 +292,7 @@ handler = lambda_adapter.create_handler(app_handler)
 ### Deployment
 
 ```python
-from mycms.edge import EdgeDeployment, DeploymentConfig, DeploymentPlatform
+from edge import EdgeDeployment, DeploymentConfig, DeploymentPlatform
 
 # Configure deployment
 config = DeploymentConfig(
@@ -340,7 +340,7 @@ history = deployment.get_deployment_history()
 ## Complete Example: Edge-Rendered Blog
 
 ```python
-from mycms.edge import (
+from edge import (
     EdgeRenderer,
     RenderConfig,
     RenderMode,
@@ -458,7 +458,7 @@ print(f"Function URL: {result.url}")
 ### Incremental Static Regeneration (ISR)
 
 ```python
-from mycms.edge import EdgeRenderer, RenderConfig, RenderMode
+from edge import EdgeRenderer, RenderConfig, RenderMode
 
 config = RenderConfig(
     mode=RenderMode.INCREMENTAL,
@@ -480,7 +480,7 @@ def render_with_isr(cache_key: str):
 ### Multi-Region Deployment
 
 ```python
-from mycms.edge import EdgeDeployment, DeploymentConfig, DeploymentPlatform
+from edge import EdgeDeployment, DeploymentConfig, DeploymentPlatform
 
 # Deploy to multiple regions
 regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"]
@@ -501,7 +501,7 @@ result = deployment.deploy(code)
 ### Load-Balanced Routing with Failover
 
 ```python
-from mycms.edge import GeoRouter, RoutingStrategy, EdgeLocation
+from edge import GeoRouter, RoutingStrategy, EdgeLocation
 
 # Primary router with load balancing
 router = GeoRouter(strategy=RoutingStrategy.LOAD_BALANCED)

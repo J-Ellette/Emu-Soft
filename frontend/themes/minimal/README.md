@@ -15,11 +15,11 @@ A clean, minimalist theme for MyCMS with essential styling and responsive design
 The Minimal theme comes bundled with MyCMS. To activate it:
 
 ```python
-from mycms.frontend.themes import get_theme_manager
+from frontend.themes import get_theme_manager
 
 theme_manager = get_theme_manager()
 theme_manager.register_theme_from_config(
-    "mycms/frontend/themes/minimal/theme.json"
+    "frontend/themes/minimal/theme.json"
 )
 theme_manager.activate_theme("minimal")
 ```
@@ -43,7 +43,7 @@ To customize the theme, you can:
 
 1. **Copy the theme** to create your own variant:
 ```bash
-cp -r mycms/frontend/themes/minimal mycms/frontend/themes/my-theme
+cp -r frontend/themes/minimal frontend/themes/my-theme
 ```
 
 2. **Edit theme.json** to change metadata and colors
@@ -53,7 +53,7 @@ cp -r mycms/frontend/themes/minimal mycms/frontend/themes/my-theme
 4. **Register your custom theme**:
 ```python
 theme_manager.register_theme_from_config(
-    "mycms/frontend/themes/my-theme/theme.json"
+    "frontend/themes/my-theme/theme.json"
 )
 ```
 

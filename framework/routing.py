@@ -2,8 +2,8 @@
 
 from typing import Callable, Dict, List, Optional, Pattern, Tuple
 import re
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response
+from framework.request import Request
+from framework.response import Response
 
 
 class Route:

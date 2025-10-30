@@ -103,7 +103,7 @@ Pre-configured compliance requirements for major standards:
 Apply security profiles with a single function call:
 
 ```python
-from mycms.security.profiles import get_profile_manager
+from security.profiles import get_profile_manager
 
 manager = get_profile_manager()
 result = manager.apply_profile("Healthcare/HIPAA")
@@ -138,7 +138,7 @@ for diff in comparison['differences']:
 Create custom security profiles for specific requirements:
 
 ```python
-from mycms.security.profiles import SecurityProfile, SecuritySettings, ProfileType
+from security.profiles import SecurityProfile, SecuritySettings, ProfileType
 
 settings = SecuritySettings(
     min_password_length=14,
@@ -199,7 +199,7 @@ imported_profile = manager.import_profile(json_str)
 ### Example 1: Apply Healthcare Profile
 
 ```python
-from mycms.security.profiles import get_profile_manager
+from security.profiles import get_profile_manager
 
 manager = get_profile_manager()
 
@@ -219,7 +219,7 @@ if result['success']:
 ### Example 2: Validate Custom Profile
 
 ```python
-from mycms.security.profiles import (
+from security.profiles import (
     SecurityProfile,
     SecuritySettings,
     ProfileType,
@@ -255,7 +255,7 @@ print(f"Warnings: {validation['warnings']}")
 ### Example 3: Check Compliance Requirements
 
 ```python
-from mycms.security.profiles import CompliancePresets, ComplianceStandard
+from security.profiles import CompliancePresets, ComplianceStandard
 
 # Get HIPAA requirements
 hipaa = CompliancePresets.get_hipaa_requirements()
@@ -271,7 +271,7 @@ for key, value in hipaa.mandatory_settings.items():
 ### Example 4: Compare Profiles
 
 ```python
-from mycms.security.profiles import get_profile_manager
+from security.profiles import get_profile_manager
 
 manager = get_profile_manager()
 
@@ -310,12 +310,12 @@ python -m pytest tests/test_security_profiles.py -v
 ### With Existing Security Middleware
 
 ```python
-from mycms.security.middleware import (
+from security.middleware import (
     SecurityHeadersMiddleware,
     CSRFMiddleware,
     RateLimitMiddleware,
 )
-from mycms.security.profiles import get_profile_manager
+from security.profiles import get_profile_manager
 
 # Apply profile
 manager = get_profile_manager()
@@ -342,8 +342,8 @@ rate_limit = RateLimitMiddleware(
 ### With Compliance Manager
 
 ```python
-from mycms.security.compliance import ComplianceManager, DataRetentionPolicy
-from mycms.security.profiles import get_profile_manager
+from security.compliance import ComplianceManager, DataRetentionPolicy
+from security.profiles import get_profile_manager
 
 manager = get_profile_manager()
 manager.apply_profile("Healthcare/HIPAA")
