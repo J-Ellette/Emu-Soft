@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Set
 from datetime import datetime, timezone
 
 from .gsn import GSNNode, GSNNodeType, GSNGoal, GSNStrategy, GSNSolution
-from .graph import EvidenceGraph
+from infrastructure.graph import EvidenceGraph
 
 
 class AssuranceCase:
