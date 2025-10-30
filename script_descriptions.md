@@ -540,6 +540,67 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### bandit_emulator_tool/
+**What it emulates:** Bandit (Python security linter)
+
+**Scripts:**
+- `bandit_emulator.py` - Security vulnerability scanner implementation
+  - 22+ security test rules (B101-B608 series)
+  - Code injection detection (exec, eval, assert)
+  - Application configuration checks (Flask debug mode, binding to all interfaces)
+  - Serialization vulnerabilities (pickle, marshal)
+  - Cryptography issues (MD5, SHA1, weak ciphers, insecure modes)
+  - Insecure protocols (Telnet, FTP)
+  - SSL/TLS issues (disabled certificate validation, insecure versions)
+  - Injection vulnerabilities (shell=True, SQL injection)
+  - Hardcoded password detection
+  - CWE mapping for vulnerabilities
+  - Severity levels (HIGH, MEDIUM, LOW)
+  - Confidence levels (HIGH, MEDIUM, LOW)
+  - AST-based code analysis
+  - Comprehensive reporting with severity breakdown
+  
+- `test_bandit_emulator.py` - Test suite for Bandit emulator
+  - Validates all 22 security test rules
+  - Tests directory scanning
+  - Verifies report generation
+  - Tests multiple issues in same file
+  - Tests clean files (no issues)
+  - Error handling tests (29 tests total)
+
+**Use:** Provides Python security linting without external dependencies. Essential for identifying security vulnerabilities in code including code injection, hardcoded secrets, insecure protocols, weak cryptography, and injection vulnerabilities. Implements industry-standard security checks mapped to CWE (Common Weakness Enumeration) identifiers. Suitable for pre-commit hooks, CI/CD pipelines, and security audits.
+
+---
+
+### safety_emulator_tool/
+**What it emulates:** Safety (Python dependency vulnerability scanner)
+
+**Scripts:**
+- `safety_emulator.py` - Dependency vulnerability scanner implementation
+  - Vulnerability database with known CVEs
+  - Coverage for 15+ popular packages (Django, Flask, Requests, urllib3, PyYAML, Cryptography, Pillow, Jinja2, SQLAlchemy, PyJWT, Werkzeug, Certifi, NumPy, Setuptools, Tornado)
+  - CVE (Common Vulnerabilities and Exposures) tracking
+  - Severity classification (CRITICAL, HIGH, MEDIUM, LOW)
+  - Requirements.txt file parsing
+  - Version comparison and specification matching
+  - Fixed version recommendations
+  - Extensible vulnerability database
+  - JSON database save/load functionality
+  - Comprehensive reporting with severity breakdown
+  - Package scanning from list or requirements file
+  
+- `test_safety_emulator.py` - Test suite for Safety emulator
+  - Validates vulnerability detection for multiple packages
+  - Tests requirements file parsing
+  - Verifies version comparison logic
+  - Tests report generation
+  - Database save/load functionality tests
+  - Edge case handling (29 tests total)
+
+**Use:** Provides dependency vulnerability scanning without external dependencies. Essential for checking Python packages against a database of known security vulnerabilities. Helps identify outdated packages with security issues and recommends fixed versions. Includes built-in vulnerability database covering common Python packages with CVE tracking. Suitable for pre-commit hooks, CI/CD pipelines, dependency update workflows, and continuous security monitoring.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1215,7 +1276,7 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ## Summary by Category
 
-### Development Productivity (8 tools)
+### Development Productivity (10 tools)
 - pytest emulator - Testing framework
 - Coverage emulator - Code coverage
 - Code formatter - Style enforcement
@@ -1223,6 +1284,8 @@ This document lists all scripts and modules in the repository, organized by fold
 - CMS CLI - Component scaffolding
 - MyPy emulator - Static type checking
 - Flake8 emulator - Code linting
+- Bandit emulator - Security linting
+- Safety emulator - Dependency vulnerability scanning
 
 ### Web Development & Deployment (6 tool groups)
 - Web Framework - Core HTTP framework
@@ -1283,8 +1346,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **37 major folders/systems** (was 35, now includes itsdangerous, cryptography)
-- **176+ Python scripts** (was 170+, added 6 new files)
+- **39 major folders/systems** (was 37, now includes bandit, safety)
+- **184+ Python scripts** (was 176+, added 8 new files)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
