@@ -11,13 +11,22 @@ Inspired by:
 - Lighthouse Accessibility Audits
 
 Key Features:
-- Color blindness simulation filters
-- Screen reader preview mode
-- Keyboard navigation testing
-- Contrast ratio analyzer
-- ARIA attribute validator
-- WCAG compliance checker
+- Color blindness simulation filters (with HSL support)
+- Screen reader preview mode (with ARIA live regions)
+- Keyboard navigation testing (with WCAG 2.2 target size)
+- Contrast ratio analyzer (extended color names)
+- ARIA attribute validator (deprecated attribute detection)
+- WCAG 2.1 and 2.2 compliance checker
 - Accessibility score calculator
+
+Enhanced Beyond Original Tools:
+- HSL/HSLA color format support for color blindness simulation
+- ARIA live regions detection and politeness tracking
+- Modern CSS :focus-visible pseudo-class detection
+- WCAG 2.2 target size checking (24x24px minimum)
+- Extended named CSS colors (38+ colors)
+- Deprecated ARIA attributes warning (aria-grabbed, aria-dropeffect)
+- Prohibited ARIA role combination detection
 """
 
 from .color_blindness import ColorBlindnessSimulator

@@ -4,7 +4,19 @@ Comprehensive accessibility testing and simulation tools to preview sites as see
 
 ## Overview
 
-This module provides a complete suite of accessibility tools for testing, validating, and simulating how users with disabilities experience web content.
+This module provides a complete suite of accessibility tools for testing, validating, and simulating how users with disabilities experience web content. **Enhanced beyond the original tools** with modern web standards support.
+
+## Enhancements Beyond Original Tools
+
+This implementation goes beyond the original tools it emulates:
+
+1. **HSL/HSLA Color Support** - Color blindness simulator now handles modern HSL color formats, not just RGB/hex
+2. **ARIA Live Regions** - Screen reader simulator detects and announces live region politeness levels
+3. **Modern CSS Support** - Detects `:focus-visible` pseudo-class for better keyboard UX
+4. **WCAG 2.2 Compliance** - Includes latest 2.2 success criteria like Target Size (Minimum)
+5. **Extended Color Names** - Supports 38+ CSS named colors vs. original 18
+6. **Deprecated ARIA Detection** - Warns about deprecated attributes like `aria-grabbed`
+7. **Role Conflict Detection** - Identifies prohibited role combinations for semantic HTML
 
 ## Inspired By
 
@@ -35,7 +47,7 @@ Simulates various types of color vision deficiencies to preview how users with c
 **Capabilities:**
 - RGB to simulated RGB transformation
 - Hex color simulation
-- CSS color simulation (hex, rgb, rgba)
+- CSS color simulation (hex, rgb, rgba, hsl, hsla)
 - HTML inline style simulation
 
 ### 2. Screen Reader Simulator
@@ -58,6 +70,7 @@ Simulates how screen readers interpret and announce web content.
 - Empty links
 - Heading hierarchy skips
 - Form inputs without labels
+- ARIA live regions presence
 
 ### 3. Keyboard Navigation Tester
 
@@ -78,6 +91,8 @@ Tests and validates keyboard navigation accessibility.
 - Skip navigation links present
 - Focus order is logical
 - No keyboard traps
+- Modern :focus-visible support
+- Target sizes meet WCAG 2.2 (24x24px)
 
 ### 4. Contrast Analyzer
 
@@ -117,16 +132,21 @@ Validates ARIA (Accessible Rich Internet Applications) attributes.
 - Redundant explicit roles
 - Proper landmark usage
 - Duplicate/missing ID references
+- Deprecated ARIA attributes (aria-grabbed, aria-dropeffect)
+- Prohibited role combinations
 
 ### 6. WCAG Compliance Checker
 
-Comprehensive WCAG 2.1 compliance checking with live preview.
+Comprehensive WCAG 2.1 and 2.2 compliance checking with live preview.
 
 **WCAG 2.1 Principles (POUR):**
 - **Perceivable** - Content must be perceivable
 - **Operable** - Interface must be operable
 - **Understandable** - Information must be understandable
 - **Robust** - Content must be robust
+
+**WCAG 2.2 New Success Criteria:**
+- 2.5.8 Target Size (Minimum) - Interactive elements should be at least 24x24 CSS pixels
 
 **Checks:**
 - Level A requirements (must)
@@ -169,10 +189,10 @@ Calculates comprehensive accessibility scores with actionable insights.
 
 ## Installation
 
-The accessibility module is part of the FoundryCore CMS:
+The accessibility module can be imported directly:
 
 ```python
-from mycms.accessibility import (
+from accessibility import (
     ColorBlindnessSimulator,
     ScreenReaderSimulator,
     KeyboardNavigationTester,
@@ -188,7 +208,7 @@ from mycms.accessibility import (
 ### Color Blindness Simulation
 
 ```python
-from mycms.accessibility import ColorBlindnessSimulator
+from accessibility import ColorBlindnessSimulator
 
 sim = ColorBlindnessSimulator()
 
@@ -211,7 +231,7 @@ types = sim.get_simulation_types()
 ### Screen Reader Preview
 
 ```python
-from mycms.accessibility import ScreenReaderSimulator
+from accessibility import ScreenReaderSimulator
 
 sim = ScreenReaderSimulator()
 
@@ -238,7 +258,7 @@ issues = sim.check_accessibility_issues(html)
 ### Keyboard Navigation Testing
 
 ```python
-from mycms.accessibility import KeyboardNavigationTester
+from accessibility import KeyboardNavigationTester
 
 tester = KeyboardNavigationTester()
 
@@ -264,7 +284,7 @@ sequence = tester.get_tab_sequence(html)
 ### Contrast Analysis
 
 ```python
-from mycms.accessibility import ContrastAnalyzer
+from accessibility import ContrastAnalyzer
 
 analyzer = ContrastAnalyzer()
 
@@ -291,7 +311,7 @@ results = analyzer.analyze_css_colors(css)
 ### ARIA Validation
 
 ```python
-from mycms.accessibility import ARIAValidator
+from accessibility import ARIAValidator
 
 validator = ARIAValidator()
 
@@ -313,7 +333,7 @@ for issue in result['issues']:
 ### WCAG Compliance Checking
 
 ```python
-from mycms.accessibility import WCAGComplianceChecker
+from accessibility import WCAGComplianceChecker
 
 checker = WCAGComplianceChecker()
 
@@ -342,7 +362,7 @@ print(report)
 ### Comprehensive Accessibility Scoring
 
 ```python
-from mycms.accessibility import AccessibilityScorer
+from accessibility import AccessibilityScorer
 
 scorer = AccessibilityScorer()
 
@@ -378,7 +398,7 @@ print(report)
 ### Complete Page Audit
 
 ```python
-from mycms.accessibility import AccessibilityScorer
+from accessibility import AccessibilityScorer
 
 scorer = AccessibilityScorer()
 
@@ -408,7 +428,7 @@ for recommendation in results['recommendations']:
 ### Preview for Different Users
 
 ```python
-from mycms.accessibility import ColorBlindnessSimulator, ScreenReaderSimulator
+from accessibility import ColorBlindnessSimulator, ScreenReaderSimulator
 
 # Load page
 with open('page.html') as f:
@@ -615,7 +635,7 @@ When adding new accessibility features:
 
 ## License
 
-Part of the FoundryCore CMS, licensed under MIT License.
+Part of the Emu-Soft collection, licensed under MIT License.
 
 ## Version History
 
@@ -632,5 +652,4 @@ Part of the FoundryCore CMS, licensed under MIT License.
 
 ---
 
-*Last Updated: 2025-10-30*  
-*Module: mycms.accessibility*
+*Last Updated: 2025-10-30*
