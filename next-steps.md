@@ -216,11 +216,23 @@ Why: Docstring extraction and HTML generation are well-understood
 Core Components: AST-based docstring extraction, multiple format parsing (Sphinx/Google/NumPy), HTML generation, index creation
 Complexity: Medium-High - requires parsing multiple docstring formats and generating structured HTML
 
-## mkdocs - Markdown documentation
+## mkdocs - Markdown documentation (COMPLETE)
+Feasibility: High
+Why: Markdown parsing and HTML generation are straightforward
+Core Components: Markdown parser, HTML generator, navigation builder, theme system
+Complexity: Medium - requires Markdown parsing and static site generation
 
-## pdoc - API documentation generator
+## pdoc - API documentation generator (COMPLETE)
+Feasibility: High
+Why: Python introspection using inspect module is well-understood
+Core Components: Module inspector, docstring parser, HTML generator, signature extraction
+Complexity: Medium - requires introspection and HTML generation
 
-## hypothesis - Property-based testing
+## hypothesis - Property-based testing (COMPLETE)
+Feasibility: High
+Why: Random data generation and property testing are well-understood patterns
+Core Components: Strategy system, data generators, test runner, property verification, shrinking (simplified)
+Complexity: Medium - requires random generation and test orchestration
 
 ## factory_boy - Test fixture replacement
 
