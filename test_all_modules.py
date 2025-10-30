@@ -114,6 +114,22 @@ def test_web():
     from web.dashboard import DashboardGenerator
     print("  ✓ dashboard.py works")
 
+def test_dev_tools():
+    """Test dev_tools modules."""
+    print("\nTesting dev_tools modules...")
+    
+    from dev_tools.pytest_emulator import PyTestEmulator, fixture
+    pytest_emu = PyTestEmulator()
+    print("  ✓ pytest_emulator.py works")
+    
+    from dev_tools.coverage_emulator import Coverage
+    cov = Coverage()
+    print("  ✓ coverage_emulator.py works")
+    
+    from dev_tools.formatter import Black
+    black = Black()
+    print("  ✓ formatter.py works")
+
 if __name__ == "__main__":
     print("=" * 60)
     print("EMU-SOFT Module Import Test")
@@ -125,6 +141,7 @@ if __name__ == "__main__":
         test_assurance()
         test_evidence()
         test_web()
+        test_dev_tools()
         
         print("\n" + "=" * 60)
         print("✓ ALL TESTS PASSED")
