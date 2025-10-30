@@ -146,13 +146,13 @@ Complexity: Medium - requires understanding of AMQP-style messaging patterns
 
 ## apispec - OpenAPI specification generator (COMPLETE)
 
-## jsonschema - JSON schema validation
+## jsonschema - JSON schema validation (COMPLETE)
 
 ## Data Formats
 
-## PyYAML - YAML parser
+## PyYAML - YAML parser (COMPLETE)
 
-## lxml - XML processing
+## lxml - XML processing (COMPLETE)
 
 ## openpyxl - Excel file handling
 

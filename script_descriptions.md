@@ -786,6 +786,110 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### jsonschema_emulator_tool/
+**What it emulates:** jsonschema (JSON Schema validation library)
+
+**Scripts:**
+- `jsonschema_emulator.py` - JSON Schema Draft 7 validator
+  - Type validation (string, integer, number, boolean, null, object, array)
+  - Multiple type support
+  - Enum and const validation
+  - Object validation (properties, required, additionalProperties, patternProperties, min/maxProperties)
+  - Array validation (items, minItems, maxItems, uniqueItems, tuple validation)
+  - String validation (minLength, maxLength, pattern, format validators)
+  - Number validation (minimum, maximum, exclusiveMinimum/Maximum, multipleOf)
+  - Format validators (email, ipv4, ipv6, uri, date, date-time)
+  - Nested schema support
+  - Error reporting with path tracking
+  - Draft7Validator, Draft4Validator, Draft6Validator classes
+  - Convenience functions (validate, is_valid)
+
+- `test_jsonschema_emulator.py` - Test suite for jsonschema emulator
+  - Tests all basic types
+  - Tests enum and const validation
+  - Tests object validation rules
+  - Tests array validation rules
+  - Tests string constraints and patterns
+  - Tests number constraints
+  - Tests complex nested schemas
+  - Tests error handling and path tracking
+  - Validates convenience functions (34 tests total)
+
+**Use:** Provides JSON schema validation without external dependencies. Essential for API request/response validation, configuration file validation, data structure validation, API documentation, contract testing, and data quality enforcement. Enables defining and enforcing data contracts with industry-standard JSON Schema for type safety and data validation.
+
+---
+
+### pyyaml_emulator_tool/
+**What it emulates:** PyYAML (YAML parser and emitter)
+
+**Scripts:**
+- `pyyaml_emulator.py` - YAML parser and serializer
+  - YAML parsing (load, safe_load functions)
+  - YAML dumping (dump, safe_dump functions)
+  - Scalar types (strings, integers, floats, booleans, null)
+  - Collections (mappings/dicts, sequences/lists)
+  - Nested structures support
+  - Inline/flow style ({}, [])
+  - Comment handling (full line and inline)
+  - Quoted strings with escape sequences
+  - Multi-line values
+  - File I/O support
+  - Custom indentation
+  - Pretty printing
+
+- `test_pyyaml_emulator.py` - Test suite for PyYAML emulator
+  - Tests scalar parsing (strings, numbers, booleans, null)
+  - Tests mapping/dictionary parsing
+  - Tests list/sequence parsing
+  - Tests complex nested structures
+  - Tests comment handling
+  - Tests inline/flow style
+  - Tests YAML serialization
+  - Tests round-trip conversions
+  - Tests file I/O operations
+  - Tests edge cases (47 tests total)
+
+**Use:** Provides YAML parsing and generation without external dependencies. Essential for configuration management, CI/CD pipeline definitions (GitHub Actions, GitLab CI), infrastructure as code (Docker Compose, Kubernetes), data serialization, and cross-language data exchange. Enables working with human-friendly YAML format for configs, manifests, and structured data.
+
+---
+
+### lxml_emulator_tool/
+**What it emulates:** lxml (XML and HTML processing library)
+
+**Scripts:**
+- `lxml_emulator.py` - XML/HTML parser and generator
+  - Element creation and manipulation
+  - Tree building (Element, SubElement)
+  - XML parsing (fromstring, parse, XML functions)
+  - HTML parsing (HTML function)
+  - XML serialization (tostring, ElementTree.write)
+  - Pretty printing and formatting
+  - Element properties (tag, text, tail, attrib)
+  - Hierarchy operations (append, insert, remove, clear)
+  - Searching (find, findall, findtext, iter)
+  - Simplified XPath queries (., //, ./)
+  - Element indexing and iteration
+  - Attribute access and modification
+  - lxml.etree module compatibility
+  - File I/O support
+
+- `test_lxml_emulator.py` - Test suite for lxml emulator
+  - Tests element creation and properties
+  - Tests attribute operations
+  - Tests tree hierarchy management
+  - Tests element searching
+  - Tests XML parsing from strings
+  - Tests XML serialization
+  - Tests ElementTree operations
+  - Tests file I/O
+  - Tests XPath queries
+  - Tests HTML parsing
+  - Tests API compatibility (47 tests total)
+
+**Use:** Provides XML and HTML processing without external C library dependencies. Essential for configuration file parsing, web scraping, data exchange between systems, RSS/Atom feed parsing, document generation, and working with XML-based formats. Enables robust XML manipulation with Pythonic API for reading, creating, and modifying XML/HTML documents.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1508,6 +1612,11 @@ This document lists all scripts and modules in the repository, organized by fold
 - Database Layer - ORM and query building
 - Cache System - Performance optimization
 - Marshmallow emulator - Object serialization/deserialization
+
+### Data Formats (3 tools)
+- jsonschema emulator - JSON schema validation
+- PyYAML emulator - YAML parser and emitter
+- lxml emulator - XML and HTML processing
 
 ### API Development (2 tools)
 - API Framework - RESTful API building
