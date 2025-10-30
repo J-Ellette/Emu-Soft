@@ -28,6 +28,10 @@ emu-soft/
 │   ├── tasks.py
 │   ├── framework.py
 │   └── graph.py
+├── dev_tools/          # Development tools emulations
+│   ├── pytest_emulator.py
+│   ├── coverage_emulator.py
+│   └── formatter.py
 └── web/               # Web components and visualization
     ├── badges.py
     └── dashboard.py
@@ -71,6 +75,13 @@ emu-soft/
 |-----------|----------|---------|
 | badges.py | shields.io | SVG badge generation |
 | dashboard.py | USWDS | Federal-compliant dashboards |
+
+### Development Tools (`dev_tools/`)
+| Component | Emulates | Purpose |
+|-----------|----------|---------|
+| pytest_emulator.py | pytest | Test discovery, fixtures, and execution |
+| coverage_emulator.py | Coverage.py | Code coverage tracking with sys.settrace() |
+| formatter.py | Black | AST-based Python code formatter |
 
 ## Documentation
 
