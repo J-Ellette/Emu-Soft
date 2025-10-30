@@ -39,6 +39,9 @@ class ScreenReaderSimulator(HTMLParser):
     # Landmark elements
     LANDMARK_ELEMENTS = {"header", "nav", "main", "aside", "footer", "section", "article", "form"}
 
+    # ARIA live region politeness levels
+    LIVE_REGIONS = {"off", "polite", "assertive"}
+
     def __init__(self):
         """Initialize the screen reader simulator."""
         super().__init__()
@@ -54,6 +57,7 @@ class ScreenReaderSimulator(HTMLParser):
         self.form_elements = []
         self.images = []
         self.semantic_structure = []
+        self.live_regions = []
 
     def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]):
         """Handle opening tags."""
@@ -182,6 +186,22 @@ class ScreenReaderSimulator(HTMLParser):
             aria_label = attrs_dict.get("aria-label", "Dialog")
             self.output.append(f"[Dialog opened: {aria_label}]")
 
+        # Handle ARIA live regions
+        aria_live = attrs_dict.get("aria-live")
+        aria_atomic = attrs_dict.get("aria-atomic") == "true"
+        aria_relevant = attrs_dict.get("aria-relevant", "additions text")
+        
+        if aria_live in self.LIVE_REGIONS and aria_live != "off":
+            self.live_regions.append({
+                "tag": tag,
+                "politeness": aria_live,
+                "atomic": aria_atomic,
+                "relevant": aria_relevant,
+                "label": attrs_dict.get("aria-label", "")
+            })
+            politeness_text = "assertively" if aria_live == "assertive" else "politely"
+            self.output.append(f"[Live region: will announce updates {politeness_text}]")
+
     def handle_endtag(self, tag: str):
         """Handle closing tags."""
         if tag in self.SKIP_ELEMENTS:
@@ -261,6 +281,7 @@ class ScreenReaderSimulator(HTMLParser):
         self.skip_content = False
         self.in_link = False
         self.link_text = []
+        self.live_regions = []
 
         self.feed(html_content)
 
@@ -396,3 +417,16 @@ class ScreenReaderSimulator(HTMLParser):
                 )
 
         return issues
+
+    def get_live_regions(self, html_content: str) -> List[Dict]:
+        """
+        Extract ARIA live regions.
+
+        Args:
+            html_content: HTML content to parse
+
+        Returns:
+            List of live regions with their properties
+        """
+        self.get_screen_reader_output(html_content)
+        return self.live_regions

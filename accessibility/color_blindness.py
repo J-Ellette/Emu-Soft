@@ -148,6 +148,27 @@ class ColorBlindnessSimulator:
 
         css_content = rgb_pattern.sub(replace_rgb, css_content)
 
+        # Pattern to match hsl() and hsla() colors - convert to RGB, simulate, convert back
+        hsl_pattern = re.compile(
+            r"hsla?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*(?:,\s*[\d.]+)?\s*\)"
+        )
+
+        def replace_hsl(match):
+            h, s, l = float(match.group(1)), float(match.group(2)), float(match.group(3))
+            r, g, b = self._hsl_to_rgb(h, s, l)
+            r_sim, g_sim, b_sim = self.simulate_color(r, g, b, simulation_type)
+            
+            # Convert back to HSL for consistency
+            h_sim, s_sim, l_sim = self._rgb_to_hsl(r_sim, g_sim, b_sim)
+            
+            # Check if it was hsla
+            if match.group(0).startswith("hsla"):
+                alpha = match.group(0).split(",")[-1].strip().rstrip(")")
+                return f"hsla({h_sim:.0f}, {s_sim:.1f}%, {l_sim:.1f}%, {alpha})"
+            return f"hsl({h_sim:.0f}, {s_sim:.1f}%, {l_sim:.1f}%)"
+
+        css_content = hsl_pattern.sub(replace_hsl, css_content)
+
         return css_content
 
     def simulate_html(self, html_content: str, simulation_type: str = "protanopia") -> str:
@@ -262,3 +283,80 @@ class ColorBlindnessSimulator:
                 "severity": "unknown",
             },
         )
+
+    def _hsl_to_rgb(self, h: float, s: float, l: float) -> Tuple[int, int, int]:
+        """
+        Convert HSL to RGB.
+        
+        Args:
+            h: Hue (0-360)
+            s: Saturation (0-100)
+            l: Lightness (0-100)
+            
+        Returns:
+            RGB tuple (0-255 for each component)
+        """
+        h = h / 360.0
+        s = s / 100.0
+        l = l / 100.0
+        
+        if s == 0:
+            # Achromatic (gray)
+            r = g = b = l
+        else:
+            def hue_to_rgb(p, q, t):
+                if t < 0:
+                    t += 1
+                if t > 1:
+                    t -= 1
+                if t < 1/6:
+                    return p + (q - p) * 6 * t
+                if t < 1/2:
+                    return q
+                if t < 2/3:
+                    return p + (q - p) * (2/3 - t) * 6
+                return p
+            
+            q = l * (1 + s) if l < 0.5 else l + s - l * s
+            p = 2 * l - q
+            r = hue_to_rgb(p, q, h + 1/3)
+            g = hue_to_rgb(p, q, h)
+            b = hue_to_rgb(p, q, h - 1/3)
+        
+        return (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
+    
+    def _rgb_to_hsl(self, r: int, g: int, b: int) -> Tuple[float, float, float]:
+        """
+        Convert RGB to HSL.
+        
+        Args:
+            r: Red (0-255)
+            g: Green (0-255)
+            b: Blue (0-255)
+            
+        Returns:
+            HSL tuple (h: 0-360, s: 0-100, l: 0-100)
+        """
+        r = r / 255.0
+        g = g / 255.0
+        b = b / 255.0
+        
+        max_c = max(r, g, b)
+        min_c = min(r, g, b)
+        l = (max_c + min_c) / 2.0
+        
+        if max_c == min_c:
+            h = s = 0.0  # Achromatic
+        else:
+            d = max_c - min_c
+            s = d / (2.0 - max_c - min_c) if l > 0.5 else d / (max_c + min_c)
+            
+            if max_c == r:
+                h = (g - b) / d + (6 if g < b else 0)
+            elif max_c == g:
+                h = (b - r) / d + 2
+            else:
+                h = (r - g) / d + 4
+            h /= 6
+        
+        return (h * 360, s * 100, l * 100)

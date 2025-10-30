@@ -30,7 +30,7 @@ class ContrastAnalyzer:
     WCAG_AAA_NORMAL = 7.0
     WCAG_AAA_LARGE = 4.5
 
-    # Named colors mapping (subset of CSS named colors)
+    # Named colors mapping (extended CSS named colors for better coverage)
     NAMED_COLORS = {
         "black": "#000000",
         "white": "#ffffff",
@@ -50,6 +50,27 @@ class ContrastAnalyzer:
         "navy": "#000080",
         "fuchsia": "#ff00ff",
         "purple": "#800080",
+        # Extended color names
+        "orange": "#ffa500",
+        "pink": "#ffc0cb",
+        "brown": "#a52a2a",
+        "gold": "#ffd700",
+        "indigo": "#4b0082",
+        "violet": "#ee82ee",
+        "tan": "#d2b48c",
+        "beige": "#f5f5dc",
+        "coral": "#ff7f50",
+        "crimson": "#dc143c",
+        "darkblue": "#00008b",
+        "darkgreen": "#006400",
+        "darkred": "#8b0000",
+        "lightblue": "#add8e6",
+        "lightgreen": "#90ee90",
+        "lightgray": "#d3d3d3",
+        "darkgray": "#a9a9a9",
+        "whitesmoke": "#f5f5f5",
+        "snow": "#fffafa",
+        "ivory": "#fffff0",
     }
 
     def __init__(self):

@@ -415,12 +415,13 @@ class KeyboardNavigationTester(HTMLParser):
 
         # Check for :focus styles
         has_focus_styles = ":focus" in css_content.lower()
+        has_focus_visible = ":focus-visible" in css_content.lower()
         has_outline_none = re.search(r"outline\s*:\s*none", css_content, re.IGNORECASE)
         has_custom_focus = re.search(
             r":focus\s*{[^}]*(border|box-shadow|background)", css_content, re.IGNORECASE
         )
 
-        if has_outline_none and not has_custom_focus:
+        if has_outline_none and not has_custom_focus and not has_focus_visible:
             issues.append(
                 {
                     "type": "missing_focus_indicator",
@@ -430,14 +431,65 @@ class KeyboardNavigationTester(HTMLParser):
                 }
             )
 
-        if not has_focus_styles:
+        if not has_focus_styles and not has_focus_visible:
             issues.append(
                 {
                     "type": "no_focus_styles",
                     "severity": "warning",
-                    "message": "No :focus styles found in CSS",
+                    "message": "No :focus or :focus-visible styles found in CSS",
                     "wcag": "WCAG 2.1 Level AA - 2.4.7 Focus Visible",
                 }
             )
+        
+        # Recommend using :focus-visible for better UX
+        if has_focus_styles and not has_focus_visible:
+            issues.append(
+                {
+                    "type": "missing_focus_visible",
+                    "severity": "info",
+                    "message": "Consider using :focus-visible for better mouse/keyboard UX distinction",
+                    "wcag": "Best Practice - Enhanced Focus Indicators",
+                }
+            )
 
+        return issues
+
+    def check_target_size(self, html_content: str, css_content: str = "") -> List[Dict]:
+        """
+        Check for adequate target sizes for interactive elements (WCAG 2.2).
+        
+        WCAG 2.2 - 2.5.8 Target Size (Minimum) Level AA:
+        Interactive elements should be at least 24x24 CSS pixels.
+        
+        Args:
+            html_content: HTML content to analyze
+            css_content: CSS content for size checking (optional)
+            
+        Returns:
+            List of issues with target sizes
+        """
+        issues = []
+        
+        # This is a basic check - in practice would need actual rendered sizes
+        # We'll check for explicit width/height in inline styles as a heuristic
+        small_targets = re.findall(
+            r'<(button|a|input)[^>]*style=["\'][^"\']*(?:width|height)\s*:\s*([0-9.]+)(?:px|rem|em)[^"\']*["\']',
+            html_content,
+            re.IGNORECASE
+        )
+        
+        for tag, size_str in small_targets:
+            try:
+                size = float(size_str)
+                if size < 24:
+                    issues.append({
+                        "type": "small_target_size",
+                        "severity": "warning",
+                        "message": f"Interactive element ({tag}) may be smaller than 24px minimum",
+                        "wcag": "WCAG 2.2 Level AA - 2.5.8 Target Size (Minimum)",
+                        "size": size
+                    })
+            except ValueError:
+                pass
+        
         return issues
