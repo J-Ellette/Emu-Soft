@@ -394,6 +394,89 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### asyncpg_emulator_tool/
+**What it emulates:** asyncpg (Async PostgreSQL database adapter)
+
+**Scripts:**
+- `asyncpg_emulator.py` - Async PostgreSQL driver implementation
+  - Async/await interface for non-blocking database operations
+  - Connection class with async query methods (fetch, fetchrow, fetchval, execute)
+  - Connection pooling with min/max size configuration
+  - Record objects with dict-like and tuple-like access
+  - Transaction support with isolation levels
+  - Parameterized queries with positional parameters ($1, $2, etc.)
+  - Context manager support for connections and pools
+  - COPY operations (basic support)
+  - Custom type codec support (stub)
+  
+- `test_asyncpg_emulator.py` - Test suite for asyncpg emulator
+  - Validates connection lifecycle and async operations
+  - Tests query execution and fetching
+  - Tests connection pool functionality
+  - Verifies transaction management
+  - Tests Record object functionality
+  - Validates parameter binding and escaping
+
+**Use:** Provides async PostgreSQL database adapter functionality without external dependencies, enabling development and testing of async database code with a modern async/await interface. Natural extension of psycopg2 for async Python applications.
+
+---
+
+### pyjwt_emulator_tool/
+**What it emulates:** PyJWT (JSON Web Token library)
+
+**Scripts:**
+- `pyjwt_emulator.py` - JWT encoding and decoding implementation
+  - Token encoding with HMAC algorithms (HS256, HS384, HS512)
+  - Token decoding and verification
+  - Signature verification with constant-time comparison
+  - Standard claims validation (exp, nbf, iat, aud, iss)
+  - Custom headers support
+  - Datetime to timestamp conversion
+  - Base64url encoding/decoding
+  - Configurable verification options
+  - Helper function for token creation with expiration
+  
+- `test_pyjwt_emulator.py` - Test suite for PyJWT emulator
+  - Validates token encoding with various payloads
+  - Tests token decoding and verification
+  - Tests signature verification and algorithm validation
+  - Verifies claims validation (exp, nbf, iat, aud, iss)
+  - Tests time leeway handling
+  - Validates custom headers
+  - Tests error handling and edge cases
+
+**Use:** Provides JWT (JSON Web Token) functionality for authentication and authorization without external dependencies. Essential for implementing stateless authentication, API tokens, SSO, and secure information exchange between services.
+
+---
+
+### bcrypt_emulator_tool/
+**What it emulates:** bcrypt (Password hashing library)
+
+**Scripts:**
+- `bcrypt_emulator.py` - Secure password hashing implementation
+  - Password hashing with configurable cost factor (rounds 4-31)
+  - Salt generation with cryptographically secure randomness
+  - Password verification with constant-time comparison
+  - bcrypt-compatible hash format ($2b$...)
+  - Key derivation function (KDF) using PBKDF2
+  - Custom base64 encoding for bcrypt format
+  - Convenience functions (hash_password, verify_password)
+  - Protection against timing attacks
+  
+- `test_bcrypt_emulator.py` - Test suite for bcrypt emulator
+  - Validates salt generation and uniqueness
+  - Tests password hashing with various inputs
+  - Tests password verification (correct and incorrect)
+  - Verifies different cost factors
+  - Tests key derivation function
+  - Tests special characters and Unicode support
+  - Validates security properties (timing resistance, randomness)
+  - Tests edge cases (empty, long passwords, etc.)
+
+**Use:** Provides industry-standard password hashing functionality without external dependencies. Essential for secure password storage, user authentication, and protecting credentials in applications. Uses adaptive cost factor for future-proof security.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1092,8 +1175,9 @@ This document lists all scripts and modules in the repository, organized by fold
 - aiohttp emulator - Async HTTP client/server framework
 - httpx emulator - Modern unified sync/async HTTP client
 
-### Database Adapters (3 tools)
+### Database Adapters (4 tools)
 - psycopg2 emulator - PostgreSQL database adapter
+- asyncpg emulator - Async PostgreSQL database adapter
 - PyMySQL emulator - Pure Python MySQL driver
 - sqlite3 emulator - Enhanced SQLite integration
 
@@ -1109,6 +1193,11 @@ This document lists all scripts and modules in the repository, organized by fold
 ### Security & Access (2 tool groups)
 - Authentication System - User management
 - Security Tools - Auditing and integrity
+
+### Cryptography & Authentication (3 tools)
+- PyJWT emulator - JSON Web Token implementation
+- bcrypt emulator - Password hashing
+- (Located with authentication tools, core security functionality)
 
 ### Quality & Analysis (2 tool groups)
 - Code Analysis - Static analysis and metrics
@@ -1129,8 +1218,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **32 major folders/systems** (was 29)
-- **161+ Python scripts** (was 152+)
+- **35 major folders/systems** (was 32, now includes asyncpg, pyjwt, bcrypt)
+- **170+ Python scripts** (was 161+, added 9 new files)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
