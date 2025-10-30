@@ -186,9 +186,17 @@ Why: Span creation, context propagation, and trace management are well-documente
 Core Components: Span creation, parent-child relationships, context propagation, sampling, exporters
 Complexity: Medium - requires context management and trace propagation
 
-## py-spy - Sampling profiler
+## py-spy - Sampling profiler (COMPLETE)
+Feasibility: High
+Why: Statistical sampling using threading and sys._current_frames() is straightforward
+Core Components: Stack trace collection, sampling loop, function statistics, flame graph data
+Complexity: Medium - requires threading and stack inspection
 
-## memory_profiler - Memory usage profiler
+## memory_profiler - Memory usage profiler (COMPLETE)
+Feasibility: High
+Why: Python's tracemalloc provides memory tracking, sys.settrace() for line-level tracking
+Core Components: Line-by-line memory tracking, memory increment tracking, profiling decorators
+Complexity: Medium - requires tracemalloc and execution tracing
 
 ## pre-commit - Git hooks framework (COMPLETE)
 Feasibility: High

@@ -1743,7 +1743,7 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ## Summary by Category
 
-### Development Productivity (14 tools)
+### Development Productivity (16 tools)
 - pytest emulator - Testing framework
 - Coverage emulator - Code coverage
 - Code formatter - Style enforcement
@@ -1757,6 +1757,8 @@ This document lists all scripts and modules in the repository, organized by fold
 - pre-commit emulator - Git hooks framework for code quality
 - vulture emulator - Dead code finder
 - Sphinx emulator - Documentation generator
+- py-spy emulator - Sampling profiler
+- memory_profiler emulator - Memory usage profiler
 
 ### Task Queues & Scheduling (5 tools)
 - Celery emulator (infrastructure/tasks.py) - Distributed task queue
@@ -1930,10 +1932,59 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### py_spy_emulator_tool/
+**What it emulates:** py-spy (Sampling profiler for Python programs)
+
+**Scripts:**
+- `py_spy_emulator.py` - Sampling profiler implementation
+  - Statistical sampling profiler with minimal overhead
+  - Stack trace collection at regular intervals
+  - Function timing statistics (total and self time)
+  - Flame graph data generation
+  - Top-like live profiling view
+  - Context manager and decorator interfaces
+  - Threading-based sampling with configurable sample rate
+  
+- `test_py_spy_emulator.py` - Test suite for py-spy emulator
+  - Validates stack frame operations
+  - Tests profile data collection
+  - Tests sampling profiler functionality
+  - Verifies context manager and decorator usage
+  - Tests flame graph data generation (23 tests total)
+
+**Use:** Provides statistical profiling without external dependencies. Essential for performance analysis and optimization with minimal overhead. Identifies performance bottlenecks through sampling-based profiling, generates flame graphs for visualization, and provides both total and self-time metrics. Ideal for production profiling, performance debugging, and understanding program behavior under load.
+
+---
+
+### memory_profiler_emulator_tool/
+**What it emulates:** memory_profiler (Memory usage profiler for Python)
+
+**Scripts:**
+- `memory_profiler_emulator.py` - Memory profiler implementation
+  - Line-by-line memory usage tracking
+  - Memory increment tracking per line
+  - Memory usage over time monitoring
+  - Decorator-based profiling
+  - Process memory statistics
+  - Memory leak detection
+  - Built on Python's tracemalloc module
+  - MemoryUsageMonitor for timeline analysis
+  
+- `test_memory_profiler_emulator.py` - Test suite for memory_profiler emulator
+  - Validates memory snapshot operations
+  - Tests line memory statistics
+  - Tests function memory profiling
+  - Verifies decorator usage
+  - Tests memory monitoring over time (25 tests total)
+
+**Use:** Provides memory profiling without external dependencies. Essential for identifying memory leaks, optimizing memory usage, and understanding memory allocation patterns. Enables line-by-line memory tracking with increment analysis, memory timeline monitoring, and peak memory detection. Ideal for memory optimization, capacity planning, leak detection, and memory-constrained environments.
+
+---
+
 ## Total Count
-- **51 major folders/systems** (was 48, now includes precommit_emulator_tool, vulture_emulator_tool, sphinx_emulator_tool)
-- **209 Python scripts** (includes emulators, tests, and support scripts)
-- **69 documentation files** (READMEs and guides)
+- **53 major folders/systems** (was 51, now includes py_spy_emulator_tool, memory_profiler_emulator_tool)
+- **217 Python scripts** (includes emulators, tests, and support scripts)
+- **71 documentation files** (READMEs and guides)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
