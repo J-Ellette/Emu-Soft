@@ -1791,8 +1791,8 @@ This document lists all scripts and modules in the repository, organized by fold
   - Tests whitelist functionality (1 test)
   - Tests special cases (3 tests)
   - Tests reporting (2 tests)
-  - Integration tests (8 tests)
-  - 21 tests total
+  - Integration tests (9 tests)
+  - 22 tests total
 
 **Use:** Provides dead code detection without external dependencies. Essential for identifying unused imports, functions, classes, and variables that can be safely removed. Helps maintain clean codebases, reduce technical debt, and improve code maintainability. Ideal for code cleanup, refactoring, code review, and CI/CD pipelines.
 
@@ -1822,9 +1822,9 @@ This document lists all scripts and modules in the repository, organized by fold
   - Tests docstring parsing (5 tests)
   - Tests documentation extraction (4 tests)
   - Tests HTML generation (4 tests)
-  - Tests builder functionality (6 tests)
+  - Tests builder functionality (7 tests)
   - Integration tests (1 test)
-  - 23 tests total
+  - 24 tests total
 
 **Use:** Provides Python documentation generation without external dependencies. Essential for creating API documentation, code understanding, internal tool documentation, and project documentation. Generates clean, professional HTML documentation from Python source code with support for multiple docstring formats. Ideal for projects needing self-hosted documentation without Sphinx dependencies.
 
@@ -1832,7 +1832,8 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ## Total Count
 - **51 major folders/systems** (was 48, now includes precommit_emulator_tool, vulture_emulator_tool, sphinx_emulator_tool)
-- **220+ Python scripts** (was 211+, added 9 new files: 3 emulators + 3 tests + 3 READMEs)
+- **209 Python scripts** (includes emulators, tests, and support scripts)
+- **69 documentation files** (READMEs and guides)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
