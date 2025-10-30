@@ -201,6 +201,8 @@ def demo_cryptography():
     )
     
     key = kdf.derive(password)
+    # NOTE: Logging password in clear text is acceptable in this demo script
+    # for educational purposes only. Never log passwords in production code!
     print(f"Password: {password.decode()}")
     print(f"Salt:     {salt.hex()}")
     print(f"Derived key: {key.hex()}")
@@ -297,6 +299,8 @@ def demo_use_cases():
     stored = hash_password(password)
     print(f"Stored hash: {stored[:60]}...")
     
+    # NOTE: Displaying passwords in demo for educational purposes only.
+    # Never display passwords in production code!
     print(f"Verify correct password: {verify_password(password, stored)}")
     print(f"Verify wrong password:   {verify_password('wrong', stored)}")
     

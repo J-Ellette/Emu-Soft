@@ -157,7 +157,13 @@ class HMACAlgorithm(SigningAlgorithm):
 
 
 class Signer:
-    """Basic signer for signing and verifying data"""
+    """Basic signer for signing and verifying data
+    
+    Note: Uses SHA1 by default to maintain compatibility with the original
+    itsdangerous library. For new applications requiring higher security,
+    consider passing digest_method=hashlib.sha256 or use the cryptography
+    library instead.
+    """
     
     def __init__(self, secret_key: Union[str, bytes], 
                  salt: Union[str, bytes] = b'itsdangerous.Signer',
@@ -172,7 +178,7 @@ class Signer:
             salt: Salt for key derivation
             sep: Separator between value and signature
             key_derivation: Key derivation method ('django-concat' or 'hmac')
-            digest_method: Hash function to use
+            digest_method: Hash function to use (default: SHA1 for compatibility)
             algorithm: Signing algorithm (if None, uses HMACAlgorithm)
         """
         if isinstance(secret_key, str):
