@@ -157,6 +157,19 @@ class ARIAValidator(HTMLParser):
         "aria-valuetext",
     }
 
+    # Deprecated ARIA attributes (warn users about these)
+    DEPRECATED_ATTRIBUTES = {
+        "aria-grabbed": "Deprecated in ARIA 1.2, use drag-and-drop API instead",
+        "aria-dropeffect": "Deprecated in ARIA 1.2, use drag-and-drop API instead",
+    }
+
+    # Prohibited roles for specific elements
+    PROHIBITED_ROLES = {
+        "button": {"link", "tab"},  # button element shouldn't have these roles
+        "a": {"button"},  # links with href shouldn't be buttons
+        "input": {"button"},  # use button element instead
+    }
+
     # Required attributes for specific roles
     REQUIRED_ATTRIBUTES = {
         "checkbox": {"aria-checked"},
@@ -259,6 +272,19 @@ class ARIAValidator(HTMLParser):
                 }
             )
 
+        # Check for prohibited role combinations
+        if tag in self.PROHIBITED_ROLES and role in self.PROHIBITED_ROLES[tag]:
+            self.issues.append(
+                {
+                    "type": "prohibited_role",
+                    "severity": "error",
+                    "message": f"Role '{role}' is not appropriate for {tag} element",
+                    "element": element_info,
+                    "wcag": "WCAG 2.1 Level A - 4.1.2 Name, Role, Value",
+                    "recommendation": f"Use semantic HTML or a different role"
+                }
+            )
+
         # Check for role="presentation" or role="none" with interactive elements
         if role in ["presentation", "none"]:
             if tag in ["button", "a", "input", "select", "textarea"]:
@@ -276,6 +302,18 @@ class ARIAValidator(HTMLParser):
         self, tag: str, attr_name: str, attr_value: str, role: Optional[str], element_info: Dict
     ):
         """Validate ARIA attribute."""
+        # Check if attribute is deprecated
+        if attr_name in self.DEPRECATED_ATTRIBUTES:
+            self.issues.append(
+                {
+                    "type": "deprecated_aria_attribute",
+                    "severity": "warning",
+                    "message": f"Deprecated ARIA attribute: '{attr_name}' - {self.DEPRECATED_ATTRIBUTES[attr_name]}",
+                    "element": element_info,
+                    "wcag": "Best Practice - Use modern ARIA patterns",
+                }
+            )
+        
         # Check if attribute is valid
         if attr_name not in self.VALID_ATTRIBUTES:
             self.issues.append(

@@ -1,7 +1,7 @@
 """
 WCAG Compliance Checker
 
-Comprehensive WCAG 2.1 compliance checking with live preview capabilities.
+Comprehensive WCAG 2.1 and 2.2 compliance checking with live preview capabilities.
 
 Inspired by:
 - axe-core
@@ -20,7 +20,7 @@ from .aria_validator import ARIAValidator
 
 class WCAGComplianceChecker:
     """
-    Comprehensive WCAG 2.1 compliance checker.
+    Comprehensive WCAG 2.1 and 2.2 compliance checker.
 
     Checks:
     - Level A requirements (must)
@@ -32,6 +32,10 @@ class WCAGComplianceChecker:
     - Operable
     - Understandable
     - Robust
+    
+    WCAG 2.2 New Success Criteria:
+    - 2.5.8 Target Size (Minimum)
+    - Additional modern accessibility requirements
     """
 
     def __init__(self):
@@ -244,6 +248,21 @@ class WCAGComplianceChecker:
                         "name": "Focus Visible",
                         "level": "AA",
                         "principle": "Operable",
+                        **issue,
+                    }
+                )
+
+        # WCAG 2.2 - 2.5.8 Target Size (Minimum) (Level AA)
+        if level in ["AA", "AAA"]:
+            target_size_issues = self.keyboard_tester.check_target_size(html_content, css_content)
+            for issue in target_size_issues:
+                issues.append(
+                    {
+                        "guideline": "2.5.8",
+                        "name": "Target Size (Minimum)",
+                        "level": "AA",
+                        "principle": "Operable",
+                        "wcag_version": "2.2",
                         **issue,
                     }
                 )
