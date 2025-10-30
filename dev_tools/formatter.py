@@ -175,6 +175,9 @@ class ImportSorter:
             Source code with sorted imports
         """
         try:
+            # Preserve trailing newline
+            has_trailing_newline = source.endswith('\n')
+            
             tree = ast.parse(source)
             
             # Extract imports and non-imports
@@ -197,7 +200,13 @@ class ImportSorter:
             # Rebuild tree
             tree.body = imports + from_imports + other_nodes
             
-            return ast.unparse(tree)
+            result = ast.unparse(tree)
+            
+            # Restore trailing newline if it was present
+            if has_trailing_newline and not result.endswith('\n'):
+                result += '\n'
+            
+            return result
             
         except Exception:
             return source

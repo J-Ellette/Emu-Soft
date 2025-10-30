@@ -209,6 +209,8 @@ class CoverageData:
     
     def should_trace_file(self, filename: str) -> bool:
         """Check if a file should be traced for coverage."""
+        import fnmatch
+        
         # Normalize path
         filename = os.path.abspath(filename)
         
@@ -220,15 +222,23 @@ class CoverageData:
         if not filename.endswith('.py'):
             return False
         
+        # Get just the filename for pattern matching
+        basename = os.path.basename(filename)
+        
         # Check omit patterns
         for pattern in self.omit_patterns:
+            # Support both full path and basename matching
+            if fnmatch.fnmatch(filename, pattern) or fnmatch.fnmatch(basename, pattern):
+                return False
+            # Also check if pattern is substring (for simple patterns)
             if pattern in filename:
                 return False
         
         # Check include patterns (if specified)
         if self.include_patterns:
             for pattern in self.include_patterns:
-                if pattern in filename:
+                # Support both full path and directory matching
+                if fnmatch.fnmatch(filename, pattern) or pattern in filename:
                     return True
             return False
         
