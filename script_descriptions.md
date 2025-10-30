@@ -688,6 +688,104 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### pika_emulator_tool/
+**What it emulates:** Pika (RabbitMQ Python client library)
+
+**Scripts:**
+- `pika_emulator.py` - RabbitMQ client implementation
+  - Connection and channel management (BlockingConnection, SelectConnection)
+  - Connection parameters and URL parsing
+  - Exchange declaration (direct, topic, fanout, headers)
+  - Queue declaration with auto-naming
+  - Queue binding and unbinding
+  - Message publishing with routing
+  - Message consumption (basic_get, basic_consume)
+  - Message acknowledgment (ack, nack, reject)
+  - Quality of Service (QoS) settings
+  - Topic pattern matching with wildcards
+  - Durable queues and persistent messages
+  - Context manager support
+  
+- `test_pika_emulator.py` - Test suite for Pika emulator
+  - Validates connection parameters and URL parsing
+  - Tests exchange and queue operations
+  - Tests message publishing and routing (direct, fanout, topic)
+  - Verifies consumption and acknowledgment
+  - Tests QoS settings
+  - Validates topic pattern matching
+  - Tests error handling (38 tests total)
+
+**Use:** Provides RabbitMQ client functionality without requiring RabbitMQ server. Essential for message queue communication, distributed task processing, microservice communication, event-driven architectures, and pub/sub messaging patterns. Enables development and testing of AMQP-based messaging systems without external dependencies.
+
+---
+
+### marshmallow_emulator_tool/
+**What it emulates:** Marshmallow (Object serialization/deserialization library)
+
+**Scripts:**
+- `marshmallow_emulator.py` - Object serialization implementation
+  - Schema definition with declarative fields
+  - Field types (String, Integer, Float, Boolean, DateTime, Date, Email, URL, List, Dict)
+  - Nested schemas for complex objects
+  - Data serialization (dump/dumps) - object to dict/JSON
+  - Data deserialization (load/loads) - dict/JSON to object
+  - Data validation with error reporting
+  - Field options (required, allow_none, default values, data_key)
+  - Custom validators (length, range, oneof, regexp)
+  - Schema hooks (pre_load, post_load, post_dump)
+  - Method and Function fields for computed values
+  - Many mode for lists of objects
+  - Unknown field handling (exclude, include, raise)
+  
+- `test_marshmallow_emulator.py` - Test suite for Marshmallow emulator
+  - Validates all field types and serialization
+  - Tests schema dump and load operations
+  - Tests nested schemas and relationships
+  - Verifies validation and error handling
+  - Tests field options and defaults
+  - Validates custom validators
+  - Tests schema hooks
+  - Tests many mode for collections
+  - Tests unknown field handling (32 tests total)
+
+**Use:** Provides object serialization/deserialization without external dependencies. Essential for API development (serializing request/response data), data validation, converting database models to JSON, form processing, and configuration file parsing. Enables clean separation between internal data structures and external representations with comprehensive validation.
+
+---
+
+### apispec_emulator_tool/
+**What it emulates:** APISpec (OpenAPI specification generator)
+
+**Scripts:**
+- `apispec_emulator.py` - OpenAPI specification generation
+  - OpenAPI 3.0.x specification structure
+  - Path and operation documentation
+  - HTTP method support (GET, POST, PUT, DELETE, etc.)
+  - Parameter specifications (path, query, header, cookie)
+  - Request body specifications
+  - Response documentation with status codes
+  - Schema definitions and references
+  - Component reuse (schemas, responses, parameters)
+  - Security scheme definitions (API key, Bearer, OAuth2, OpenID Connect)
+  - Tags and operation categorization
+  - Multiple output formats (dict, JSON, YAML)
+  - Helper functions for common patterns
+  
+- `test_apispec_emulator.py` - Test suite for APISpec emulator
+  - Validates spec creation and structure
+  - Tests path and operation definition
+  - Tests schema definitions and references
+  - Verifies parameters and request bodies
+  - Tests responses and status codes
+  - Validates tags and metadata
+  - Tests security schemes
+  - Tests component reuse
+  - Validates output formats
+  - Tests complete API examples (29 tests total)
+
+**Use:** Provides OpenAPI specification generation without external dependencies. Essential for API documentation, contract-first API development, generating API clients, API testing and validation, and integration with documentation tools (Swagger UI, ReDoc). Enables defining and documenting REST APIs with industry-standard OpenAPI format for clear communication between frontend, backend, and API consumers.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1374,11 +1472,12 @@ This document lists all scripts and modules in the repository, organized by fold
 - Bandit emulator - Security linting
 - Safety emulator - Dependency vulnerability scanning
 
-### Task Queues & Scheduling (4 tools)
+### Task Queues & Scheduling (5 tools)
 - Celery emulator (infrastructure/tasks.py) - Distributed task queue
 - RQ emulator - Simple Python job queue
 - APScheduler emulator - Advanced job scheduling
 - Kombu emulator - Messaging library (used by Celery)
+- Pika emulator - RabbitMQ client for AMQP messaging
 
 ### Web Development & Deployment (6 tool groups)
 - Web Framework - Core HTTP framework
@@ -1405,9 +1504,14 @@ This document lists all scripts and modules in the repository, organized by fold
 - USWDS Integration - Federal design system
 - Dashboard & Badges - Visualization
 
-### Data Management (2 tool groups)
+### Data Management (3 tool groups)
 - Database Layer - ORM and query building
 - Cache System - Performance optimization
+- Marshmallow emulator - Object serialization/deserialization
+
+### API Development (2 tools)
+- API Framework - RESTful API building
+- APISpec emulator - OpenAPI specification generator
 
 ### Security & Access (2 tool groups)
 - Authentication System - User management
@@ -1439,8 +1543,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **42 major folders/systems** (was 39, now includes rq_emulator_tool, apscheduler_emulator_tool, kombu_emulator_tool)
-- **193+ Python scripts** (was 184+, added 9 new files: 3 emulators + 3 tests + 3 READMEs)
+- **45 major folders/systems** (was 42, now includes pika_emulator_tool, marshmallow_emulator_tool, apispec_emulator_tool)
+- **202+ Python scripts** (was 193+, added 9 new files: 3 emulators + 3 tests + 3 READMEs)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 

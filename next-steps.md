@@ -140,11 +140,11 @@ Why: Message queue abstraction with routing is implementable without broker
 Core Components: Connection, Channel, Exchange, Queue, Producer, Consumer, Message routing
 Complexity: Medium - requires understanding of AMQP-style messaging patterns
 
-## pika - RabbitMQ client
+## pika - RabbitMQ client (COMPLETE)
 
-## marshmallow - Object serialization/deserialization
+## marshmallow - Object serialization/deserialization (COMPLETE)
 
-## apispec - OpenAPI specification generator
+## apispec - OpenAPI specification generator (COMPLETE)
 
 ## jsonschema - JSON schema validation
 
