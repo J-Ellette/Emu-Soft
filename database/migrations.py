@@ -2,7 +2,7 @@
 
 from typing import List
 from datetime import datetime
-from mycms.core.database.connection import db
+from database.connection import db
 
 
 class Migration:

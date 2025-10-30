@@ -171,7 +171,7 @@ class ConfigurationManager:
             ConfigSetting(
                 key="site_name",
                 label="Site Name",
-                value="MyCMS",
+                value="My Site",
                 category=ConfigCategory.GENERAL,
                 description="The name of your website",
                 required=True,

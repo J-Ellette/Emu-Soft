@@ -241,9 +241,9 @@ class TwoFactorAuthManager:
         # Create provisioning URI for QR code
         # Format: otpauth://totp/CMS:user@example.com?secret=SECRET&issuer=CMS
         provisioning_uri = (
-            f"otpauth://totp/MyCMS:user_{user_id}"
+            f"otpauth://totp/CMS:user_{user_id}"
             f"?secret={secret}"
-            f"&issuer=MyCMS"
+            f"&issuer=CMS"
             f"&digits=6"
             f"&period=30"
         )

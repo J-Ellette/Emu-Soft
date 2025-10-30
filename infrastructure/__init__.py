@@ -1,5 +1,5 @@
 """
-Core infrastructure replacements for CIV-ARCOS.
+Core infrastructure replacements.
 
 This package contains replacements of common infrastructure components,
 implemented without external dependencies.

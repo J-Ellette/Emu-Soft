@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, Optional
 import asyncpg
-from mycms.core.config.settings import settings
+from config.settings import settings
 
 
 class DatabaseConnection:

@@ -1,5 +1,5 @@
 """
-Assurance case components for CIV-ARCOS.
+Assurance case components.
 
 This package contains replacements of ARCOS (Automated Rapid Certification of Software)
 tools developed for DARPA, adapted for civilian use.

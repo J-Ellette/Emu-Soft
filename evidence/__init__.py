@@ -1,5 +1,5 @@
 """
-Evidence collection system for CIV-ARCOS.
+Evidence collection system.
 
 This package contains the evidence collection and provenance tracking system.
 

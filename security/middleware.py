@@ -3,9 +3,9 @@
 from typing import Any, Optional, Dict, Set
 from datetime import datetime, timezone, timedelta
 import secrets
-from mycms.core.framework.middleware import Middleware
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response
+from framework.middleware import Middleware
+from framework.request import Request
+from framework.response import Response
 
 
 class SecurityHeadersMiddleware(Middleware):

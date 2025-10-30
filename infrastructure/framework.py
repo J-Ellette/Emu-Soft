@@ -1,5 +1,5 @@
 """
-Minimal web framework for CIV-ARCOS.
+Minimal web framework for Application.
 Emulates FastAPI/Flask without external dependencies.
 """
 
@@ -193,7 +193,7 @@ class Application:
         handler_class = self._create_handler_class()
         server = HTTPServer((host, port), handler_class)
 
-        print(f"Starting CIV-ARCOS server on {host}:{port}")
+        print(f"Starting Application server on {host}:{port}")
         try:
             server.serve_forever()
         except KeyboardInterrupt:

@@ -1,10 +1,10 @@
 """Template system for rendering HTML templates with variable substitution and control structures."""  # noqa: E501
 
-from mycms.templates.engine import TemplateEngine
-from mycms.templates.loader import TemplateLoader
-from mycms.templates.context import Context
-from mycms.templates.filters import TemplateFilters
-from mycms.templates.components import (
+from templates.engine import TemplateEngine
+from templates.loader import TemplateLoader
+from templates.context import Context
+from templates.filters import TemplateFilters
+from templates.components import (
     Component,
     FunctionalComponent,
     ComponentRegistry,
@@ -14,19 +14,19 @@ from mycms.templates.components import (
     get_global_registry,
     component,
 )
-from mycms.templates.ai_generator import (
+from templates.ai_generator import (
     AITemplateGenerator,
     TemplatePattern,
     get_global_generator,
 )
-from mycms.templates.collaboration import (
+from templates.collaboration import (
     CollaborationSession,
     CollaborationManager,
     TemplateChange,
     TemplateVersion,
     get_global_collaboration_manager,
 )
-from mycms.templates.optimizer import (
+from templates.optimizer import (
     TemplateOptimizer,
     OptimizedTemplateEngine,
     TemplateCache,

@@ -5,8 +5,8 @@ model registration, admin site management, and model admin classes.
 """
 
 from typing import Any, Dict, List, Optional, Type
-from mycms.core.database.orm import Model
-from mycms.admin.forms import ModelForm
+from database.orm import Model
+from admin.forms import ModelForm
 
 
 class ModelAdmin:

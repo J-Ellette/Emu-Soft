@@ -189,7 +189,7 @@ class USWDSComponentRenderer:
         <div class="usa-footer__contact-links mobile-lg:grid-col-12">
           <div class="usa-footer__primary-content">
             <p>&copy; {year} {site_name}. All rights reserved.</p>
-            <p>Powered by <a href="https://github.com/J-Ellette/CMS-Home-Grown">MyCMS</a> - A Homegrown Content Management System</p>
+            <p>Powered by a Homegrown Content Management System</p>
             <p>Design system: <a href="https://designsystem.digital.gov/">U.S. Web Design System</a></p>
           </div>
         </div>

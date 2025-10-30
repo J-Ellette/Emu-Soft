@@ -1,11 +1,11 @@
 """Authentication middleware for request processing."""
 
 from typing import Any
-from mycms.core.framework.middleware import Middleware
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response
-from mycms.auth.session import SessionManager
-from mycms.auth.authentication import get_current_user
+from framework.middleware import Middleware
+from framework.request import Request
+from framework.response import Response
+from auth.session import SessionManager
+from auth.authentication import get_current_user
 
 
 class AuthMiddleware(Middleware):

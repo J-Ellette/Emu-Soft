@@ -1,13 +1,16 @@
-"""Authentication and authorization system for MyCMS."""
+"""Authentication and authorization system.
 
-from mycms.auth.models import User, Role, Permission
-from mycms.auth.authentication import authenticate, login, logout
-from mycms.auth.authorization import has_permission, require_permission
-from mycms.auth.password import hash_password, verify_password
-from mycms.auth.session import SessionManager
-from mycms.auth.middleware import AuthMiddleware
-from mycms.auth.tokens import JWTTokenManager, create_token_pair
-from mycms.auth.two_factor import (
+This package provides comprehensive authentication and authorization
+
+
+from auth.models import User, Role, Permission
+from auth.authentication import authenticate, login, logout
+from auth.authorization import has_permission, require_permission
+from auth.password import hash_password, verify_password
+from auth.session import SessionManager
+from auth.middleware import AuthMiddleware
+from auth.tokens import JWTTokenManager, create_token_pair
+from auth.two_factor import (
     TOTPGenerator,
     TwoFactorAuthManager,
     get_twofa_manager,

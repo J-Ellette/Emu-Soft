@@ -5,7 +5,7 @@ This module provides dashboard widgets and statistics for the admin interface.
 
 from typing import Any, Dict, List
 from datetime import datetime, timedelta
-from mycms.admin.interface import AdminSite
+from admin.interface import AdminSite
 
 
 class DashboardWidget:

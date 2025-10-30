@@ -1,5 +1,5 @@
 """
-Web components and visualization tools for CIV-ARCOS.
+Web components and visualization tools.
 
 This package contains web dashboard and badge generation components.
 

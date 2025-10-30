@@ -1,11 +1,11 @@
 """Public-facing views for pages and posts."""
 
 from typing import Any, Optional
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, HTMLResponse
-from mycms.templates.engine import TemplateEngine
-from mycms.templates.loader import TemplateLoader
-from mycms.core.database.connection import DatabaseConnection
+from framework.request import Request
+from framework.response import Response, HTMLResponse
+from templates.engine import TemplateEngine
+from templates.loader import TemplateLoader
+from database.connection import DatabaseConnection
 
 
 class FrontendViews:
@@ -27,7 +27,7 @@ class FrontendViews:
             db_connection: Database connection for querying content
         """
         self.template_engine = template_engine or TemplateEngine(
-            TemplateLoader(["mycms/frontend/templates"])
+            TemplateLoader(["frontend/templates"])
         )
         self.db_connection = db_connection
 
@@ -42,7 +42,7 @@ class FrontendViews:
         """
         context = {
             "title": "Welcome",
-            "site_name": "MyCMS",
+            "site_name": "My Site",
             "request": request,
         }
 
@@ -87,7 +87,7 @@ class FrontendViews:
             context = {
                 "page": page_data,
                 "title": page_data["title"],
-                "site_name": "MyCMS",
+                "site_name": "My Site",
                 "request": request,
             }
 
@@ -126,7 +126,7 @@ class FrontendViews:
             context = {
                 "post": post_data,
                 "title": post_data["title"],
-                "site_name": "MyCMS",
+                "site_name": "My Site",
                 "request": request,
             }
 
@@ -158,7 +158,7 @@ class FrontendViews:
             context = {
                 "posts": posts,
                 "title": "Blog Posts",
-                "site_name": "MyCMS",
+                "site_name": "My Site",
                 "request": request,
             }
 
@@ -216,7 +216,7 @@ class FrontendViews:
                 "category": category_data,
                 "posts": posts,
                 "title": category_data["name"],
-                "site_name": "MyCMS",
+                "site_name": "My Site",
                 "request": request,
             }
 
@@ -260,7 +260,7 @@ class FrontendViews:
         Returns:
             HTML string
         """
-        site_name = context.get("site_name", "MyCMS")
+        site_name = context.get("site_name", "My Site")
         title = context.get("title", "Home")
         return f"""
         <!DOCTYPE html>
@@ -297,7 +297,7 @@ class FrontendViews:
         page = context.get("page", {})
         page_title = page.get("title", "Page")
         page_content = page.get("content", "")
-        site_name = context.get("site_name", "MyCMS")
+        site_name = context.get("site_name", "My Site")
         return f"""
         <!DOCTYPE html>
         <html>
@@ -331,7 +331,7 @@ class FrontendViews:
         post_title = post.get("title", "Post")
         post_content = post.get("content", "")
         post_published = post.get("published_at", "Unknown")
-        site_name = context.get("site_name", "MyCMS")
+        site_name = context.get("site_name", "My Site")
         return f"""
         <!DOCTYPE html>
         <html>

@@ -3,7 +3,7 @@
 import json
 from typing import Any, Dict, List, Optional, Type, Union
 from datetime import datetime, date
-from mycms.core.database.orm import Model
+from database.orm import Model
 
 
 class APISerializer:

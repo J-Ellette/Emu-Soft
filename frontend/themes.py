@@ -1,4 +1,4 @@
-"""Theme management system for MyCMS.
+"""Theme management system.
 
 Provides functionality to manage and switch between different visual themes
 for the frontend presentation layer.
@@ -105,7 +105,7 @@ class ThemeManager:
         """Initialize the theme manager.
 
         Args:
-            themes_base_dir: Base directory for themes (e.g., 'mycms/frontend/themes')
+            themes_base_dir: Base directory for themes (e.g., 'frontend/themes')
         """
         self.themes: Dict[str, Theme] = {}
         self.active_theme: Optional[str] = None
@@ -115,13 +115,13 @@ class ThemeManager:
         self._register_default_theme()
 
     def _register_default_theme(self) -> None:
-        """Register the default theme that ships with MyCMS."""
+        """Register the default theme that ships with the CMS."""
         default_theme = Theme(
             name="default",
-            display_name="MyCMS Default",
-            description="The default theme for MyCMS with clean, modern design",
-            template_dir="mycms/frontend/templates",
-            author="MyCMS Team",
+            display_name="Default Theme",
+            description="The default theme with clean, modern design",
+            template_dir="frontend/templates",
+            author="CMS Team",
             version="1.0.0",
             responsive=True,
         )

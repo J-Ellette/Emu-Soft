@@ -1,7 +1,7 @@
 """
 Economic Impact Measurement - ROI Calculator
 
-Quantifies the concrete cost savings and risk reduction value from using CIV-ARCOS.
+Quantifies the concrete cost savings and risk reduction value from using the system.
 Provides comprehensive financial analysis for executive decision-making.
 """
 
@@ -247,7 +247,7 @@ class IndustryBenchmarks:
 
 class ROICalculator:
     """
-    Calculate ROI and economic impact of using CIV-ARCOS.
+    Calculate ROI and economic impact of using the system.
     
     Quantifies concrete cost savings and risk reduction value.
     """
@@ -267,10 +267,10 @@ class ROICalculator:
         organization_profile: OrganizationProfile
     ) -> Dict[str, Any]:
         """
-        Quantify concrete cost savings from using CIV-ARCOS.
+        Quantify concrete cost savings from using the system.
         
         Args:
-            evidence_data: Evidence and quality data from CIV-ARCOS
+            evidence_data: Evidence and quality data from the system
             organization_profile: Organization characteristics and costs
             
         Returns:
@@ -817,7 +817,7 @@ class ROICalculator:
                     'name': 'Setup and Integration',
                     'duration_weeks': 2,
                     'activities': [
-                        'Install CIV-ARCOS',
+                        'Install the system',
                         'Configure evidence collectors',
                         'Integrate with CI/CD pipeline',
                         'Train development team'
@@ -889,7 +889,7 @@ class ROICalculator:
                 {
                     'metric': 'Code quality score',
                     'target': '>80',
-                    'measurement': 'CIV-ARCOS quality score'
+                    'measurement': 'the system quality score'
                 },
                 {
                     'metric': 'Test coverage',

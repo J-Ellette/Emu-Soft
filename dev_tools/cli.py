@@ -1,6 +1,6 @@
-"""Command-line interface for MyCMS development.
+"""Command-line interface for development.
 
-Provides CLI tools for scaffolding and managing CMS components:
+Provides CLI tools for scaffolding and managing components:
 - Plugin scaffolding
 - Theme scaffolding
 - Content type scaffolding
@@ -152,7 +152,7 @@ __all__ = ["{self._to_class_name(name)}"]
         
         content = f'''"""Main plugin implementation for {display_name}."""
 
-from mycms.plugins.base import Plugin, PluginConfig
+from plugins.base import Plugin, PluginConfig
 from typing import Dict, Any
 
 
@@ -312,7 +312,7 @@ To develop this plugin:
         content = f'''"""Tests for {name} plugin."""
 
 import pytest
-from mycms.plugins.base import PluginConfig
+from plugins.base import PluginConfig
 from .plugin import {class_name}
 
 
@@ -430,7 +430,7 @@ class ThemeScaffolder:
             "display_name": display_name or name.title(),
             "version": "1.0.0",
             "author": author,
-            "description": "A custom theme for MyCMS",
+            "description": "A custom theme",
             "template_dir": "templates",
             "static_dir": "static",
             "settings": {
@@ -453,7 +453,7 @@ class ThemeScaffolder:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title|default:"MyCMS" }}</title>
+    <title>{{ title|default:"CMS" }}</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -469,7 +469,7 @@ class ThemeScaffolder:
     </main>
     
     <footer>
-        <p>&copy; 2025 MyCMS</p>
+        <p>&copy; 2025 CMS</p>
     </footer>
 </body>
 </html>
@@ -479,7 +479,7 @@ class ThemeScaffolder:
         # Home template
         home_content = '''{{ extends "base.html" }}
 
-<h1>Welcome to {{ site_name|default:"MyCMS" }}</h1>
+<h1>Welcome to {{ site_name|default:"CMS" }}</h1>
 
 <div class="content-grid">
     {{ for post in posts }}
@@ -548,7 +548,7 @@ footer {
         """Create README.md file."""
         content = f'''# {display_name} Theme
 
-A custom theme for MyCMS.
+A custom theme.
 
 ## Installation
 
@@ -650,8 +650,8 @@ class ContentTypeScaffolder:
         
         content = f'''"""Custom content type: {class_name}."""
 
-from mycms.content.custom_post_types import CustomPostType
-from mycms.content.custom_fields import (
+from content.custom_post_types import CustomPostType
+from content.custom_fields import (
     CharField,
     TextField,
     BooleanField,
@@ -697,7 +697,7 @@ class {class_name}(CustomPostType):
 
 
 class CLI:
-    """Main CLI interface for MyCMS development tools."""
+    """Main CLI interface for development tools."""
 
     def __init__(self) -> None:
         """Initialize CLI."""
@@ -706,8 +706,8 @@ class CLI:
     def _create_parser(self) -> argparse.ArgumentParser:
         """Create argument parser."""
         parser = argparse.ArgumentParser(
-            description="MyCMS Development CLI",
-            prog="mycms",
+            description="CMS Development CLI",
+            prog="cms",
         )
         
         subparsers = parser.add_subparsers(dest="command", help="Command to run")

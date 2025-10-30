@@ -1,7 +1,7 @@
 """Cache middleware for HTTP caching."""
 
 from typing import Any, Callable, Dict, Optional
-from mycms.cache.backend import CacheBackend
+from cache.backend import CacheBackend
 import hashlib
 
 
@@ -25,7 +25,7 @@ class CacheMiddleware:
             default_timeout: Default cache timeout in seconds (default: 300)
             cache_anonymous_only: Only cache requests without authentication
         """
-        from mycms.cache.backend import InMemoryCache
+        from cache.backend import InMemoryCache
 
         self.cache_backend = cache_backend or InMemoryCache(default_timeout)
         self.default_timeout = default_timeout

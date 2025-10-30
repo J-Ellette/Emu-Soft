@@ -6,7 +6,7 @@ with the existing content versioning system.
 
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
-from mycms.security.content_integrity import (
+from security.content_integrity import (
     ContentIntegrityAction,
     get_content_integrity_verifier,
 )

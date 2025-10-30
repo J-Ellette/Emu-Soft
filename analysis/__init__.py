@@ -1,5 +1,5 @@
 """
-Code analysis and quality assessment tools for CIV-ARCOS.
+Code analysis and quality assessment tools.
 
 This package contains replacement of popular code analysis tools,
 implemented without external dependencies.

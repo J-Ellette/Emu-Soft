@@ -269,7 +269,7 @@ def rate_limit(
 
         @wraps(func)
         async def wrapper(request: Any, *args: Any, **kwargs: Any) -> Any:
-            from mycms.core.framework.response import JSONResponse
+            from framework.response import JSONResponse
 
             # Extract identifier
             if key_func:

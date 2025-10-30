@@ -1,5 +1,5 @@
 """
-Web dashboard for CIV-ARCOS quality metrics and assurance cases.
+Web dashboard for Quality Dashboard quality metrics and assurance cases.
 Custom HTML generation without template engines (no Jinja2/Django templates).
 Now using United States Web Design System (USWDS) for accessibility and consistency.
 """
@@ -41,7 +41,7 @@ class DashboardGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIV-ARCOS Dashboard</title>
+    <title>Quality Dashboard Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/{self.uswds_version}/css/uswds.min.css">
     <style>{self._get_custom_css()}</style>
 </head>
@@ -51,7 +51,7 @@ class DashboardGenerator:
     <main id="main-content">
         <section class="usa-section">
             <div class="grid-container">
-                <h1 class="usa-prose">🛡️ CIV-ARCOS Dashboard</h1>
+                <h1 class="usa-prose">🛡️ Quality Dashboard Dashboard</h1>
                 <p class="usa-intro">Civilian Assurance-based Risk Computation and Orchestration System</p>
                 
                 <div class="grid-row grid-gap margin-top-4">
@@ -184,7 +184,7 @@ class DashboardGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quality Badges - CIV-ARCOS</title>
+    <title>Quality Badges - Quality Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/{self.uswds_version}/css/uswds.min.css">
     <style>{self._get_custom_css()}</style>
 </head>
@@ -252,7 +252,7 @@ class DashboardGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyze Repository - CIV-ARCOS</title>
+    <title>Analyze Repository - Quality Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/{self.uswds_version}/css/uswds.min.css">
     <style>{self._get_custom_css()}</style>
 </head>
@@ -432,7 +432,7 @@ class DashboardGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assurance Cases - CIV-ARCOS</title>
+    <title>Assurance Cases - Quality Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/{self.uswds_version}/css/uswds.min.css">
     <style>{self._get_custom_css()}</style>
 </head>
@@ -685,7 +685,7 @@ class DashboardGenerator:
     <header class="usa-header usa-header--extended" role="banner">
         <div class="usa-navbar">
             <div class="usa-logo" id="extended-logo">
-                <em class="usa-logo__text"><a href="/dashboard" title="CIV-ARCOS Home" aria-label="CIV-ARCOS Home">CIV-ARCOS</a></em>
+                <em class="usa-logo__text"><a href="/dashboard" title="Quality Dashboard Home" aria-label="Quality Dashboard Home">Quality Dashboard</a></em>
             </div>
             <button class="usa-menu-btn">Menu</button>
         </div>
@@ -714,7 +714,7 @@ class DashboardGenerator:
                         <div class="grid-row grid-gap-4">
                             <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
                                 <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
-                                    <h4 class="usa-footer__primary-link">CIV-ARCOS</h4>
+                                    <h4 class="usa-footer__primary-link">Quality Dashboard</h4>
                                     <p class="text-base-light">Civilian Assurance-based Risk Computation and Orchestration System</p>
                                 </section>
                             </div>
@@ -724,7 +724,7 @@ class DashboardGenerator:
                                     <ul class="usa-list usa-list--unstyled">
                                         <li class="usa-footer__secondary-link"><a href="/dashboard">Dashboard</a></li>
                                         <li class="usa-footer__secondary-link"><a href="/api">API Docs</a></li>
-                                        <li class="usa-footer__secondary-link"><a href="https://github.com/J-Ellette/CIV-ARCOS">GitHub</a></li>
+                                        <li class="usa-footer__secondary-link"><a href="https://github.com/J-Ellette/Quality Dashboard">GitHub</a></li>
                                     </ul>
                                 </section>
                             </div>
@@ -737,7 +737,7 @@ class DashboardGenerator:
             <div class="grid-container">
                 <div class="usa-footer__logo grid-row grid-gap-2">
                     <div class="grid-col-auto">
-                        <p class="usa-footer__contact-heading">CIV-ARCOS v0.1.0</p>
+                        <p class="usa-footer__contact-heading">Quality Dashboard v0.1.0</p>
                     </div>
                 </div>
             </div>
@@ -799,7 +799,7 @@ class DashboardGenerator:
         return """
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('CIV-ARCOS Dashboard loaded');
+            console.log('Quality Dashboard Dashboard loaded');
         });
 
         // Utility function for API calls

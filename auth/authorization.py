@@ -2,7 +2,7 @@
 
 from typing import Callable, Optional
 from functools import wraps
-from mycms.auth.models import User, Permission
+from auth.models import User, Permission
 
 
 async def has_permission(user: User, permission_codename: str) -> bool:
@@ -54,12 +54,12 @@ def require_permission(permission_codename: str) -> Callable:
                     user = request.user
 
             if not user:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Authentication required"}, status_code=401)
 
             if not await has_permission(user, permission_codename):
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Permission denied"}, status_code=403)
 
@@ -92,12 +92,12 @@ def require_role(role_name: str) -> Callable:
                     user = request.user
 
             if not user:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Authentication required"}, status_code=401)
 
             if not await has_role(user, role_name):
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Role required: " + role_name}, status_code=403)
 
@@ -127,12 +127,12 @@ def require_staff() -> Callable:
                     user = request.user
 
             if not user:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Authentication required"}, status_code=401)
 
             if not user.is_staff:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Staff access required"}, status_code=403)
 
@@ -162,12 +162,12 @@ def require_superuser() -> Callable:
                     user = request.user
 
             if not user:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Authentication required"}, status_code=401)
 
             if not user.is_superuser:
-                from mycms.core.framework.response import Response
+                from framework.response import Response
 
                 return Response({"error": "Superuser access required"}, status_code=403)
 

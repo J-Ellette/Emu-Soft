@@ -148,8 +148,8 @@ class DatabaseSessionManager(SessionManager):
         Returns:
             New Session instance
         """
-        from mycms.core.database.connection import db
-        from mycms.core.database.query import QueryBuilder
+        from database.connection import db
+        from database.query import QueryBuilder
 
         session_id = self._generate_session_id()
         expires_at = datetime.utcnow() + timedelta(seconds=self.session_timeout)
@@ -177,8 +177,8 @@ class DatabaseSessionManager(SessionManager):
         Returns:
             Session instance or None if not found or expired
         """
-        from mycms.core.database.connection import db
-        from mycms.core.database.query import QueryBuilder
+        from database.connection import db
+        from database.query import QueryBuilder
 
         qb = QueryBuilder("sessions")
         qb.where("session_id", "=", session_id)
@@ -208,8 +208,8 @@ class DatabaseSessionManager(SessionManager):
         Args:
             session_id: Session ID to delete
         """
-        from mycms.core.database.connection import db
-        from mycms.core.database.query import QueryBuilder
+        from database.connection import db
+        from database.query import QueryBuilder
 
         qb = QueryBuilder("sessions")
         qb.delete().where("session_id", "=", session_id)
@@ -222,8 +222,8 @@ class DatabaseSessionManager(SessionManager):
         Args:
             session: Session to save
         """
-        from mycms.core.database.connection import db
-        from mycms.core.database.query import QueryBuilder
+        from database.connection import db
+        from database.query import QueryBuilder
 
         qb = QueryBuilder("sessions")
         qb.update(
@@ -238,8 +238,8 @@ class DatabaseSessionManager(SessionManager):
 
     async def cleanup_expired(self) -> None:
         """Remove all expired sessions from database."""
-        from mycms.core.database.connection import db
-        from mycms.core.database.query import QueryBuilder
+        from database.connection import db
+        from database.query import QueryBuilder
 
         qb = QueryBuilder("sessions")
         qb.delete().where("expires_at", "<", datetime.utcnow().isoformat())
