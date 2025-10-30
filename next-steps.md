@@ -150,7 +150,7 @@ Complexity: Medium - requires understanding of AMQP-style messaging patterns
 
 ## Data Formats
 
-## PyYAML - YAML parser
+## PyYAML - YAML parser (COMPLETE)
 
 ## lxml - XML processing
 
