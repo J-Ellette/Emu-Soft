@@ -316,6 +316,84 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### psycopg2_emulator_tool/
+**What it emulates:** psycopg2 (PostgreSQL database adapter)
+
+**Scripts:**
+- `psycopg2_emulator.py` - PostgreSQL DB-API 2.0 adapter implementation
+  - Connection management with transaction support
+  - Cursor operations for query execution
+  - Parameterized queries (positional %s and named %(name)s)
+  - Result fetching (fetchone, fetchmany, fetchall)
+  - Context manager support for connections and cursors
+  - Complete exception hierarchy (DatabaseError, OperationalError, etc.)
+  - Type conversion helpers (Date, Time, Timestamp, Binary)
+  - DB-API 2.0 compliance with type objects
+  
+- `test_psycopg2_emulator.py` - Test suite for psycopg2 emulator
+  - Validates connection lifecycle
+  - Tests cursor operations and parameter binding
+  - Verifies transaction management
+  - Tests exception handling
+  - Validates DB-API 2.0 compliance
+
+**Use:** Provides PostgreSQL database adapter functionality without external dependencies, enabling development and testing of PostgreSQL-dependent code with a familiar psycopg2-compatible API.
+
+---
+
+### pymysql_emulator_tool/
+**What it emulates:** PyMySQL (Pure Python MySQL driver)
+
+**Scripts:**
+- `pymysql_emulator.py` - MySQL DB-API 2.0 driver implementation
+  - Connection management with autocommit support
+  - Cursor operations with DictCursor support
+  - Parameterized queries (positional %s and named %(name)s)
+  - Result fetching with dictionary-based results
+  - Context manager support
+  - Complete exception hierarchy
+  - Type conversion with MySQL-specific escaping
+  - Binary data handling with hex encoding
+  - Database selection and connection ping
+  
+- `test_pymysql_emulator.py` - Test suite for PyMySQL emulator
+  - Validates connection features
+  - Tests cursor and DictCursor operations
+  - Verifies parameter escaping and type handling
+  - Tests transaction management
+  - Validates DB-API 2.0 compliance
+
+**Use:** Provides pure Python MySQL driver functionality without external dependencies, enabling development and testing of MySQL-dependent code with a PyMySQL-compatible API.
+
+---
+
+### sqlite3_emulator_tool/
+**What it emulates:** Enhanced SQLite3 (Python's built-in sqlite3 with enhancements)
+
+**Scripts:**
+- `sqlite3_emulator.py` - Enhanced SQLite3 implementation
+  - Enhanced connection with custom functions and aggregates
+  - Query history tracking in cursors
+  - Built-in custom SQL functions (regexp, json_extract, md5, sha256, etc.)
+  - Statistical aggregates (stdev, median, mode)
+  - Database utilities (backup, optimize, integrity check)
+  - Metadata access (tables, indexes, schema info)
+  - Foreign key management
+  - Enhanced type support for date/datetime
+  - EXPLAIN QUERY PLAN support
+  
+- `test_sqlite3_emulator.py` - Test suite for SQLite3 enhancements
+  - Validates custom functions
+  - Tests custom aggregates
+  - Verifies query history tracking
+  - Tests database utilities
+  - Validates backup and restore
+  - Tests date/time type support
+
+**Use:** Extends Python's built-in sqlite3 module with enhanced functionality including custom SQL functions, statistical aggregates, query tracking, and database management utilities, all while maintaining full compatibility with the standard API.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1014,6 +1092,11 @@ This document lists all scripts and modules in the repository, organized by fold
 - aiohttp emulator - Async HTTP client/server framework
 - httpx emulator - Modern unified sync/async HTTP client
 
+### Database Adapters (3 tools)
+- psycopg2 emulator - PostgreSQL database adapter
+- PyMySQL emulator - Pure Python MySQL driver
+- sqlite3 emulator - Enhanced SQLite integration
+
 ### Frontend & Templates (3 tool groups)
 - Template Engine - HTML generation
 - USWDS Integration - Federal design system
@@ -1046,8 +1129,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **29 major folders/systems** (was 26)
-- **152+ Python scripts** (was 143+)
+- **32 major folders/systems** (was 29)
+- **161+ Python scripts** (was 152+)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 

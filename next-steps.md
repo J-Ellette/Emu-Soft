@@ -77,11 +77,11 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## httpx - Modern async HTTP client (COMPLETE)
 
-## psycopg2 - PostgreSQL adapter
+## psycopg2 - PostgreSQL adapter (COMPLETE)
 
-## PyMySQL - MySQL driver
+## PyMySQL - MySQL driver (COMPLETE)
 
-## sqlite3 enhancements - Better SQLite integration
+## sqlite3 enhancements - Better SQLite integration (COMPLETE)
 
 ## asyncpg - Async PostgreSQL driver
 
