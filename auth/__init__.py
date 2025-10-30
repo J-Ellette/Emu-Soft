@@ -1,7 +1,8 @@
 """Authentication and authorization system.
 
 This package provides comprehensive authentication and authorization
-
+features for user management and access control.
+"""
 
 from auth.models import User, Role, Permission
 from auth.authentication import authenticate, login, logout

@@ -9,6 +9,5 @@ This module provides AI-assisted content creation, including:
 """
 
 from ai.content_generator import ContentGenerator
-from ai.recommendations import RecommendationEngine
 
-__all__ = ["ContentGenerator", "RecommendationEngine"]
+__all__ = ["ContentGenerator"]
