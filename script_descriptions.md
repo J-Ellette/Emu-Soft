@@ -477,6 +477,69 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### itsdangerous_emulator_tool/
+**What it emulates:** itsdangerous (Cryptographic signing library)
+
+**Scripts:**
+- `itsdangerous_emulator.py` - Cryptographic signing implementation
+  - Signer for basic data signing and verification
+  - TimestampSigner for time-limited signatures
+  - Serializer for signing complex data structures (dicts, lists)
+  - TimedSerializer for serialization with expiration
+  - URLSafeSerializer and URLSafeTimedSerializer aliases
+  - HMAC-based signatures with multiple algorithms
+  - Constant-time comparison to prevent timing attacks
+  - Key derivation with multiple methods (django-concat, hmac, concat)
+  - Automatic compression for large payloads
+  - URL-safe Base64 encoding without padding
+  
+- `test_itsdangerous_emulator.py` - Test suite for itsdangerous emulator
+  - Validates basic signing and verification
+  - Tests timestamp signing with expiration
+  - Verifies serialization of complex data structures
+  - Tests timed serialization with max_age
+  - Validates security features (tampering detection, timing attacks)
+  - Tests edge cases (empty data, unicode, binary data)
+
+**Use:** Provides cryptographic signing for safely signing and verifying data without external dependencies. Essential for session management, token generation (password reset, email verification), cookie signing, and any scenario where data integrity must be verified. Commonly used in web applications for secure state management.
+
+---
+
+### cryptography_emulator_tool/
+**What it emulates:** cryptography (Modern cryptographic recipes library)
+
+**Scripts:**
+- `cryptography_emulator.py` - Comprehensive cryptography implementation
+  - Fernet symmetric authenticated encryption
+  - MultiFernet for key rotation support
+  - Hash algorithms (SHA1, SHA224, SHA256, SHA384, SHA512, SHA512_224, SHA512_256, MD5, BLAKE2b, BLAKE2s)
+  - HMAC (Hash-based Message Authentication Code)
+  - PBKDF2HMAC for password-based key derivation
+  - Scrypt memory-hard key derivation function
+  - HKDF for HMAC-based key expansion
+  - PKCS7 padding for block ciphers
+  - TOTP (Time-based One-Time Password) for 2FA
+  - HOTP (HMAC-based One-Time Password)
+  - Constant-time comparison utilities
+  - Exception hierarchy for cryptographic errors
+  
+- `test_cryptography_emulator.py` - Test suite for cryptography emulator
+  - Validates Fernet encryption/decryption (12 tests)
+  - Tests MultiFernet key rotation (4 tests)
+  - Verifies hash algorithms (4 tests)
+  - Tests HMAC operations (4 tests)
+  - Validates PBKDF2HMAC key derivation (6 tests)
+  - Tests Scrypt key derivation (3 tests)
+  - Verifies HKDF key expansion (4 tests)
+  - Tests PKCS7 padding (5 tests)
+  - Validates TOTP 2FA (5 tests)
+  - Tests HOTP (4 tests)
+  - Tests security features and edge cases
+
+**Use:** Provides modern cryptographic operations without external dependencies. Essential for secure data encryption, password hashing, message authentication, key derivation, and two-factor authentication. Enables building secure applications with industry-standard cryptographic primitives including Fernet encryption, multiple hash algorithms, HMAC, and password-based key derivation functions (PBKDF2, Scrypt). Suitable for session encryption, API signatures, password storage, and 2FA implementation.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1194,10 +1257,12 @@ This document lists all scripts and modules in the repository, organized by fold
 - Authentication System - User management
 - Security Tools - Auditing and integrity
 
-### Cryptography & Authentication (3 tools)
+### Cryptography & Authentication (5 tools)
 - PyJWT emulator - JSON Web Token implementation
 - bcrypt emulator - Password hashing
-- (Located with authentication tools, core security functionality)
+- itsdangerous emulator - Cryptographic signing and serialization
+- cryptography emulator - Modern cryptographic recipes (Fernet, KDF, HMAC, hashing)
+- (Additional auth tools located with authentication system)
 
 ### Quality & Analysis (2 tool groups)
 - Code Analysis - Static analysis and metrics
@@ -1218,8 +1283,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **35 major folders/systems** (was 32, now includes asyncpg, pyjwt, bcrypt)
-- **170+ Python scripts** (was 161+, added 9 new files)
+- **37 major folders/systems** (was 35, now includes itsdangerous, cryptography)
+- **176+ Python scripts** (was 170+, added 6 new files)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
