@@ -17,6 +17,7 @@ from sqlite3_emulator import (
     Error,
     IntegrityError,
     OperationalError,
+    PARSE_DECLTYPES,
 )
 
 
@@ -332,7 +333,7 @@ class TestDateTimeSupport(unittest.TestCase):
     
     def setUp(self):
         """Set up test database with type detection"""
-        self.conn = connect(':memory:', detect_types=1)  # PARSE_DECLTYPES
+        self.conn = connect(':memory:', detect_types=PARSE_DECLTYPES)
     
     def tearDown(self):
         """Close test connection"""

@@ -79,7 +79,8 @@ class EnhancedCursor(_sqlite3.Cursor):
         Returns:
             Self for chaining
         """
-        self._add_to_history(sql, f"<executemany with {len(list(seq_of_parameters))} sets>")
+        # Store original sequence for history, but don't consume it
+        self._add_to_history(sql, "<executemany operation>")
         return super().executemany(sql, seq_of_parameters)
     
     def _add_to_history(self, sql: str, parameters: Any) -> None:
