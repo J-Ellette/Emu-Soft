@@ -1,8 +1,8 @@
 """Middleware pipeline for request/response processing."""
 
 from typing import Any, List
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response
+from framework.request import Request
+from framework.response import Response
 
 
 class Middleware:

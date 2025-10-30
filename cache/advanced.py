@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 import hashlib
 import re
 import time
-from mycms.cache.backend import CacheBackend
+from cache.backend import CacheBackend
 
 
 @dataclass

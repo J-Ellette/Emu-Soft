@@ -2,7 +2,7 @@
 
 import pytest
 import json
-from mycms.security.profiles import (
+from security.profiles import (
     SecurityProfile,
     SecuritySettings,
     ProfileType,

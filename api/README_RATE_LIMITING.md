@@ -14,7 +14,7 @@ Advanced API rate limiting implementation with token bucket algorithm, multiple 
 ### Using the Decorator
 
 ```python
-from mycms.api.rate_limiting import rate_limit
+from api.rate_limiting import rate_limit
 
 @rate_limit(requests=100, window=60)  # 100 requests per minute
 async def my_api_endpoint(request):
@@ -24,7 +24,7 @@ async def my_api_endpoint(request):
 ### Configuring Endpoint-Specific Limits
 
 ```python
-from mycms.api.rate_limiting import get_rate_limiter, RateLimitConfig
+from api.rate_limiting import get_rate_limiter, RateLimitConfig
 
 limiter = get_rate_limiter()
 
@@ -43,7 +43,7 @@ limiter.configure_endpoint(
 ### User Tier-Based Limiting
 
 ```python
-from mycms.api.rate_limiting import get_rate_limiter, RateLimitConfig
+from api.rate_limiting import get_rate_limiter, RateLimitConfig
 
 limiter = get_rate_limiter()
 
@@ -67,7 +67,7 @@ limiter.configure_user_tier(
 ### Manual Rate Limit Check
 
 ```python
-from mycms.api.rate_limiting import get_rate_limiter
+from api.rate_limiting import get_rate_limiter
 
 limiter = get_rate_limiter()
 
@@ -91,7 +91,7 @@ else:
 Track and analyze rate limiting patterns:
 
 ```python
-from mycms.api.rate_limiting import RateLimitAnalytics
+from api.rate_limiting import RateLimitAnalytics
 
 analytics = RateLimitAnalytics()
 
@@ -113,7 +113,7 @@ analytics.clear_old_data(max_age_hours=24)
 The token bucket algorithm provides a balance between strict rate limiting and allowing burst traffic:
 
 ```python
-from mycms.api.rate_limiting import TokenBucket
+from api.rate_limiting import TokenBucket
 
 # 10 tokens per second, max capacity of 100
 bucket = TokenBucket(rate=10.0, capacity=100)
@@ -133,7 +133,7 @@ else:
 ### Rate Limit Config
 
 ```python
-from mycms.api.rate_limiting import RateLimitConfig
+from api.rate_limiting import RateLimitConfig
 
 config = RateLimitConfig(
     requests=100,     # Number of requests allowed
@@ -160,7 +160,7 @@ When rate limiting is active, responses include informative headers:
 5. **Cleanup Expired Data**: Regularly clean up old bucket and analytics data
 
 ```python
-from mycms.api.rate_limiting import get_rate_limiter
+from api.rate_limiting import get_rate_limiter
 
 limiter = get_rate_limiter()
 
@@ -185,8 +185,8 @@ When rate limit is exceeded, a 429 status code is returned:
 For application-wide rate limiting, use the existing `RateLimitMiddleware` in conjunction with this advanced system:
 
 ```python
-from mycms.security.middleware import RateLimitMiddleware
-from mycms.api.rate_limiting import get_rate_limiter, RateLimitConfig
+from security.middleware import RateLimitMiddleware
+from api.rate_limiting import get_rate_limiter, RateLimitConfig
 
 # Configure global rate limiter
 limiter = get_rate_limiter()

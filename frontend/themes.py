@@ -105,7 +105,7 @@ class ThemeManager:
         """Initialize the theme manager.
 
         Args:
-            themes_base_dir: Base directory for themes (e.g., 'mycms/frontend/themes')
+            themes_base_dir: Base directory for themes (e.g., 'frontend/themes')
         """
         self.themes: Dict[str, Theme] = {}
         self.active_theme: Optional[str] = None
@@ -120,7 +120,7 @@ class ThemeManager:
             name="default",
             display_name="MyCMS Default",
             description="The default theme for MyCMS with clean, modern design",
-            template_dir="mycms/frontend/templates",
+            template_dir="frontend/templates",
             author="MyCMS Team",
             version="1.0.0",
             responsive=True,

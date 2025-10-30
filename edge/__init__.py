@@ -11,17 +11,17 @@ Inspired by:
 - Netlify Edge Functions
 """
 
-from mycms.edge.renderer import EdgeRenderer, RenderConfig, RenderMode
-from mycms.edge.cache import EdgeCache, CacheStrategy, GeoCache
-from mycms.edge.router import GeoRouter, RoutingStrategy, EdgeLocation, RoutingRule
-from mycms.edge.adapters import (
+from edge.renderer import EdgeRenderer, RenderConfig, RenderMode
+from edge.cache import EdgeCache, CacheStrategy, GeoCache
+from edge.router import GeoRouter, RoutingStrategy, EdgeLocation, RoutingRule
+from edge.adapters import (
     CloudflareWorkerAdapter,
     LambdaEdgeAdapter,
     GenericEdgeAdapter,
     EdgeRequest,
     EdgeResponse,
 )
-from mycms.edge.deployment import EdgeDeployment, DeploymentConfig, DeploymentPlatform
+from edge.deployment import EdgeDeployment, DeploymentConfig, DeploymentPlatform
 
 __all__ = [
     "EdgeRenderer",

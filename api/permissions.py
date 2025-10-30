@@ -2,9 +2,9 @@
 
 from typing import Callable, Optional
 from functools import wraps
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, JSONResponse
-from mycms.auth.models import User
+from framework.request import Request
+from framework.response import Response, JSONResponse
+from auth.models import User
 
 
 class APIPermission:

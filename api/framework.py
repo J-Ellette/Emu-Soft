@@ -1,8 +1,8 @@
 """API Framework for building RESTful endpoints."""
 
 from typing import Any, Callable, Dict, List, Optional
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, JSONResponse
+from framework.request import Request
+from framework.response import Response, JSONResponse
 
 
 class APIEndpoint:

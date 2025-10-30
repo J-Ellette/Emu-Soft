@@ -1,8 +1,8 @@
 """URL routing configuration for frontend views."""
 
 from typing import Optional
-from mycms.core.framework.routing import Router
-from mycms.frontend.views import FrontendViews
+from framework.routing import Router
+from frontend.views import FrontendViews
 
 
 def create_frontend_routes(

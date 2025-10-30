@@ -1,8 +1,8 @@
 """Basic ORM implementation for database models."""
 
 from typing import Any, Dict, List, Optional, Type, TypeVar
-from mycms.core.database.connection import db
-from mycms.core.database.query import QueryBuilder
+from database.connection import db
+from database.query import QueryBuilder
 
 T = TypeVar("T", bound="Model")
 

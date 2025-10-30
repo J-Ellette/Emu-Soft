@@ -2,9 +2,9 @@
 
 import re
 from typing import Any, Dict, Optional
-from mycms.templates.context import Context
-from mycms.templates.filters import TemplateFilters
-from mycms.templates.loader import TemplateLoader
+from templates.context import Context
+from templates.filters import TemplateFilters
+from templates.loader import TemplateLoader
 
 
 class TemplateEngine:

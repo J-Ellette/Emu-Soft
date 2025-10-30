@@ -5,15 +5,15 @@ including login, dashboard, and CRUD operations.
 """
 
 from typing import Any, Dict, Optional, Type
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, HTMLResponse
-from mycms.core.database.orm import Model
-from mycms.admin.interface import AdminSite
-from mycms.admin.forms import ModelForm
-from mycms.admin.dashboard import Dashboard
-from mycms.admin.config_manager import config_manager
-from mycms.auth.authentication import authenticate, login, logout
-from mycms.auth.session import SessionManager
+from framework.request import Request
+from framework.response import Response, HTMLResponse
+from database.orm import Model
+from admin.interface import AdminSite
+from admin.forms import ModelForm
+from admin.dashboard import Dashboard
+from admin.config_manager import config_manager
+from auth.authentication import authenticate, login, logout
+from auth.session import SessionManager
 
 
 class AdminViews:

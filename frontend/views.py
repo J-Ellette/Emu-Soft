@@ -1,11 +1,11 @@
 """Public-facing views for pages and posts."""
 
 from typing import Any, Optional
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response, HTMLResponse
-from mycms.templates.engine import TemplateEngine
-from mycms.templates.loader import TemplateLoader
-from mycms.core.database.connection import DatabaseConnection
+from framework.request import Request
+from framework.response import Response, HTMLResponse
+from templates.engine import TemplateEngine
+from templates.loader import TemplateLoader
+from database.connection import DatabaseConnection
 
 
 class FrontendViews:
@@ -27,7 +27,7 @@ class FrontendViews:
             db_connection: Database connection for querying content
         """
         self.template_engine = template_engine or TemplateEngine(
-            TemplateLoader(["mycms/frontend/templates"])
+            TemplateLoader(["frontend/templates"])
         )
         self.db_connection = db_connection
 

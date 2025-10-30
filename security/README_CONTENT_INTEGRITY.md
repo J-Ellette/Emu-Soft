@@ -77,7 +77,7 @@ This implementation is inspired by:
 ### Basic Usage
 
 ```python
-from mycms.security.content_integrity import (
+from security.content_integrity import (
     ContentIntegrityVerifier,
     ContentIntegrityAction,
     get_content_integrity_verifier,
@@ -330,9 +330,9 @@ October 2025
 
 ## Related Systems
 
-- Content versioning (`mycms/content/versioning.py`)
-- Audit logging (`mycms/security/audit.py`)
-- Enhanced audit logging (`mycms/security/enhanced_audit.py`)
+- Content versioning (`content/versioning.py`)
+- Audit logging (`security/audit.py`)
+- Enhanced audit logging (`security/enhanced_audit.py`)
 
 ## Future Enhancements
 

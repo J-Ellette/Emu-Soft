@@ -2,8 +2,8 @@
 
 from typing import Optional
 from datetime import datetime
-from mycms.auth.models import User
-from mycms.auth.session import Session, SessionManager
+from auth.models import User
+from auth.session import Session, SessionManager
 
 
 async def authenticate(username: str, password: str) -> Optional[User]:
@@ -103,7 +103,7 @@ async def change_password(user: User, old_password: str, new_password: str) -> t
     Returns:
         Tuple of (success, message)
     """
-    from mycms.auth.password import validate_password_strength
+    from auth.password import validate_password_strength
 
     # Verify old password
     if not user.check_password(old_password):
@@ -131,7 +131,7 @@ async def reset_password(user: User, new_password: str) -> tuple[bool, str]:
     Returns:
         Tuple of (success, message)
     """
-    from mycms.auth.password import validate_password_strength
+    from auth.password import validate_password_strength
 
     # Validate new password strength
     is_valid, error = validate_password_strength(new_password)

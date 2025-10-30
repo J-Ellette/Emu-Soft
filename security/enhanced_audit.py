@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 import json
 
-from mycms.security.audit import AuditAction, AuditLogger
+from security.audit import AuditAction, AuditLogger
 
 
 @dataclass

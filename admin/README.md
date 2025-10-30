@@ -7,8 +7,8 @@ This  Admin Interface is a web-based control panel for managing CMS content. It 
 ### 1. Register Your Models
 
 ```python
-from mycms.admin import site
-from mycms.auth.models import User
+from admin import site
+from auth.models import User
 
 # Simple registration
 site.register(User)
@@ -17,16 +17,16 @@ site.register(User)
 ### 2. Set Up Admin Routes
 
 ```python
-from mycms.core.framework.application import Application
-from mycms.admin.views import AdminViews
-from mycms.auth.session import SessionManager
+from framework.application import Application
+from admin.views import AdminViews
+from auth.session import SessionManager
 
 app = Application()
 session_manager = SessionManager()
 admin_views = AdminViews(site, session_manager)
 
 # Add authentication middleware
-from mycms.auth.middleware import AuthMiddleware
+from auth.middleware import AuthMiddleware
 app.add_middleware(AuthMiddleware(session_manager))
 
 # Add admin routes
@@ -68,7 +68,7 @@ Navigate to `http://localhost:8000/admin/` and log in with a staff user account.
 ### Custom ModelAdmin
 
 ```python
-from mycms.admin import ModelAdmin
+from admin import ModelAdmin
 
 class MyModelAdmin(ModelAdmin):
     # Fields to display in list view
@@ -95,7 +95,7 @@ site.register(MyModel, MyModelAdmin)
 ### Custom Forms
 
 ```python
-from mycms.admin.forms import ModelForm, CharField, EmailField
+from admin.forms import ModelForm, CharField, EmailField
 
 class CustomForm(ModelForm):
     title = CharField(

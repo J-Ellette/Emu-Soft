@@ -1,10 +1,10 @@
 """Main ASGI application class."""
 
 from typing import Any, Dict
-from mycms.core.framework.request import Request
-from mycms.core.framework.response import Response
-from mycms.core.framework.routing import Router
-from mycms.core.framework.middleware import MiddlewarePipeline
+from framework.request import Request
+from framework.response import Response
+from framework.routing import Router
+from framework.middleware import MiddlewarePipeline
 
 
 class Application:
