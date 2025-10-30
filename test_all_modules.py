@@ -138,6 +138,21 @@ def test_dev_tools():
     import live_reload_tool
     import cms_cli_tool
     print("  ✓ New folder structure works")
+    
+    # Test newly added emulators
+    from mypy_emulator_tool.mypy_emulator import MypyEmulator
+    mypy_emu = MypyEmulator()
+    print("  ✓ mypy_emulator.py works")
+    
+    from flake8_emulator_tool.flake8_emulator import Flake8Emulator
+    flake8_emu = Flake8Emulator()
+    print("  ✓ flake8_emulator.py works")
+    
+    from uvicorn_emulator_tool.uvicorn_emulator import ASGIServer, ASGIRequest
+    # Test instantiable classes
+    raw_request = b"GET / HTTP/1.1\r\n\r\n"
+    request = ASGIRequest(raw_request, ('127.0.0.1', 12345))
+    print("  ✓ uvicorn_emulator.py works")
 
 if __name__ == "__main__":
     print("=" * 60)
