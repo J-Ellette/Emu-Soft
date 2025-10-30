@@ -944,6 +944,103 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### sentry_sdk_emulator_tool/
+**What it emulates:** sentry-sdk (Error tracking and performance monitoring)
+
+**Scripts:**
+- `sentry_sdk_emulator.py` - Error tracking implementation
+  - Exception capture with stack traces
+  - Message logging with severity levels
+  - Breadcrumb tracking for context
+  - User context binding
+  - Tags and extra data
+  - Event filtering and sampling
+  - Before-send hooks
+  - Scope management with push/pop
+  - Release and environment tracking
+  - Transaction tracking for performance
+  - Thread-safe operations
+
+- `test_sentry_sdk_emulator.py` - Test suite for Sentry SDK emulator
+  - Validates SDK initialization and configuration (19 tests total)
+  - Tests exception capture from context and direct
+  - Tests message capture with levels
+  - Verifies breadcrumb tracking
+  - Tests user context, tags, and extra data
+  - Tests scope management (push, configure)
+  - Tests event filtering and sampling
+  - Tests before-send hooks
+  - Validates release and environment tracking
+
+**Use:** Provides error tracking and monitoring without external dependencies or network communication. Essential for capturing and analyzing application errors, tracking user context, and monitoring application health. Enables detailed error reports with stack traces, breadcrumbs showing user actions leading to errors, and rich context data. Perfect for debugging production issues, understanding error patterns, and monitoring application stability.
+
+---
+
+### prometheus_client_emulator_tool/
+**What it emulates:** prometheus_client (Metrics collection for Prometheus)
+
+**Scripts:**
+- `prometheus_client_emulator.py` - Metrics collection implementation
+  - Counter metrics (monotonically increasing)
+  - Gauge metrics (arbitrary up/down values)
+  - Histogram metrics (observations with buckets)
+  - Summary metrics (observations with quantiles)
+  - Multi-dimensional metrics with labels
+  - Collector registry for metric management
+  - Prometheus text format exposition
+  - Context managers for timing
+  - Process and platform metrics collectors
+  - Thread-safe operations
+
+- `test_prometheus_client_emulator.py` - Test suite for Prometheus client emulator
+  - Validates all metric types (21 tests total)
+  - Tests counter with labels and child metrics
+  - Tests gauge operations (inc, dec, set)
+  - Tests histogram with buckets and timing
+  - Tests summary with timing
+  - Tests collector registry management
+  - Tests metrics generation in Prometheus format
+  - Tests process and platform collectors
+  - Validates label validation and bucket validation
+
+**Use:** Provides metrics collection and exposition without external dependencies. Essential for monitoring application performance, tracking business metrics, and observability. Enables tracking of counters (requests, errors), gauges (memory, connections), histograms (request duration, response sizes), and summaries. Perfect for application monitoring, performance analysis, capacity planning, and SRE practices. Metrics can be exposed in Prometheus text format for scraping.
+
+---
+
+### opencensus_emulator_tool/
+**What it emulates:** opencensus (Distributed tracing framework)
+
+**Scripts:**
+- `opencensus_emulator.py` - Distributed tracing implementation
+  - Trace and span creation with hierarchical relationships
+  - Parent-child span relationships
+  - Span attributes for metadata
+  - Span annotations for timestamped events
+  - Span status tracking with standard codes
+  - Span kinds (SERVER, CLIENT, PRODUCER, CONSUMER)
+  - Context propagation using W3C Trace Context
+  - Sampling strategies (always, never, probability)
+  - Exporters (in-memory, console)
+  - Thread-local context management
+  - Span links for connecting traces
+  - Thread-safe operations
+
+- `test_opencensus_emulator.py` - Test suite for OpenCensus emulator
+  - Validates span creation and management (22 tests total)
+  - Tests span attributes and annotations
+  - Tests span status and finishing
+  - Tests parent-child relationships and nesting
+  - Tests different span kinds
+  - Tests sampling strategies
+  - Tests exporters and trace collection
+  - Tests context propagation with W3C format
+  - Tests global tracer configuration
+  - Tests concurrent span creation
+
+**Use:** Provides distributed tracing without external dependencies or backend integration. Essential for understanding request flow through distributed systems, identifying performance bottlenecks, and debugging microservices. Enables tracing requests across service boundaries with context propagation, visualizing call hierarchies, measuring operation durations, and correlating logs with traces. Perfect for microservices architectures, service mesh deployments, and complex distributed applications.
+
+---
+
 ### isort_emulator_tool/
 **What it emulates:** isort (Python import statement sorting tool)
 
@@ -1723,8 +1820,11 @@ This document lists all scripts and modules in the repository, organized by fold
 - Code Analysis - Static analysis and metrics
 - Security Scanner - Vulnerability detection
 
-### Monitoring & Observability (1 tool)
+### Monitoring & Observability (4 tools)
 - structlog emulator - Structured logging with context binding and multiple output formats
+- sentry-sdk emulator - Error tracking and performance monitoring
+- prometheus_client emulator - Metrics collection for Prometheus
+- opencensus emulator - Distributed tracing framework
 
 ### Assurance & Certification (1 comprehensive system)
 - ARCOS Assurance System - Military-grade software certification
