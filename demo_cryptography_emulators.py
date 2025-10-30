@@ -9,6 +9,8 @@ This script demonstrates the key features of both emulators:
 import sys
 import time
 import os
+import json
+import traceback
 
 # Add paths for imports
 sys.path.insert(0, 'itsdangerous_emulator_tool')
@@ -251,7 +253,6 @@ def demo_use_cases():
     session_key = Fernet.generate_key()
     f = Fernet(session_key)
     
-    import json
     session_data = json.dumps({
         'user_id': 123,
         'username': 'john',
@@ -340,7 +341,6 @@ def main():
         
     except Exception as e:
         print(f"\n✗ Error: {e}")
-        import traceback
         traceback.print_exc()
         return 1
     
