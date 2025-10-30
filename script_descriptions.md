@@ -908,7 +908,7 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ## Summary by Category
 
-### Development Productivity (11 tools)
+### Development Productivity (8 tools)
 - pytest emulator - Testing framework
 - Coverage emulator - Code coverage
 - Code formatter - Style enforcement
@@ -916,15 +916,17 @@ This document lists all scripts and modules in the repository, organized by fold
 - CMS CLI - Component scaffolding
 - MyPy emulator - Static type checking
 - Flake8 emulator - Code linting
-- Uvicorn emulator - ASGI server
-- Gunicorn emulator - WSGI server with worker management
-- Nginx emulator - Reverse proxy and load balancing
-- Requests emulator - HTTP client library
 
-### Web Development (3 tool groups)
+### Web Development & Deployment (6 tool groups)
 - Web Framework - Core HTTP framework
 - API Framework - RESTful API building
 - Admin Interface - Auto-generated admin panel
+- Uvicorn emulator - ASGI server
+- Gunicorn emulator - WSGI server with worker management
+- Nginx emulator - Reverse proxy and load balancing
+
+### Networking & HTTP (1 tool)
+- Requests emulator - HTTP client library
 
 ### Frontend & Templates (3 tool groups)
 - Template Engine - HTML generation
