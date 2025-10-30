@@ -85,11 +85,11 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## asyncpg - Async PostgreSQL driver (COMPLETE)
 
-## pandas - Data manipulation (huge undertaking!)
+## pandas - Data manipulation (BEYOND SCOPE)
 
-## numpy - Numerical computing foundation
+## numpy - Numerical computing foundation (BEYOND SCOPE)
 
-## SQLAlchemy Core - If we only do ORM, add Core functionality
+## SQLAlchemy Core - If we only do ORM, add Core functionality (BEYOND SCOPE)
 
 ## cryptography - Modern cryptographic recipes (COMPLETE)
 Feasibility: High
@@ -154,7 +154,11 @@ Complexity: Medium - requires understanding of AMQP-style messaging patterns
 
 ## lxml - XML processing (COMPLETE)
 
-## openpyxl - Excel file handling
+## openpyxl - Excel file handling (COMPLETE)
+Feasibility: High
+Why: XLSX format is well-documented, can use zipfile and XML parsing
+Core Components: Workbook, Worksheet, Cell classes, XLSX file format handling
+Complexity: Medium - requires XML generation/parsing and ZIP file management
 
 ## Monitoring & Observability
 
