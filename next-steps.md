@@ -91,13 +91,21 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## SQLAlchemy Core - If we only do ORM, add Core functionality
 
-## cryptography - Modern cryptographic recipes
+## cryptography - Modern cryptographic recipes (COMPLETE)
+Feasibility: High
+Why: Standard cryptographic operations using Python's hashlib, hmac, and os modules
+Core Components: Fernet encryption, Hash functions, HMAC, Key derivation (PBKDF2/Scrypt/HKDF), PKCS7 padding, TOTP/HOTP
+Complexity: Medium-High - requires understanding of cryptographic primitives but achievable with standard library
 
 ## PyJWT - JSON Web Token implementation (COMPLETE)
 
 ## bcrypt - Password hashing (COMPLETE)
 
-## itsdangerous - Cryptographic signing
+## itsdangerous - Cryptographic signing (COMPLETE)
+Feasibility: High
+Why: Signature generation and verification using HMAC are well-understood
+Core Components: Signer, TimestampSigner, Serializer, TimedSerializer, URL-safe encoding
+Complexity: Medium - mainly involves HMAC, base64 encoding, and JSON serialization
 
 ## bandit - Security linter for Python
 
