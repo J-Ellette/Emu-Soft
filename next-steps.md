@@ -31,6 +31,8 @@ Make sure each folder in the repo has documentation, readme, etc.,
 Do all this while ensuring you do not break any scripts. 
 Make a new script_descriptions.md to list the results, names, uses, etc. - listed by folder name."
 
+### If any of the scripts listed below are redundancies/have already been implemented within the repo, just mark it as complete and skip it.
+
 ## pytest (COMPLETE)
 Feasibility: Very High
 Why: Test discovery, fixture management, and assertion rewriting are well-understood patterns
