@@ -392,6 +392,9 @@ class APISpec:
         lines = []
         indent_str = '  ' * indent
         
+        # Predefined set for YAML special characters
+        YAML_SPECIAL_CHARS = {':', '{', '}', '[', ']', ',', '&', '*', '#', '?', '|', '-', '<', '>', '=', '!', '%', '@', '\\'}
+        
         if isinstance(obj, dict):
             for key, value in obj.items():
                 if isinstance(value, dict):
@@ -418,13 +421,11 @@ class APISpec:
                         for line in value.split('\n'):
                             lines.append(f"{indent_str}  {line}")
                     else:
-                        # Escape quotes and special characters
-                        escaped_value = value.replace('"', '\\"')
-                        # Use single quotes if string contains special characters
-                        if any(char in value for char in [':', '{', '}', '[', ']', ',', '&', '*', '#', '?', '|', '-', '<', '>', '=', '!', '%', '@', '\\']):
-                            # Use single quotes and escape single quotes
-                            escaped_value = value.replace("'", "''")
-                            lines.append(f"{indent_str}{key}: '{escaped_value}'")
+                        # Use double quotes and escape backslashes and quotes
+                        escaped_value = value.replace('\\', '\\\\').replace('"', '\\"')
+                        # Check if contains special YAML characters
+                        if any(char in YAML_SPECIAL_CHARS for char in value):
+                            lines.append(f'{indent_str}{key}: "{escaped_value}"')
                         else:
                             lines.append(f'{indent_str}{key}: "{escaped_value}"')
                 else:
@@ -441,9 +442,9 @@ class APISpec:
                         if dict_lines:
                             first_line = dict_lines[0].lstrip()
                             lines.append(f"{indent_str}- {first_line}")
-                            # Remaining lines get proper indentation
+                            # Remaining lines get proper relative indentation
                             for line in dict_lines[1:]:
-                                lines.append(f"  {line}")
+                                lines.append(f"{indent_str}  {line}")
                 elif isinstance(item, list):
                     # Nested list
                     lines.append(f"{indent_str}-")
@@ -451,8 +452,8 @@ class APISpec:
                     if nested_yaml:
                         lines.append(nested_yaml)
                 elif isinstance(item, str):
-                    # Escape quotes in strings
-                    escaped_item = item.replace('"', '\\"')
+                    # Escape backslashes and quotes in strings
+                    escaped_item = item.replace('\\', '\\\\').replace('"', '\\"')
                     lines.append(f'{indent_str}- "{escaped_item}"')
                 else:
                     lines.append(f"{indent_str}- {item}")
