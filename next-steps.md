@@ -83,7 +83,7 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## sqlite3 enhancements - Better SQLite integration (COMPLETE)
 
-## asyncpg - Async PostgreSQL driver
+## asyncpg - Async PostgreSQL driver (COMPLETE)
 
 ## pandas - Data manipulation (huge undertaking!)
 
@@ -93,9 +93,9 @@ Complexity: Medium - simpler than MyPy but requires many rules
 
 ## cryptography - Modern cryptographic recipes
 
-## PyJWT - JSON Web Token implementation
+## PyJWT - JSON Web Token implementation (COMPLETE)
 
-## bcrypt - Password hashing
+## bcrypt - Password hashing (COMPLETE)
 
 ## itsdangerous - Cryptographic signing
 
