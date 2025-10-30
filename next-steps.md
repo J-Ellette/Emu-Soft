@@ -18,7 +18,17 @@ We have successfully emulated and recreated the following technologies:
 - Flask-Admin
 - Django Security Middleware
 
-Now we want to do the same with the following:
+Now we want to do the same with the following by picking the next two or three in line, implementing them, and then marking each item as (COMPLETE) once it has been implemented. 
+
+Each script should be given it's own folder in the root, following the grouping, naming, etc. format that was laid out in a previous step:
+"Go through each of the folders and determine which script(s) within each one is emulating - collect the name of that script or group of scripts, or the name of script or group of scripts if they are uniquely new scripts. 
+Regroup and/or rename files and folders as needed while ensuring that doing so does not break the script due to includes.
+Solo scripts, like those in the dev_tools folder ( https://github.com/J-Ellette/Emu-Soft/tree/main/dev_tools ) should be moved to their own folders in the root.
+Use your best judgement in grouping and naming. 
+If you find redundant scripts, compare and keep the best coded script and delete the other(s). 
+Make sure each folder in the repo has documentation, readme, etc.,
+Do all this while ensuring you do not break any scripts. 
+Make a new script_descriptions.md to list the results, names, uses, etc. - listed by folder name."
 
 ## pytest (COMPLETE)
 Feasibility: Very High
@@ -162,5 +172,6 @@ Complexity: Medium - simpler than MyPy but requires many rules
 ### DO NOT IMPLEMENT BELOW THIS LINE, THESE ARE INTERNAL NOTES
 Go through each of the folders and determine the script(s) within each one is emulating - collect the name of that script or group of scripts, or the name of script or group of scripts if they are uniquely new scripts. Regroup the scripts in to new folders, if needed, to keep like types together. Use your best judgement in grouping and naming. If you find redundant scripts, compare and keep the best coded script and delete the other(s). 
 Do all this while ensuring you do not break any scripts. 
+Solo scripts, like those in rhe dev_tools folder ( https://github.com/J-Ellette/Emu-Soft/tree/main/dev_tools ) should be moved to their own folders in the root.
 Make sure each folder in the repo has documentation, readme, etc.,
 Make a new descriptions.md to list the results, grouped by folder name.
