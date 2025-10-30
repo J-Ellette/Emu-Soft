@@ -601,6 +601,93 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
+### rq_emulator_tool/
+**What it emulates:** RQ (Redis Queue) - Simple Python job queue
+
+**Scripts:**
+- `rq_emulator.py` - RQ job queue implementation
+  - Job enqueueing for background processing
+  - Worker execution with burst mode
+  - Multiple named queues with priority
+  - Job status tracking (queued, started, finished, failed)
+  - Result retrieval with timeout support
+  - Job scheduling (run at specific time or after delay)
+  - Failure handling with exception capture
+  - Job metadata storage and retrieval
+  - Thread-safe operations
+  
+- `test_rq_emulator.py` - Test suite for RQ emulator
+  - Validates job creation and enqueueing
+  - Tests worker execution and result retrieval
+  - Tests multiple queues and priorities
+  - Verifies job status transitions
+  - Tests error handling
+  - Validates scheduled jobs
+  - Tests concurrent job processing (14 tests total)
+
+**Use:** Provides simple background job queue functionality without Redis dependency. Much simpler than Celery but still powerful for most use cases. Ideal for development, testing, and single-application background task processing with a low barrier to entry.
+
+---
+
+### apscheduler_emulator_tool/
+**What it emulates:** APScheduler (Advanced Python Scheduler)
+
+**Scripts:**
+- `apscheduler_emulator.py` - Job scheduling implementation
+  - BackgroundScheduler for non-blocking execution
+  - Date trigger for one-time execution at specific time
+  - Interval trigger for periodic execution (seconds to weeks)
+  - Cron trigger for time-based execution (cron-like)
+  - Job management (add, remove, pause, resume)
+  - Job state tracking (pending, running, paused, removed)
+  - Execution count and timing tracking
+  - Decorator support for scheduled functions
+  - Thread-safe operations with heap-based scheduling
+  
+- `test_apscheduler_emulator.py` - Test suite for APScheduler emulator
+  - Validates date trigger (one-time execution)
+  - Tests interval trigger (periodic execution)
+  - Tests cron trigger (time-based execution)
+  - Verifies job management operations
+  - Tests pause and resume functionality
+  - Tests multiple concurrent jobs
+  - Validates job state transitions
+  - Tests decorator-based scheduling (14 tests total)
+
+**Use:** Provides advanced job scheduling without external dependencies. Schedule Python code to execute later, either once or periodically. Supports cron-style, interval-based, and date-based scheduling. Ideal for periodic tasks, scheduled jobs, background processing, system maintenance, monitoring, and any scenario requiring timed execution.
+
+---
+
+### kombu_emulator_tool/
+**What it emulates:** Kombu - Messaging library for Python
+
+**Scripts:**
+- `kombu_emulator.py` - Message queue and routing implementation
+  - Connection and channel management
+  - Exchange types (direct, topic, fanout, headers)
+  - Queue declaration and binding
+  - Message routing based on routing keys
+  - Producer API for publishing messages
+  - Consumer API for receiving messages
+  - Message acknowledgment and rejection
+  - Message properties and headers
+  - Thread-safe message queuing
+  - Context manager support
+  
+- `test_kombu_emulator.py` - Test suite for Kombu emulator
+  - Validates connection management
+  - Tests exchange and queue operations
+  - Tests message routing (direct, fanout exchanges)
+  - Verifies producer and consumer functionality
+  - Tests message acknowledgment and rejection
+  - Tests multiple message handling
+  - Validates message properties and headers
+  - Tests queue operations (16 tests total)
+
+**Use:** Provides messaging library functionality without external message brokers. Uniform API for message queuing with support for multiple exchange types and routing patterns. Used by Celery as messaging backbone. Ideal for development, testing, inter-component communication, and prototyping messaging systems without RabbitMQ, Redis, or other brokers.
+
+---
+
 ## Accessibility Tools
 
 ### accessibility/
@@ -1287,6 +1374,12 @@ This document lists all scripts and modules in the repository, organized by fold
 - Bandit emulator - Security linting
 - Safety emulator - Dependency vulnerability scanning
 
+### Task Queues & Scheduling (4 tools)
+- Celery emulator (infrastructure/tasks.py) - Distributed task queue
+- RQ emulator - Simple Python job queue
+- APScheduler emulator - Advanced job scheduling
+- Kombu emulator - Messaging library (used by Celery)
+
 ### Web Development & Deployment (6 tool groups)
 - Web Framework - Core HTTP framework
 - API Framework - RESTful API building
@@ -1346,8 +1439,8 @@ This document lists all scripts and modules in the repository, organized by fold
 ---
 
 ## Total Count
-- **39 major folders/systems** (was 37, now includes bandit, safety)
-- **184+ Python scripts** (was 176+, added 8 new files)
+- **42 major folders/systems** (was 39, now includes rq_emulator_tool, apscheduler_emulator_tool, kombu_emulator_tool)
+- **193+ Python scripts** (was 184+, added 9 new files: 3 emulators + 3 tests + 3 READMEs)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
