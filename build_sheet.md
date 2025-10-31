@@ -46,7 +46,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## Security Tools - will need to be placed into a folder that includes the specific language of the script.
 - Vault (HashiCorp) - Secrets management (COMPLETE)
 - OAuth 2.0/OIDC server implementation (COMPLETE)
-- SAML authentication provider
+- SAML authentication provider (COMPLETE)
 - Certificate Authority (CA) implementation (COMPLETE)
 
 ## Monitoring & Observability - will need to be placed into a folder that includes the specific language of the script.
@@ -63,12 +63,12 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
 - ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/
-- Entity Framework - ORM
+- Entity Framework - ORM (COMPLETE)
 - SignalR - Real-time communication
 
 ## Ruby - will need to be placed into a new folder in the root called ruby/
-- Rails - Web framework
-- RSpec - Testing framework
+- Rails - Web framework (COMPLETE)
+- RSpec - Testing framework (COMPLETE)
 - Sidekiq - Background jobs
 
 ### Remaining High-Value Python Libraries - will go inside their own subfolders, inside the python directory
