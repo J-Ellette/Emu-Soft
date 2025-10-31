@@ -43,7 +43,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Ansible - Configuration management
 - Jenkins - CI/CD server
 
-## Security Tools - will need to be placed into a new folder in the root called security/
+## Security Tools - will need to be placed into a folder that includes the specific language of the script.
 - Vault (HashiCorp) - Secrets management
 - OAuth 2.0/OIDC server implementation
 - SAML authentication provider
