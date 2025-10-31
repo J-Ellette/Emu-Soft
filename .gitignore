@@ -35,3 +35,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Go
+go/*/*/gin_test
+go/*/*/cobra_test
+go/*/*/viper_test
