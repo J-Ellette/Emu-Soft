@@ -38,16 +38,16 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## System Tools & DevOps - will need to be placed into a folder that includes the specific language of the script.
 - Docker - Containerization platform (COMPLETE)
 - Nginx - Web server/reverse proxy (COMPLETE)
-- Kubernetes - Container orchestration (components)
+- Kubernetes - Container orchestration (components) (COMPLETE)
 - Terraform - Infrastructure as code (COMPLETE)
 - Ansible - Configuration management (COMPLETE)
 - Jenkins - CI/CD server (COMPLETE)
 
 ## Security Tools - will need to be placed into a folder that includes the specific language of the script.
 - Vault (HashiCorp) - Secrets management (COMPLETE)
-- OAuth 2.0/OIDC server implementation
+- OAuth 2.0/OIDC server implementation (COMPLETE)
 - SAML authentication provider
-- Certificate Authority (CA) implementation
+- Certificate Authority (CA) implementation (COMPLETE)
 
 ## Monitoring & Observability - will need to be placed into a folder that includes the specific language of the script.
 - Prometheus - Metrics collection (COMPLETE)
@@ -59,7 +59,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## Java Enterprise - will need to be placed into a new folder in the root called java/
 - Spring Boot - Enterprise framework (COMPLETE)
 - Hibernate - ORM standard (COMPLETE)
-- Maven/Gradle - Build tools (COMPLETE - Maven)
+- Maven/Gradle - Build tools (COMPLETE)
 
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
 - ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/
