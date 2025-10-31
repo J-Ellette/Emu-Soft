@@ -204,7 +204,10 @@ class Broker:
         self._delayed_messages: List[tuple] = []  # (eta, message)
         self._actors: Dict[str, Actor] = {}
         self._result_backend: Optional[ResultBackend] = None
-        self._lock = threading.RLock()  # Use RLock to allow recursive locking
+        # Use RLock (Reentrant Lock) to prevent deadlocks when methods like 
+        # enqueue() call declare_queue() while already holding the lock.
+        # This allows the same thread to acquire the lock multiple times.
+        self._lock = threading.RLock()
     
     def declare_queue(self, queue_name: str):
         """Declare a queue."""

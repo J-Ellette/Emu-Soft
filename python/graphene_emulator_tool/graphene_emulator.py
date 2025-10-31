@@ -390,12 +390,17 @@ class Schema:
                 # Try to convert to appropriate type
                 if value.isdigit():
                     value = int(value)
-                elif value.replace('.', '').isdigit():
-                    value = float(value)
                 elif value.lower() == 'true':
                     value = True
                 elif value.lower() == 'false':
                     value = False
+                else:
+                    # Try to parse as float
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        # Keep as string if not a valid float
+                        pass
                 
                 args[key] = value
         

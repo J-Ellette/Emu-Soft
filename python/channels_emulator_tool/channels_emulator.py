@@ -15,11 +15,12 @@ Key Features:
 
 from __future__ import annotations
 from typing import Any, Dict, List, Optional, Callable, Union
-from collections import defaultdict
+from collections import defaultdict, deque
 import asyncio
 import json
 import uuid
 import time
+import concurrent.futures
 
 
 class ChannelsError(Exception):
@@ -91,13 +92,14 @@ class WebsocketConsumer(BaseConsumer):
     
     async def __call__(self, receive: Callable, send: Callable):
         """Handle the WebSocket connection."""
-        self._send_queue = []
+        # Use deque for O(1) popleft() instead of O(n) list.pop(0)
+        self._send_queue = deque()
         self._receive = receive
         
         async def flush_send_queue():
             """Send all queued messages."""
             while self._send_queue:
-                message = self._send_queue.pop(0)
+                message = self._send_queue.popleft()
                 await send(message)
         
         # Wait for connection
@@ -339,8 +341,7 @@ def async_to_sync(func: Callable) -> Callable:
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
-                # Create a new loop in a thread
-                import concurrent.futures
+                # Create a new loop in a thread using ThreadPoolExecutor
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     future = executor.submit(asyncio.run, func(*args, **kwargs))
                     return future.result()
