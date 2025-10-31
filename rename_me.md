@@ -5,17 +5,17 @@ The following emulator tools in the `python/` directory have not yet been given 
 ## NEW: Recently Added Emulators
 
 - **nginx_emulator_tool** - Web server and reverse proxy emulator
-  - Location: `devops/nginx_emulator_tool/`
+  - Location: `python/nginx_emulator_tool/`
   - Emulates: Nginx
   - Suggested name: TBD
 
 - **vault_emulator_tool** - Secrets management emulator
-  - Location: `security/vault_emulator_tool/`
+  - Location: `python/vault_emulator_tool/`
   - Emulates: HashiCorp Vault
   - Suggested name: TBD
 
 - **grafana_emulator_tool** - Visualization and monitoring platform emulator
-  - Location: `monitor_observe/grafana_emulator_tool/`
+  - Location: `python/grafana_emulator_tool/`
   - Emulates: Grafana
   - Suggested name: TBD
 
@@ -25,17 +25,17 @@ The following emulator tools in the `python/` directory have not yet been given 
   - Suggested name: TBD
 
 - **docker_emulator_tool** - Container platform emulator
-  - Location: `devops/docker_emulator_tool/`
+  - Location: `python/docker_emulator_tool/`
   - Emulates: Docker
   - Suggested name: TBD
 
 - **ansible_emulator_tool** - Configuration management and automation emulator
-  - Location: `devops/ansible_emulator_tool/`
+  - Location: `python/ansible_emulator_tool/`
   - Emulates: Ansible
   - Suggested name: TBD
 
 - **jaeger_emulator_tool** - Distributed tracing system emulator
-  - Location: `monitor_observe/jaeger_emulator_tool/`
+  - Location: `python/jaeger_emulator_tool/`
   - Emulates: Jaeger
   - Suggested name: TBD
 
