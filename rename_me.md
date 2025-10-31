@@ -2,6 +2,28 @@
 
 The following emulator tools in the `python/` directory have not yet been given their final names and need to be renamed:
 
+## NEW: Recently Added Emulators
+
+- **nginx_emulator_tool** - Web server and reverse proxy emulator
+  - Location: `devops/nginx_emulator_tool/`
+  - Emulates: Nginx
+  - Suggested name: TBD
+
+- **vault_emulator_tool** - Secrets management emulator
+  - Location: `security/vault_emulator_tool/`
+  - Emulates: HashiCorp Vault
+  - Suggested name: TBD
+
+- **grafana_emulator_tool** - Visualization and monitoring platform emulator
+  - Location: `monitor_observe/grafana_emulator_tool/`
+  - Emulates: Grafana
+  - Suggested name: TBD
+
+- **hibernate_emulator_tool** - Java ORM framework emulator
+  - Location: `java/hibernate_emulator_tool/`
+  - Emulates: Hibernate
+  - Suggested name: TBD
+
 ## Infrastructure & DevOps Tools
 
 - **terraform_emulator_tool** - Infrastructure as Code tool (Terraform emulator)
