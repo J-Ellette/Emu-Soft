@@ -1,4 +1,6 @@
 """
+Developed by PowerShield, as an alternative to Black
+
 Black code formatter emulator - AST-based Python code formatting.
 Emulates Black functionality without external dependencies.
 
