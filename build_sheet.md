@@ -3,6 +3,7 @@ Each should go in its own subfolder, inside the listed folder.
 Delete from the list any redundancies. 
 Mark as (COMPLETE) each item implemented. 
 Delete from the list any items that are beyong the scope of this project due to difficulties.
+Do all languages, in whichever order you want to go after the list.
 
 Each script in each folder/subfolder should be proveided with a readme.md detailing what it is, what it has emulated, uses, etc.
 
