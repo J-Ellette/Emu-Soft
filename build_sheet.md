@@ -26,13 +26,13 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Testify - Testing toolkit (COMPLETE)
 - GORM - ORM (COMPLETE)
 - Redis Go client (COMPLETE)
-- Go-kit - Microservices toolkit
+- Go-kit - Microservices toolkit (COMPLETE)
 
 ## Rust Ecosystem - will need to be placed into a new folder in the root called rust/
 - Actix-web - Web framework (COMPLETE)
-- Serde - Serialization framework
-- Tokio - Async runtime
-- Clap - CLI argument parsing
+- Serde - Serialization framework (COMPLETE)
+- Tokio - Async runtime (COMPLETE)
+- Clap - CLI argument parsing (COMPLETE)
 - Diesel - ORM and query builder
 
 ## System Tools & DevOps - will need to be placed into a new folder in the root called devops/
