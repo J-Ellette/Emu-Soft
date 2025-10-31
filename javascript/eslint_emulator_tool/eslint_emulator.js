@@ -297,26 +297,29 @@ class EqeqeqRule extends Rule {
         
         lines.forEach((line, index) => {
             // Match == or != but not === or !==
-            const eqMatch = /(\s)==(\s)/.exec(line);
-            const neqMatch = /(\s)!=(\s)/.exec(line);
+            // Using negative lookahead to avoid matching === and !==
+            const eqRegex = /[^=!](\s*==\s*)[^=]/g;
+            const neqRegex = /[^!](\s*!=\s*)[^=]/g;
             
-            if (eqMatch) {
+            let eqMatch;
+            while ((eqMatch = eqRegex.exec(line)) !== null) {
                 context.report({
                     ruleId: 'eqeqeq',
                     message: 'Expected \'===\' and instead saw \'==\'.',
                     severity: this.config.severity || 2,
                     line: index + 1,
-                    column: line.indexOf(' ==')
+                    column: eqMatch.index + 1  // +1 to skip the char before ==
                 });
             }
             
-            if (neqMatch) {
+            let neqMatch;
+            while ((neqMatch = neqRegex.exec(line)) !== null) {
                 context.report({
                     ruleId: 'eqeqeq',
                     message: 'Expected \'!==\' and instead saw \'!=\'.',
                     severity: this.config.severity || 2,
                     line: index + 1,
-                    column: line.indexOf(' !=')
+                    column: neqMatch.index + 1  // +1 to skip the char before !=
                 });
             }
         });
