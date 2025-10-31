@@ -6,10 +6,6 @@ low-level Python client for Elasticsearch. It provides a straightforward
 interface to interact with Elasticsearch clusters for indexing, searching,
 and managing documents.
 
-Author: CIV-ARCOS Project
-License: Original implementation for educational purposes
-
-
 Developed by PowerShield
 """
 
