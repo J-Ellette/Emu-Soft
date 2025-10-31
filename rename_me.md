@@ -1,5 +1,21 @@
 # Scripts That Still Need to Be Renamed
 
+## New Tools Awaiting Rename
+
+The following newly implemented emulator tools need names assigned:
+
+### Python Security Tools
+- ✅ oauth_server_emulator_tool → **[Needs Name]** (OAuth 2.0/OIDC server emulator in python/)
+- ✅ ca_emulator_tool → **[Needs Name]** (Certificate Authority emulator in python/)
+
+### Python System Tools  
+- ✅ kubernetes_orchestrator_tool → **[Needs Name]** (Kubernetes orchestration emulator in python/)
+
+### Java Build Tools
+- ✅ gradle_emulator_tool → **[Needs Name]** (Gradle build tool emulator in java/)
+
+---
+
 All emulator tools have been successfully renamed! See the "Renamed Tools" section below for the complete list.
 
 ## Notes
