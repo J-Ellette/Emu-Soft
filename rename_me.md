@@ -7,12 +7,20 @@ The following newly implemented emulator tools need names assigned:
 ### Python Security Tools
 - ✅ oauth_server_emulator_tool → **[Needs Name]** (OAuth 2.0/OIDC server emulator in python/)
 - ✅ ca_emulator_tool → **[Needs Name]** (Certificate Authority emulator in python/)
+- ✅ saml_emulator_tool → **[Needs Name]** (SAML authentication provider emulator in python/saml_emulator_tool/)
 
 ### Python System Tools  
 - ✅ kubernetes_orchestrator_tool → **[Needs Name]** (Kubernetes orchestration emulator in python/)
 
 ### Java Build Tools
 - ✅ gradle_emulator_tool → **[Needs Name]** (Gradle build tool emulator in java/)
+
+### C# .NET Tools
+- ✅ entity_framework_emulator_tool → **[Needs Name]** (Entity Framework ORM emulator in c_sharp/entity_framework_emulator_tool/)
+
+### Ruby Tools
+- ✅ rails_emulator_tool → **[Needs Name]** (Ruby on Rails web framework emulator in ruby/rails_emulator_tool/)
+- ✅ rspec_emulator_tool → **[Needs Name]** (RSpec testing framework emulator in ruby/rspec_emulator_tool/)
 
 ---
 

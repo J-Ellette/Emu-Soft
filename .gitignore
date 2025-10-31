@@ -51,3 +51,15 @@ rust/**/test_*_emulator
 rust/**/*_emulator
 !rust/**/*.rs
 *.class
+
+# C# / .NET
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+.vs/
+*.user
+*.suo
+*.csproj.user
