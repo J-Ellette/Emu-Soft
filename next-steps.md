@@ -1,38 +1,3 @@
-### We have successfully emulated and recreated the following technologies:
-- Django
-- FastAPI
-- Flask
-- Django ORM
-- SQLAlchemy
-- Peewee/Tortoise - Lighter ORMs
-- Django-allauth
-- Authlib
-- PassLib
-- Django Templates
-- Jinja2
-- Django REST Framework (DRF)
-- Pydantic
-- Django Cache Framework
-- Redis-py / aioredis
-- Django Admin
-- Flask-Admin
-- Django Security Middleware
-
-### Now we want to do the same with the following by picking the next two or three in line, implementing them, and then marking each item as (COMPLETE) once it has been implemented. 
-
-### Each script should be given it's own folder in the root, following the grouping, naming, etc. format that was laid out in a previous step:
-
-"Go through each of the folders and determine which script(s) within each one is emulating - collect the name of that script or group of scripts, or the name of script or group of scripts if they are uniquely new scripts. 
-Regroup and/or rename files and folders as needed while ensuring that doing so does not break the script due to includes.
-Solo scripts, like those previously in the dev_tools folder ( https://github.com/J-Ellette/Emu-Soft/tree/main/dev_tools ) should be moved to their own folders in the root.
-Use your best judgement in grouping and naming. 
-If you find redundant scripts, compare and keep the best coded script and delete the other(s). 
-Make sure each folder in the repo has documentation, readme, etc.,
-Do all this while ensuring you do not break any scripts. 
-Make a new script_descriptions.md to list the results, names, uses, etc. - listed by folder name."
-
-### If any of the scripts listed below are redundancies/have already been implemented within the repo, just mark it as complete and skip it. You can verify by checking here: https://github.com/J-Ellette/Emu-Soft/blob/main/script_descriptions.md
-
 ## pytest (COMPLETE)
 Feasibility: Very High
 Why: Test discovery, fixture management, and assertion rewriting are well-understood patterns
@@ -84,12 +49,6 @@ Complexity: Medium - simpler than MyPy but requires many rules
 ## sqlite3 enhancements - Better SQLite integration (COMPLETE)
 
 ## asyncpg - Async PostgreSQL driver (COMPLETE)
-
-## pandas - Data manipulation (BEYOND SCOPE)
-
-## numpy - Numerical computing foundation (BEYOND SCOPE)
-
-## SQLAlchemy Core - If we only do ORM, add Core functionality (BEYOND SCOPE)
 
 ## cryptography - Modern cryptographic recipes (COMPLETE)
 Feasibility: High
@@ -252,13 +211,113 @@ Why: Monkey-patching datetime/time modules is well-understood
 Core Components: Time freezing (datetime.now, date.today, time.time), time manipulation (tick, move_to), context manager/decorator
 Complexity: Medium - requires careful module patching and restoration
 
-## pytest-django - Django-specific pytest plugins
+## Django (COMPLETE)
+Feasibility: Very High
+Why: Web framework patterns, ORM, and admin interface are well-documented concepts
+Core Components: WSGI/ASGI application, URL routing, request/response handling, middleware, ORM, admin interface, template engine
+Complexity: High - comprehensive framework with many components but achievable
 
-## BeautifulSoup - HTML parsing
+## FastAPI (COMPLETE)
+Feasibility: Very High
+Why: ASGI framework with async support and automatic API documentation
+Core Components: ASGI application, async request handling, dependency injection, Pydantic integration, OpenAPI documentation
+Complexity: Medium-High - requires async patterns and API documentation generation
 
-## scrapy - Web scraping framework
+## Flask (COMPLETE)
+Feasibility: Very High
+Why: Lightweight WSGI framework with simple routing and request handling
+Core Components: WSGI application, routing, request/response objects, Jinja2 integration
+Complexity: Medium - simpler than Django but still comprehensive
 
-## selenium - Browser automation
+## Django ORM (COMPLETE)
+Feasibility: High
+Why: Object-relational mapping with query generation and model management
+Core Components: Model definitions, query builder, relationships, migrations
+Complexity: High - requires query translation and relationship management
+
+## SQLAlchemy (COMPLETE)
+Feasibility: High
+Why: Database toolkit with ORM and core SQL expression language
+Core Components: Engine, ORM, query builder, session management
+Complexity: High - comprehensive database abstraction layer
+
+## Peewee/Tortoise - Lighter ORMs (COMPLETE)
+Feasibility: High
+Why: Simplified ORM patterns for easier database interaction
+Core Components: Model definitions, simple query interface, async support (Tortoise)
+Complexity: Medium - lighter weight than SQLAlchemy
+
+## Django-allauth (COMPLETE)
+Feasibility: High
+Why: Authentication flows and social auth integration patterns are well-understood
+Core Components: User registration, login/logout, social authentication, email verification
+Complexity: Medium - requires understanding of OAuth flows
+
+## Authlib (COMPLETE)
+Feasibility: High
+Why: OAuth and authentication protocol implementations
+Core Components: OAuth1/OAuth2 clients and servers, JWT handling
+Complexity: Medium-High - requires protocol understanding
+
+## PassLib (COMPLETE)
+Feasibility: High
+Why: Password hashing with multiple algorithm support
+Core Components: Password hashing algorithms (bcrypt, argon2, etc.), context management
+Complexity: Medium - cryptographic primitives implementation
+
+## Django Templates (COMPLETE)
+Feasibility: High
+Why: Template engine with inheritance and filters
+Core Components: Template parser, variable substitution, template tags, filters, inheritance
+Complexity: Medium-High - requires template language parsing
+
+## Jinja2 (COMPLETE)
+Feasibility: High
+Why: Powerful template engine with similar concepts to Django templates
+Core Components: Template parser, environment management, filters, tests, globals
+Complexity: Medium-High - sophisticated template processing
+
+## Django REST Framework (DRF) (COMPLETE)
+Feasibility: High
+Why: RESTful API patterns with serialization and authentication
+Core Components: Serializers, viewsets, routers, authentication, permissions, pagination
+Complexity: High - comprehensive API framework
+
+## Pydantic (COMPLETE)
+Feasibility: High
+Why: Data validation using Python type hints
+Core Components: BaseModel, field validators, type coercion, serialization
+Complexity: Medium - type-based validation and serialization
+
+## Django Cache Framework (COMPLETE)
+Feasibility: High
+Why: Caching abstraction with multiple backends
+Core Components: Cache backends (memory, file, database), decorators, middleware
+Complexity: Medium - caching strategies and invalidation
+
+## Redis-py / aioredis (COMPLETE)
+Feasibility: High
+Why: In-memory data structure store with async support
+Core Components: String operations, lists, sets, hashes, pub/sub, async interface
+Complexity: Medium - data structure implementation and async patterns
+
+## Django Admin (COMPLETE)
+Feasibility: High
+Why: Auto-generated admin interface from models
+Core Components: ModelAdmin, admin site, CRUD views, filters, search
+Complexity: High - automatic interface generation from models
+
+## Flask-Admin (COMPLETE)
+Feasibility: High
+Why: Admin interface for Flask applications
+Core Components: Admin views, model views, form generation, authentication
+Complexity: Medium-High - similar to Django Admin but for Flask
+
+## Django Security Middleware (COMPLETE)
+Feasibility: High
+Why: Security headers and protections are well-understood
+Core Components: CSRF protection, XSS protection, security headers, HTTPS enforcement
+Complexity: Medium - security best practices implementation
 
 
 ### DO NOT IMPLEMENT BELOW THIS LINE, THIS IS RESERVED FOR INTERNAL NOTES
