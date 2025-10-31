@@ -91,8 +91,8 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - elasticsearch-py - Elasticsearch client (COMPLETE)
 
-- graphene - GraphQL framework
+- graphene - GraphQL framework (COMPLETE)
 
-- dramatiq - Alternative task queue
+- dramatiq - Alternative task queue (COMPLETE)
 
-- channels - WebSocket support for Django-style frameworks
+- channels - WebSocket support for Django-style frameworks (COMPLETE)
