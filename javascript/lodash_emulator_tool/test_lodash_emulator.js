@@ -234,6 +234,16 @@ runner.test('set - should set nested value', () => {
     assertEqual(obj.a.b.c, 42);
 });
 
+runner.test('set - should prevent prototype pollution', () => {
+    const obj = {};
+    _.set(obj, '__proto__.polluted', 'bad');
+    _.set(obj, 'constructor.prototype.polluted', 'bad');
+    
+    // Should not pollute prototype
+    const newObj = {};
+    assert(newObj.polluted === undefined, 'Prototype should not be polluted');
+});
+
 runner.test('has - should check if property exists', () => {
     const obj = { a: { b: 2 } };
     assert(_.has(obj, 'a.b') === true);

@@ -368,17 +368,34 @@ _.set = function(obj, path, value) {
     }
     
     const keys = Array.isArray(path) ? path : path.split('.');
+    
+    // Guard against prototype pollution
+    const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+    for (const key of keys) {
+        if (dangerousKeys.includes(key)) {
+            return obj;
+        }
+    }
+    
     let current = obj;
     
     for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];
+        // Additional guard at each level
+        if (dangerousKeys.includes(key)) {
+            return obj;
+        }
         if (!(key in current) || typeof current[key] !== 'object') {
             current[key] = {};
         }
         current = current[key];
     }
     
-    current[keys[keys.length - 1]] = value;
+    const finalKey = keys[keys.length - 1];
+    // Guard before final assignment
+    if (!dangerousKeys.includes(finalKey)) {
+        current[finalKey] = value;
+    }
     return obj;
 };
 
