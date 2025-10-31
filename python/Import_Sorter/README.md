@@ -44,7 +44,7 @@ This module provides automatic import sorting and organization according to PEP 
 ### Basic Import Sorting
 
 ```python
-from isort_emulator import sort_imports
+from Import_Sorter import sort_imports
 
 code = """
 import sys
@@ -75,7 +75,7 @@ from myapp.models import User
 ### Sort a File
 
 ```python
-from isort_emulator import sort_file
+from Import_Sorter import sort_file
 
 # Sort and modify file
 changed = sort_file('mymodule.py')
@@ -91,7 +91,7 @@ if not is_sorted:
 ### Sort a Directory
 
 ```python
-from isort_emulator import sort_directory
+from Import_Sorter import sort_directory
 
 # Sort all Python files in directory
 modified, total = sort_directory('src/',
@@ -104,7 +104,7 @@ print(f"Modified {modified} of {total} files")
 ### Custom Classification
 
 ```python
-from isort_emulator import sort_imports
+from Import_Sorter import sort_imports
 
 code = """
 import requests
@@ -132,7 +132,7 @@ profile = black
 Load and use configuration:
 
 ```python
-from isort_emulator import Config, sort_imports
+from Import_Sorter import Config, sort_imports
 
 config = Config.from_file('.isort.cfg')
 
@@ -201,13 +201,13 @@ You can run the emulator as a script:
 
 ```bash
 # Sort a single file
-python isort_emulator.py myfile.py
+python Import_Sorter.py myfile.py
 
 # Sort a directory
-python isort_emulator.py src/
+python Import_Sorter.py src/
 
 # Check without modifying
-python isort_emulator.py --check myfile.py
+python Import_Sorter.py --check myfile.py
 ```
 
 ## Advanced Features
@@ -273,7 +273,7 @@ The emulator uses the following logic to classify imports:
 Run the test suite:
 
 ```bash
-python test_isort_emulator.py
+python test_Import_Sorter.py
 ```
 
 The test suite includes:
@@ -391,7 +391,7 @@ known_first_party = {'myapp', 'mylib', 'mytools'}
 Add to your CI pipeline:
 
 ```bash
-python isort_emulator.py --check src/
+python Import_Sorter.py --check src/
 if [ $? -ne 0 ]; then
     echo "Imports are not sorted!"
     exit 1
@@ -405,7 +405,7 @@ Automatically sort imports before committing:
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
-python isort_emulator.py src/
+python Import_Sorter.py src/
 git add -u
 ```
 

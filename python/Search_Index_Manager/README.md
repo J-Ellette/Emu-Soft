@@ -58,7 +58,7 @@ This emulator implements core functionality for Elasticsearch operations:
 ### Creating a Client
 
 ```python
-from elasticsearch_emulator import Elasticsearch, connect
+from Search_Index_Manager import Elasticsearch, connect
 
 # Create client with default settings
 es = Elasticsearch()
@@ -433,7 +433,7 @@ if result['errors']:
 ### Application Logging
 
 ```python
-from elasticsearch_emulator import Elasticsearch
+from Search_Index_Manager import Elasticsearch
 from datetime import datetime
 
 es = Elasticsearch()
@@ -469,7 +469,7 @@ errors = es.search(
 ### Product Search Engine
 
 ```python
-from elasticsearch_emulator import Elasticsearch
+from Search_Index_Manager import Elasticsearch
 
 es = Elasticsearch()
 
@@ -549,7 +549,7 @@ results = search_products('mouse', category='electronics', max_price=50)
 ### Analytics and Metrics
 
 ```python
-from elasticsearch_emulator import Elasticsearch
+from Search_Index_Manager import Elasticsearch
 from datetime import datetime, timedelta
 
 es = Elasticsearch()
@@ -637,7 +637,7 @@ Simulates efficient bulk operations for high-throughput scenarios.
 Run the test suite:
 
 ```bash
-python test_elasticsearch_emulator.py
+python test_Search_Index_Manager.py
 ```
 
 The test suite covers:

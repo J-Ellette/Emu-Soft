@@ -45,7 +45,7 @@ This emulator implements core Alembic functionality:
 ### Initializing a Migration Environment
 
 ```python
-from alembic_emulator import init, Config
+from Database_Versioner import init, Config
 
 # Initialize new migration environment
 result = init(directory='alembic', template='generic')
@@ -55,7 +55,7 @@ print(f"Created migration directory: {result['directory']}")
 ### Creating Migration Revisions
 
 ```python
-from alembic_emulator import revision, Config
+from Database_Versioner import revision, Config
 
 # Create a new migration
 rev_id = revision(message='Create users table')
@@ -74,7 +74,7 @@ rev_id3 = revision(message='Create posts table', config=config)
 ### Upgrading and Downgrading
 
 ```python
-from alembic_emulator import upgrade, downgrade, current
+from Database_Versioner import upgrade, downgrade, current
 
 # Upgrade to latest version
 applied = upgrade('head')
@@ -99,7 +99,7 @@ upgrade('abc123')
 ### Querying Migration History
 
 ```python
-from alembic_emulator import history, heads, current
+from Database_Versioner import history, heads, current
 
 # Get migration history
 hist = history(verbose=True)
@@ -120,7 +120,7 @@ print(f"Current: {curr}")
 ### Stamping Database Version
 
 ```python
-from alembic_emulator import stamp, revision
+from Database_Versioner import stamp, revision
 
 # Create revisions
 rev1 = revision('First migration')
@@ -137,7 +137,7 @@ print(f"Current revision: {current()}")
 ### Using Script Directory
 
 ```python
-from alembic_emulator import Config, ScriptDirectory
+from Database_Versioner import Config, ScriptDirectory
 
 # Create configuration
 config = Config('alembic.ini')
@@ -163,7 +163,7 @@ for rev in revisions:
 ### Branch and Merge
 
 ```python
-from alembic_emulator import revision, merge, Config, ScriptDirectory
+from Database_Versioner import revision, merge, Config, ScriptDirectory
 
 # Create base migration
 base = revision('Base migration')
@@ -183,7 +183,7 @@ print(f"Merge revision: {merge_rev}")
 ### Using Operations in Migration Scripts
 
 ```python
-from alembic_emulator import op
+from Database_Versioner import op
 
 # In your migration's upgrade() function:
 def upgrade():
@@ -210,7 +210,7 @@ def downgrade():
 ### Complete Migration Workflow
 
 ```python
-from alembic_emulator import (
+from Database_Versioner import (
     init, revision, upgrade, downgrade, 
     current, history, Config
 )
@@ -263,7 +263,7 @@ print(f"Re-applied: {applied}")
 ### Working with Migration Context
 
 ```python
-from alembic_emulator import Config, ScriptDirectory, MigrationContext
+from Database_Versioner import Config, ScriptDirectory, MigrationContext
 
 # Setup
 config = Config()
@@ -286,7 +286,7 @@ print(f"Stamped to: {context.get_current_revision()}")
 Run the comprehensive test suite:
 
 ```bash
-python test_alembic_emulator.py
+python test_Database_Versioner.py
 ```
 
 Tests cover:
@@ -308,7 +308,7 @@ This emulator is designed to be a drop-in replacement for Alembic in development
 # from alembic import command, config
 
 # Use:
-from alembic_emulator import revision, upgrade, downgrade, Config
+from Database_Versioner import revision, upgrade, downgrade, Config
 ```
 
 ## Use Cases

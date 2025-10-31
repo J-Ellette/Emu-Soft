@@ -54,7 +54,7 @@ This emulator implements core SQLAlchemy functionality:
 ### Engine and Connection
 
 ```python
-from sqlalchemy_core_emulator import create_engine
+from Query_Engine import create_engine
 
 # Create engine
 engine = create_engine('sqlite:///database.db')
@@ -77,7 +77,7 @@ with engine.connect() as conn:
 ### Schema Definition
 
 ```python
-from sqlalchemy_core_emulator import (
+from Query_Engine import (
     create_engine, MetaData, Table, Column,
     Integer, String, Boolean, DateTime
 )
@@ -113,7 +113,7 @@ metadata.drop_all()
 ### INSERT Operations
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -153,7 +153,7 @@ with engine.connect() as conn:
 ### SELECT Operations
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -218,7 +218,7 @@ with engine.connect() as conn:
 ### Result Handling
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -253,7 +253,7 @@ with engine.connect() as conn:
 ### UPDATE Operations
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -299,7 +299,7 @@ with engine.connect() as conn:
 ### DELETE Operations
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -325,7 +325,7 @@ with engine.connect() as conn:
 ### Transactions
 
 ```python
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 engine = create_engine('sqlite:///app.db')
 metadata = MetaData(bind=engine)
@@ -363,7 +363,7 @@ with engine.connect() as conn:
 ### User Management System
 
 ```python
-from sqlalchemy_core_emulator import (
+from Query_Engine import (
     create_engine, MetaData, Table, Column,
     Integer, String, Boolean, DateTime
 )
@@ -437,7 +437,7 @@ print(f"Active users: {len(active)}")
 ### Blog System
 
 ```python
-from sqlalchemy_core_emulator import (
+from Query_Engine import (
     create_engine, MetaData, Table, Column,
     Integer, String, Text, DateTime
 )
@@ -515,7 +515,7 @@ print(f"Post has {len(post_comments)} comments")
 ### Product Inventory
 
 ```python
-from sqlalchemy_core_emulator import (
+from Query_Engine import (
     create_engine, MetaData, Table, Column,
     Integer, String, Float, Numeric
 )
@@ -586,7 +586,7 @@ update_stock('MSE-001', 20)
 Run the comprehensive test suite:
 
 ```bash
-python test_sqlalchemy_core_emulator.py
+python test_Query_Engine.py
 ```
 
 Tests cover:
@@ -608,7 +608,7 @@ This emulator is designed to be compatible with SQLAlchemy Core usage patterns:
 # from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
 # Use:
-from sqlalchemy_core_emulator import create_engine, MetaData, Table, Column, Integer, String
+from Query_Engine import create_engine, MetaData, Table, Column, Integer, String
 
 # The rest of your code remains largely unchanged
 engine = create_engine('sqlite:///database.db')

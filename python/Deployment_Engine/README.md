@@ -50,7 +50,7 @@ This emulator implements core Fabric functionality:
 ### Basic Connection and Command Execution
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 
 # Create connection
 conn = Connection('web1.example.com', user='deployer')
@@ -69,7 +69,7 @@ result = conn.local('ls -la')
 ### Using Context Manager
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 
 # Automatic connection management
 with Connection('web1.example.com', user='admin') as conn:
@@ -85,7 +85,7 @@ with Connection('web1.example.com', user='admin') as conn:
 ### File Transfer
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 
 conn = Connection('deploy.example.com')
 
@@ -104,7 +104,7 @@ conn.put('config.yml')  # Uploads to config.yml on remote
 ### Command Results
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 
 conn = Connection('server.com')
 
@@ -129,7 +129,7 @@ output = str(result)
 ### Group Operations
 
 ```python
-from fabric_emulator import Group
+from Deployment_Engine import Group
 
 # Create group of servers
 servers = Group(
@@ -158,7 +158,7 @@ servers.close()
 ### Sudo with Specific User
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 
 conn = Connection('server.com')
 
@@ -175,7 +175,7 @@ conn.sudo('npm install', user='nodejs', env={'NODE_ENV': 'production'})
 ### Task Definition
 
 ```python
-from fabric_emulator import Connection, task
+from Deployment_Engine import Connection, task
 
 @task
 def deploy(conn):
@@ -202,7 +202,7 @@ with Connection('deploy.example.com') as conn:
 ### Module-Level Functions
 
 ```python
-from fabric_emulator import run, sudo, put, get
+from Deployment_Engine import run, sudo, put, get
 
 # Quick command execution
 result = run('hostname', 'server.com', user='admin')
@@ -218,7 +218,7 @@ get('/remote/log.txt', 'local_log.txt', 'server.com')
 ### Complete Deployment Example
 
 ```python
-from fabric_emulator import Connection, Group
+from Deployment_Engine import Connection, Group
 
 def deploy_application():
     """Complete deployment workflow."""
@@ -276,7 +276,7 @@ deploy_application()
 ### Configuration Management
 
 ```python
-from fabric_emulator import Connection, Config
+from Deployment_Engine import Connection, Config
 
 # Create configuration
 config = Config(overrides={
@@ -296,7 +296,7 @@ result = conn.run('might-fail-command')
 ### Database Backup Example
 
 ```python
-from fabric_emulator import Connection
+from Deployment_Engine import Connection
 from datetime import datetime
 
 def backup_database(db_host, db_name):
@@ -333,7 +333,7 @@ backup_database('db.example.com', 'production_db')
 ### Multi-Environment Deployment
 
 ```python
-from fabric_emulator import Group
+from Deployment_Engine import Group
 
 def deploy_to_environment(env):
     """Deploy to specific environment."""
@@ -377,7 +377,7 @@ deploy_to_environment('production')
 Run the comprehensive test suite:
 
 ```bash
-python test_fabric_emulator.py
+python test_Deployment_Engine.py
 ```
 
 Tests cover:
@@ -398,7 +398,7 @@ This emulator is designed to be a drop-in replacement for Fabric in development 
 # from fabric import Connection, Config, Group
 
 # Use:
-from fabric_emulator import Connection, Config, Group
+from Deployment_Engine import Connection, Config, Group
 ```
 
 ## Use Cases

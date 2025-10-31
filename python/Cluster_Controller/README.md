@@ -47,7 +47,7 @@ This emulator implements core functionality for Kubernetes resource management:
 ### Configuration
 
 ```python
-from kubernetes_emulator import config, client
+from Cluster_Controller import config, client
 
 # Load configuration from ~/.kube/config
 config.load_kube_config()
@@ -63,8 +63,8 @@ apps_v1 = client.AppsV1Api()
 ### Working with Namespaces
 
 ```python
-from kubernetes_emulator import client
-from kubernetes_emulator import V1Namespace, V1ObjectMeta
+from Cluster_Controller import client
+from Cluster_Controller import V1Namespace, V1ObjectMeta
 
 v1 = client.CoreV1Api()
 
@@ -91,8 +91,8 @@ v1.delete_namespace("my-namespace")
 #### Creating Pods
 
 ```python
-from kubernetes_emulator import client
-from kubernetes_emulator import (
+from Cluster_Controller import client
+from Cluster_Controller import (
     V1Pod, V1PodSpec, V1Container, V1ObjectMeta
 )
 
@@ -175,7 +175,7 @@ v1.delete_namespaced_pod(name="my-pod", namespace="default")
 ### Working with Services
 
 ```python
-from kubernetes_emulator import (
+from Cluster_Controller import (
     V1Service, V1ServiceSpec, V1ServicePort
 )
 
@@ -235,7 +235,7 @@ v1.delete_namespaced_service(
 ### Working with Deployments
 
 ```python
-from kubernetes_emulator import (
+from Cluster_Controller import (
     V1Deployment, V1DeploymentSpec
 )
 
@@ -303,7 +303,7 @@ apps_v1.delete_namespaced_deployment(
 ### Working with ConfigMaps
 
 ```python
-from kubernetes_emulator import V1ConfigMap
+from Cluster_Controller import V1ConfigMap
 
 v1 = client.CoreV1Api()
 
@@ -344,7 +344,7 @@ v1.delete_namespaced_config_map(name="app-config", namespace="default")
 ### Working with Secrets
 
 ```python
-from kubernetes_emulator import V1Secret
+from Cluster_Controller import V1Secret
 import base64
 
 v1 = client.CoreV1Api()
@@ -386,8 +386,8 @@ v1.delete_namespaced_secret(name="db-credentials", namespace="default")
 ### Application Deployment Script
 
 ```python
-from kubernetes_emulator import client, config
-from kubernetes_emulator import (
+from Cluster_Controller import client, config
+from Cluster_Controller import (
     V1Namespace, V1ObjectMeta, V1Deployment, V1DeploymentSpec,
     V1Service, V1ServiceSpec, V1ServicePort, V1ConfigMap
 )
@@ -449,7 +449,7 @@ def deploy_application():
 ### Resource Monitoring
 
 ```python
-from kubernetes_emulator import client, config
+from Cluster_Controller import client, config
 
 def monitor_cluster():
     config.load_kube_config()
@@ -522,7 +522,7 @@ Tracks resource states and lifecycle (creating, running, terminating, etc.).
 Run the test suite:
 
 ```bash
-python test_kubernetes_emulator.py
+python test_Cluster_Controller.py
 ```
 
 The test suite covers:

@@ -46,7 +46,7 @@ This emulator implements core dramatiq functionality:
 ### Basic Actor Definition
 
 ```python
-from dramatiq_emulator import actor
+from Background_Process_Manager import actor
 
 @actor
 def send_email(to, subject, body):
@@ -66,7 +66,7 @@ print(f"Message ID: {message.message_id}")
 ### Actor with Custom Options
 
 ```python
-from dramatiq_emulator import actor
+from Background_Process_Manager import actor
 
 @actor(queue_name='emails', max_retries=5, time_limit=30000)
 def send_notification(user_id, notification_type):
@@ -81,7 +81,7 @@ message = send_notification.send(123, "welcome")
 ### Working with Workers
 
 ```python
-from dramatiq_emulator import actor, get_broker, Worker
+from Background_Process_Manager import actor, get_broker, Worker
 import time
 
 @actor
@@ -111,7 +111,7 @@ worker.stop()
 ### Storing and Retrieving Results
 
 ```python
-from dramatiq_emulator import actor, get_broker, Worker, ResultBackend, Results
+from Background_Process_Manager import actor, get_broker, Worker, ResultBackend, Results
 import time
 
 # Set up result backend
@@ -144,7 +144,7 @@ worker.stop()
 ### Delayed Tasks
 
 ```python
-from dramatiq_emulator import actor
+from Background_Process_Manager import actor
 
 @actor
 def scheduled_task(task_name):
@@ -163,7 +163,7 @@ print("Task scheduled for later execution")
 ### Pipelines - Chaining Tasks
 
 ```python
-from dramatiq_emulator import actor, Pipeline
+from Background_Process_Manager import actor, Pipeline
 
 @actor
 def download_file(url):
@@ -193,7 +193,7 @@ pipeline.run()
 ### Groups - Parallel Execution
 
 ```python
-from dramatiq_emulator import actor, group, get_broker, Worker
+from Background_Process_Manager import actor, group, get_broker, Worker
 import time
 
 @actor
@@ -224,7 +224,7 @@ worker.stop()
 ### Complete Example: Image Processing Service
 
 ```python
-from dramatiq_emulator import actor, get_broker, Worker, ResultBackend, Results
+from Background_Process_Manager import actor, get_broker, Worker, ResultBackend, Results
 import time
 
 # Set up infrastructure
@@ -299,7 +299,7 @@ upload_worker.stop()
 ### Error Handling
 
 ```python
-from dramatiq_emulator import actor, ActorNotFound
+from Background_Process_Manager import actor, ActorNotFound
 
 @actor
 def risky_task(value):
@@ -321,7 +321,7 @@ message = risky_task.send(-5)
 Run the comprehensive test suite:
 
 ```bash
-python test_dramatiq_emulator.py
+python test_Background_Process_Manager.py
 ```
 
 Tests cover:
@@ -344,7 +344,7 @@ This emulator is designed to be a drop-in replacement for dramatiq in developmen
 # import dramatiq
 
 # Use:
-import dramatiq_emulator as dramatiq
+import Background_Process_Manager as dramatiq
 
 # The rest of your code remains unchanged
 @dramatiq.actor

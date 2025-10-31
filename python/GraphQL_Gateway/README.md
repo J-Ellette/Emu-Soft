@@ -38,7 +38,7 @@ This emulator implements core graphene functionality:
 ### Basic Schema Definition
 
 ```python
-from graphene_emulator import ObjectType, String, Int, Field, Schema
+from GraphQL_Gateway import ObjectType, String, Int, Field, Schema
 
 class User(ObjectType):
     id = Field(String)
@@ -70,7 +70,7 @@ print(result.data)
 ### Query with Arguments
 
 ```python
-from graphene_emulator import ObjectType, String, Field, Schema
+from GraphQL_Gateway import ObjectType, String, Field, Schema
 
 class Query(ObjectType):
     greeting = Field(String)
@@ -91,7 +91,7 @@ print(result.data)
 ### Working with Lists
 
 ```python
-from graphene_emulator import ObjectType, String, Int, Field, List, Schema
+from GraphQL_Gateway import ObjectType, String, Int, Field, List, Schema
 
 class Book(ObjectType):
     title = Field(String)
@@ -120,7 +120,7 @@ print(result.data)
 ### Mutations
 
 ```python
-from graphene_emulator import ObjectType, String, Field, Schema
+from GraphQL_Gateway import ObjectType, String, Field, Schema
 
 # Storage for demo
 users = []
@@ -154,7 +154,7 @@ print(result.data)
 ### Complete Blog API Example
 
 ```python
-from graphene_emulator import ObjectType, String, Int, Field, List, Schema
+from GraphQL_Gateway import ObjectType, String, Int, Field, List, Schema
 
 # In-memory storage
 posts_db = []
@@ -244,7 +244,7 @@ print(result.data)
 ### Working with DateTime
 
 ```python
-from graphene_emulator import ObjectType, String, DateTime, Field, Schema
+from GraphQL_Gateway import ObjectType, String, DateTime, Field, Schema
 from datetime import datetime
 
 class Event(ObjectType):
@@ -272,7 +272,7 @@ print(result.data)
 ### Error Handling
 
 ```python
-from graphene_emulator import ObjectType, String, Field, Schema
+from GraphQL_Gateway import ObjectType, String, Field, Schema
 
 class Query(ObjectType):
     risky_operation = Field(String)
@@ -297,7 +297,7 @@ if result.errors:
 Run the comprehensive test suite:
 
 ```bash
-python test_graphene_emulator.py
+python test_GraphQL_Gateway.py
 ```
 
 Tests cover:
@@ -320,7 +320,7 @@ This emulator is designed to be a drop-in replacement for graphene in developmen
 # import graphene
 
 # Use:
-import graphene_emulator as graphene
+import GraphQL_Gateway as graphene
 
 # The rest of your code remains unchanged
 class Query(graphene.ObjectType):

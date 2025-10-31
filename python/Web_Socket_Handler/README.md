@@ -38,7 +38,7 @@ This emulator implements core Channels functionality:
 ### Basic WebSocket Consumer
 
 ```python
-from channels_emulator import WebsocketConsumer
+from Web_Socket_Handler import WebsocketConsumer
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -60,7 +60,7 @@ class ChatConsumer(WebsocketConsumer):
 ### Async WebSocket Consumer
 
 ```python
-from channels_emulator import AsyncWebsocketConsumer
+from Web_Socket_Handler import AsyncWebsocketConsumer
 
 class AsyncChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -82,7 +82,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
 ### JSON WebSocket Consumer
 
 ```python
-from channels_emulator import JsonWebsocketConsumer
+from Web_Socket_Handler import JsonWebsocketConsumer
 
 class JsonChatConsumer(JsonWebsocketConsumer):
     def connect(self):
@@ -113,7 +113,7 @@ class JsonChatConsumer(JsonWebsocketConsumer):
 ### Using Channel Layers for Broadcasting
 
 ```python
-from channels_emulator import AsyncJsonWebsocketConsumer, get_channel_layer
+from Web_Socket_Handler import AsyncJsonWebsocketConsumer, get_channel_layer
 import asyncio
 
 class ChatRoomConsumer(AsyncJsonWebsocketConsumer):
@@ -177,7 +177,7 @@ class ChatRoomConsumer(AsyncJsonWebsocketConsumer):
 ### URL Routing
 
 ```python
-from channels_emulator import URLRouter, WebsocketConsumer
+from Web_Socket_Handler import URLRouter, WebsocketConsumer
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -203,7 +203,7 @@ websocket_urlpatterns = URLRouter([
 ### Protocol Type Routing
 
 ```python
-from channels_emulator import ProtocolTypeRouter, URLRouter, AsyncWebsocketConsumer
+from Web_Socket_Handler import ProtocolTypeRouter, URLRouter, AsyncWebsocketConsumer
 
 class MyWebsocketConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -221,7 +221,7 @@ application = ProtocolTypeRouter({
 ### Database Sync to Async
 
 ```python
-from channels_emulator import AsyncWebsocketConsumer, database_sync_to_async
+from Web_Socket_Handler import AsyncWebsocketConsumer, database_sync_to_async
 
 class UserConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -249,7 +249,7 @@ class UserConsumer(AsyncWebsocketConsumer):
 ### Complete Chat Application Example
 
 ```python
-from channels_emulator import (
+from Web_Socket_Handler import (
     AsyncJsonWebsocketConsumer,
     get_channel_layer,
     URLRouter,
@@ -354,7 +354,7 @@ application = ProtocolTypeRouter({
 Run the comprehensive test suite:
 
 ```bash
-python test_channels_emulator.py
+python test_Web_Socket_Handler.py
 ```
 
 Tests cover:
@@ -376,7 +376,7 @@ This emulator is designed to be a drop-in replacement for Django Channels in dev
 # from channels.generic.websocket import WebsocketConsumer
 
 # Use:
-from channels_emulator import WebsocketConsumer
+from Web_Socket_Handler import WebsocketConsumer
 
 # The rest of your code remains unchanged
 class MyConsumer(WebsocketConsumer):
