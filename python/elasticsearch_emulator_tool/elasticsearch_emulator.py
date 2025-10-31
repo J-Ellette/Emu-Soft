@@ -241,7 +241,8 @@ class Elasticsearch:
         # Generate ID if not provided
         if not id:
             import random
-            id = ''.join(random.choices('0123456789abcdefghijklmnopqrstuvwxyz', k=20))
+            # Use 20-character ID consistent with Elasticsearch defaults
+            id = ''.join(random.choices('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_', k=20))
         
         # Check if document exists for versioning
         existing_doc = self._indices[index].documents.get(id)

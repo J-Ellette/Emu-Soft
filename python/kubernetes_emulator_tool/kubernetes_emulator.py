@@ -30,7 +30,15 @@ class V1ObjectMeta:
     def __post_init__(self):
         if not self.uid:
             import random
-            self.uid = ''.join(random.choices('0123456789abcdef-', k=36))
+            # Generate proper UUID format (RFC 4122)
+            hex_chars = '0123456789abcdef'
+            self.uid = (
+                ''.join(random.choices(hex_chars, k=8)) + '-' +
+                ''.join(random.choices(hex_chars, k=4)) + '-' +
+                ''.join(random.choices(hex_chars, k=4)) + '-' +
+                ''.join(random.choices(hex_chars, k=4)) + '-' +
+                ''.join(random.choices(hex_chars, k=12))
+            )
 
 
 @dataclass
