@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 import time
 import threading
+import fnmatch
 
 
 class RedisError(Exception):
@@ -464,8 +465,7 @@ class Redis:
         if pattern == '*':
             return list(all_keys)
         
-        # Simple wildcard matching
-        import fnmatch
+        # Simple wildcard matching using fnmatch (imported at top)
         return [key for key in all_keys if fnmatch.fnmatch(key, pattern)]
     
     def flushdb(self) -> bool:
@@ -571,9 +571,14 @@ class PubSub:
         return None
     
     def listen(self):
-        """Listen for messages on subscribed channels."""
-        # Simplified implementation - yields nothing
-        # In real Redis, this would block and yield messages
+        """
+        Listen for messages on subscribed channels.
+        
+        NOTE: This is a simplified implementation that returns an empty iterator.
+        In production Redis, this would block and yield messages as they arrive.
+        For testing scenarios that require message handling, use the publish()
+        method with callbacks or mock the listen() behavior in your tests.
+        """
         return iter([])
 
 

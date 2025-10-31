@@ -558,13 +558,19 @@ class Blob:
         """
         Generate a signed URL for temporary access.
         
+        NOTE: This is a simplified emulation that returns a URL with a token.
+        This is NOT cryptographically secure and should only be used for
+        development and testing. In production, use the actual google-cloud-storage
+        library which implements proper signed URL generation with cryptographic
+        signatures.
+        
         Args:
             expiration: Expiration time (datetime, timedelta, or seconds)
             method: HTTP method
             **kwargs: Additional parameters
         
         Returns:
-            Signed URL string
+            Signed URL string (emulated, not cryptographically secure)
         """
         # Simplified signed URL (not cryptographically secure)
         token = uuid.uuid4().hex
