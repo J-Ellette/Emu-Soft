@@ -1,0 +1,10 @@
+[package]
+name = "clap_emulator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "test"
+path = "test_clap_emulator.rs"
