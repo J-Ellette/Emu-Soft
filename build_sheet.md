@@ -70,7 +70,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - RSpec - Testing framework
 - Sidekiq - Background jobs
 
-### Remaining High-Value Python Libraries
+### Remaining High-Value Python Libraries - will go inside their own subfolders, inside the python directory
 
 - boto3 - AWS SDK (massive enterprise value)
 
