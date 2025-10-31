@@ -4,6 +4,21 @@ The following emulator tools in the `python/` directory have not yet been given 
 
 ## NEW: Recently Added Emulators
 
+- **jenkins_emulator_tool** - CI/CD automation server emulator
+  - Location: `python/jenkins_emulator_tool/`
+  - Emulates: Jenkins
+  - Suggested name: TBD
+
+- **fluentd_emulator_tool** - Unified logging layer emulator
+  - Location: `python/fluentd_emulator_tool/`
+  - Emulates: Fluentd
+  - Suggested name: TBD
+
+- **alertmanager_emulator_tool** - Alert routing and management emulator
+  - Location: `python/alertmanager_emulator_tool/`
+  - Emulates: Prometheus AlertManager
+  - Suggested name: TBD
+
 - **nginx_emulator_tool** - Web server and reverse proxy emulator
   - Location: `python/nginx_emulator_tool/`
   - Emulates: Nginx
