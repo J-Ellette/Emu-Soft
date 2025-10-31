@@ -20,9 +20,9 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Prettier - Code formatting (COMPLETE)
 
 ## Go Language Tools - will need to be placed into a new folder in the root called go/
-- Gin - Web framework
-- Cobra - CLI framework
-- Viper - Configuration management
+- Gin - Web framework (COMPLETE)
+- Cobra - CLI framework (COMPLETE)
+- Viper - Configuration management (COMPLETE)
 - Testify - Testing toolkit
 - GORM - ORM
 - Redis Go client
