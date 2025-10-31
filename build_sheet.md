@@ -72,7 +72,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 ### Remaining High-Value Python Libraries - will go inside their own subfolders, inside the python directory
 
-- boto3 - AWS SDK (massive enterprise value)
+- boto3 - AWS SDK (massive enterprise value) (COMPLETE)
 
 - google-cloud-storage - Google Cloud SDK
 
@@ -80,11 +80,11 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - docker-py - Docker API client
 
-- fabric - SSH deployment automation
+- fabric - SSH deployment automation (COMPLETE)
 
 - SQLAlchemy Core - Lower-level SQL toolkit (since you have ORM)
 
-- alembic - Database migrations
+- alembic - Database migrations (COMPLETE)
 
 - Redis client (I may have this already)
 
