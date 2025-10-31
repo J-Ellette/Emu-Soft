@@ -17,10 +17,15 @@ This folder structure has been created to prepare for when the repository is ava
 Once the Drakon-Chart-Editor repository is created, it can be added here using:
 
 ```bash
-# Option 1: As a git submodule
+# Option 1: As a git submodule (recommended)
+# First, remove this README and the empty directory
+cd soviet
+rm -rf drakon
+# Then add the submodule
 git submodule add https://github.com/J-Ellette/Drakon-Chart-Editor.git soviet/drakon
 
-# Option 2: Clone the repository contents
+# Option 2: Clone the repository contents directly
 cd soviet/drakon
+rm README.md  # Remove this placeholder README
 git clone https://github.com/J-Ellette/Drakon-Chart-Editor.git .
 ```
