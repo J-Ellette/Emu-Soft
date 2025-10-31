@@ -62,7 +62,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Maven/Gradle - Build tools (COMPLETE) → JavaGrade
 
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
-- ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/ (IN PROGRESS)
+- ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/ (COMPLETE) → ViperNet
 - Entity Framework - ORM (COMPLETE) → StructureFramer
 - SignalR - Real-time communication (COMPLETE) → RealSignal
 
