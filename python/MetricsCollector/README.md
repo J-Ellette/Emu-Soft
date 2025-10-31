@@ -1,626 +1,389 @@
-# Prometheus Emulator - Metrics Collection and Monitoring
+# Prometheus Client Emulator
 
-This module emulates **Prometheus**, an open-source systems monitoring and alerting toolkit. Prometheus provides a powerful platform for collecting, storing, and querying time-series metrics data.
+A pure Python implementation of Prometheus client functionality without external dependencies.
 
-## What is Prometheus?
+## What This Emulates
 
-Prometheus is a monitoring system developed at SoundCloud that has become one of the most popular monitoring solutions. It provides:
-- **Multi-dimensional data model** with time series identified by metric name and key/value pairs
-- **Flexible query language (PromQL)** to leverage this dimensionality
-- **Pull-based metrics collection** over HTTP
-- **Time series storage** in memory and on local disk
-- **Service discovery** or static configuration for target discovery
-- **Alert manager** for handling alerts
-
-Key features:
-- Simple yet powerful data model
-- Efficient time series database
-- Integration with Grafana for visualization
-- Wide ecosystem of exporters
-- Native support for Kubernetes monitoring
+**Emulates:** prometheus_client (Python client for Prometheus monitoring)
+**Original:** https://github.com/prometheus/client_python
 
 ## Features
 
-This emulator implements core Prometheus functionality:
+- **Counter** metrics (monotonically increasing values)
+- **Gauge** metrics (arbitrary up/down values)
+- **Histogram** metrics (observations with configurable buckets)
+- **Summary** metrics (observations with quantiles)
+- Multi-dimensional metrics with labels
+- Collector registry for metric management
+- Prometheus text format exposition
+- Context manager support for timing
+- Process and platform metrics collectors
+- Thread-safe operations
+- No external dependencies
 
-### Metric Types
-- **Counter** - Monotonically increasing values (requests, errors)
-- **Gauge** - Values that can go up and down (temperature, memory)
-- **Histogram** - Bucketed observations (request durations, response sizes)
-- **Summary** - Similar to histogram with quantile calculation
+## Core Components
 
-### Registry
-- **Metric registration** - Register and manage metrics
-- **Metric collection** - Export metrics in Prometheus format
-- **Thread-safe operations** - Safe for concurrent use
+- **prometheus_client_emulator.py**: Main implementation
+  - `Counter`: Monotonically increasing counter
+  - `Gauge`: Value that can go up and down
+  - `Histogram`: Observations bucketed into configurable ranges
+  - `Summary`: Observations with sum and count
+  - `CollectorRegistry`: Registry for managing metrics
+  - `ProcessCollector`: System process metrics
+  - `PlatformCollector`: Python platform information
 
-### Utilities
-- **HTTP server** - Serve metrics endpoint
-- **Pushgateway support** - Push metrics for batch jobs
-- **Timing utilities** - Context managers and decorators for timing
-- **Info and Enum metrics** - Special metric types
+## Usage
 
-## Usage Examples
-
-### Counter Metrics
-
-Counters are used for values that only increase (like request counts):
+### Counter
 
 ```python
-from prometheus_emulator import Counter
+from prometheus_client_emulator import Counter, REGISTRY
 
 # Create a counter
-requests = Counter("http_requests_total", "Total HTTP requests")
-
-# Increment the counter
-requests.inc()      # Increment by 1
-requests.inc(5)     # Increment by 5
-
-# Get current value
-count = requests.get()
-print(f"Total requests: {count}")
-```
-
-#### Counter with Labels
-
-Labels allow you to track dimensions of your metrics:
-
-```python
-from prometheus_emulator import Counter
-
-# Create counter with labels
-requests = Counter(
-    "http_requests_total",
-    "Total HTTP requests",
-    labels=["method", "status"]
+requests_total = Counter(
+    'http_requests_total',
+    'Total HTTP requests',
+    ('method', 'endpoint')
 )
+REGISTRY.register(requests_total)
 
-# Increment with specific label values
-requests.inc(method="GET", status="200")
-requests.inc(method="GET", status="200")
-requests.inc(method="POST", status="201")
-requests.inc(method="GET", status="404")
+# Increment counter
+requests_total.inc(labels={'method': 'GET', 'endpoint': '/api/users'})
+requests_total.inc(5, labels={'method': 'POST', 'endpoint': '/api/users'})
 
-# Get counts for specific labels
-get_200 = requests.get(method="GET", status="200")
-print(f"GET 200 requests: {get_200}")  # Output: 2
+# Using labels() for convenience
+http_requests = Counter('requests', 'HTTP requests', ('method',))
+REGISTRY.register(http_requests)
 
-post_201 = requests.get(method="POST", status="201")
-print(f"POST 201 requests: {post_201}")  # Output: 1
+get_counter = http_requests.labels(method='GET')
+get_counter.inc()
+get_counter.inc()
 ```
 
-### Gauge Metrics
-
-Gauges are used for values that can increase or decrease:
+### Gauge
 
 ```python
-from prometheus_emulator import Gauge
+from prometheus_client_emulator import Gauge, REGISTRY
 
 # Create a gauge
-temperature = Gauge("room_temperature", "Room temperature in Celsius")
+temperature = Gauge('temperature_celsius', 'Current temperature')
+REGISTRY.register(temperature)
 
-# Set absolute value
-temperature.set(22.5)
+# Set value
+temperature.set(23.5)
 
 # Increment/decrement
-temperature.inc(0.5)    # Now 23.0
-temperature.dec(1.0)    # Now 22.0
+temperature.inc(1.5)
+temperature.dec(0.5)
 
-# Get current value
-current = temperature.get()
-print(f"Temperature: {current}°C")
+# Set to current time
+temperature.set_to_current_time()
+
+# With labels
+memory_usage = Gauge('memory_usage_bytes', 'Memory usage', ('server',))
+REGISTRY.register(memory_usage)
+
+web1_memory = memory_usage.labels(server='web-1')
+web1_memory.set(1024 * 1024 * 512)  # 512 MB
 ```
 
-#### Gauge with Labels
+### Histogram
 
 ```python
-from prometheus_emulator import Gauge
+from prometheus_client_emulator import Histogram, REGISTRY
 
-# Track temperature in multiple locations
-temperature = Gauge(
-    "temperature_celsius",
-    "Temperature readings",
-    labels=["location"]
-)
-
-temperature.set(22.5, location="office")
-temperature.set(18.0, location="warehouse")
-temperature.set(25.0, location="server_room")
-
-# Query specific location
-office_temp = temperature.get(location="office")
-print(f"Office temperature: {office_temp}°C")
-```
-
-#### Set Gauge to Current Time
-
-```python
-from prometheus_emulator import Gauge
-
-last_success = Gauge("job_last_success_timestamp", "Last successful job completion")
-
-# Update when job completes
-last_success.set_to_current_time()
-```
-
-### Histogram Metrics
-
-Histograms sample observations and count them in configurable buckets:
-
-```python
-from prometheus_emulator import Histogram
-
-# Create histogram with custom buckets
+# Create a histogram
 request_duration = Histogram(
-    "http_request_duration_seconds",
-    "HTTP request duration in seconds",
-    buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 5.0]
+    'request_duration_seconds',
+    'Request duration',
+    buckets=(.01, .05, .1, .5, 1.0, 5.0, float('inf'))
 )
+REGISTRY.register(request_duration)
 
-# Record observations
-request_duration.observe(0.025)  # 25ms request
-request_duration.observe(0.150)  # 150ms request
-request_duration.observe(0.500)  # 500ms request
-request_duration.observe(2.000)  # 2s request
+# Observe values
+request_duration.observe(0.05)
+request_duration.observe(0.15)
+request_duration.observe(0.75)
 
-# Get statistics
-total = request_duration.get_count()
-sum_duration = request_duration.get_sum()
-avg_duration = sum_duration / total
+# Time a block of code
+with request_duration.time():
+    # Your code here
+    process_request()
 
-print(f"Total requests: {total}")
-print(f"Average duration: {avg_duration:.3f}s")
+# With labels
+api_latency = Histogram(
+    'api_latency_seconds',
+    'API latency',
+    ('endpoint',)
+)
+REGISTRY.register(api_latency)
+
+with api_latency.labels(endpoint='/api/users').time():
+    fetch_users()
 ```
 
-#### Histogram with Labels
+### Summary
 
 ```python
-from prometheus_emulator import Histogram
+from prometheus_client_emulator import Summary, REGISTRY
 
-# Track request duration by endpoint
-duration = Histogram(
-    "api_request_duration_seconds",
-    "API request duration",
-    labels=["endpoint", "method"],
-    buckets=[0.01, 0.1, 0.5, 1.0, 5.0]
-)
+# Create a summary
+response_size = Summary('response_size_bytes', 'Response size')
+REGISTRY.register(response_size)
 
-# Record requests
-duration.observe(0.025, endpoint="/api/users", method="GET")
-duration.observe(0.150, endpoint="/api/users", method="GET")
-duration.observe(0.800, endpoint="/api/posts", method="POST")
+# Observe values
+response_size.observe(1024)
+response_size.observe(2048)
+response_size.observe(512)
 
-# Query specific endpoint
-user_count = duration.get_count(endpoint="/api/users", method="GET")
-user_sum = duration.get_sum(endpoint="/api/users", method="GET")
-user_avg = user_sum / user_count
-
-print(f"GET /api/users - Count: {user_count}, Avg: {user_avg:.3f}s")
-```
-
-### Summary Metrics
-
-Summaries are similar to histograms but calculate quantiles:
-
-```python
-from prometheus_emulator import Summary
-
-# Create summary
-response_size = Summary(
-    "http_response_size_bytes",
-    "HTTP response size in bytes"
-)
-
-# Record observations
-for size in [100, 150, 200, 180, 220, 190]:
-    response_size.observe(size)
-
-# Get statistics
-count = response_size.get_count()
-total = response_size.get_sum()
-median = response_size.get_quantile(0.5)
-p95 = response_size.get_quantile(0.95)
-
-print(f"Requests: {count}")
-print(f"Total size: {total} bytes")
-print(f"Median: {median} bytes")
-print(f"95th percentile: {p95} bytes")
+# Time a block of code
+with response_size.time():
+    # Your code here
+    generate_response()
 ```
 
 ### Registry
 
-The registry manages all metrics:
-
 ```python
-from prometheus_emulator import Registry, Counter, Gauge
+from prometheus_client_emulator import CollectorRegistry, Counter
 
-# Create a custom registry
-registry = Registry()
-
-# Create and register metrics
-requests = Counter("requests", "Request count")
-memory = Gauge("memory_usage", "Memory usage in MB")
-
-registry.register(requests)
-registry.register(memory)
-
-# Use the metrics
-requests.inc()
-memory.set(512)
-
-# Collect all metrics
-output = registry.collect()
-print(output)
-```
-
-#### Global Registry
-
-By default, a global registry is available:
-
-```python
-from prometheus_emulator import REGISTRY, Counter
-
-# Metrics are automatically added to global registry
-requests = Counter("requests", "Request count")
-REGISTRY.register(requests)
-
-# Later, collect all metrics
-from prometheus_emulator import generate_latest
-
-metrics_output = generate_latest()
-print(metrics_output)
-```
-
-### Timing Operations
-
-#### Using Timer Context Manager
-
-```python
-from prometheus_emulator import Histogram, Timer
-import time
-
-# Create histogram for timing
-request_duration = Histogram(
-    "request_processing_seconds",
-    "Request processing time",
-    labels=["handler"]
-)
-
-# Time a block of code
-def process_request(handler_name):
-    with Timer(request_duration, handler=handler_name):
-        # Your code here
-        time.sleep(0.1)  # Simulate work
-        return "Success"
-
-result = process_request("api_handler")
-print(f"Duration recorded: {request_duration.get_sum():.3f}s")
-```
-
-#### Using Decorator
-
-```python
-from prometheus_emulator import Histogram, time_function
-
-# Create histogram
-function_duration = Histogram(
-    "function_duration_seconds",
-    "Function execution time",
-    labels=["function"]
-)
-
-# Decorate function
-@time_function(function_duration, function="data_processing")
-def process_data(data):
-    time.sleep(0.05)  # Simulate processing
-    return len(data)
-
-result = process_data([1, 2, 3, 4, 5])
-print(f"Processed {result} items")
-```
-
-### HTTP Server
-
-Start a metrics server to expose metrics:
-
-```python
-from prometheus_emulator import start_http_server, Counter, REGISTRY
-
-# Create some metrics
-requests = Counter("app_requests", "Application requests")
-REGISTRY.register(requests)
-
-# Start HTTP server on port 8000
-start_http_server(8000)
-
-# Metrics available at http://localhost:8000/metrics
-
-# Application code
-while True:
-    requests.inc()
-    time.sleep(1)
-```
-
-### Pushgateway Support
-
-For batch jobs that don't run long enough to be scraped:
-
-```python
-from prometheus_emulator import push_to_gateway, Counter, REGISTRY
-
-# Create metrics for batch job
-job_duration = Counter("batch_job_duration_seconds", "Batch job duration")
-REGISTRY.register(job_duration)
-
-# Run your batch job
-start = time.time()
-# ... do work ...
-duration = time.time() - start
-
-job_duration.inc(duration)
-
-# Push metrics to Pushgateway
-push_to_gateway("localhost:9091", "batch_job", REGISTRY)
-```
-
-### Info Metrics
-
-Info metrics expose text information as labels:
-
-```python
-from prometheus_emulator import info
-
-# Create info metric
-build_info = info(
-    "app_build",
-    "Application build information",
-    version="1.2.3",
-    commit="abc123",
-    build_date="2024-01-15"
-)
-
-print(f"Version: {build_info['version']}")
-```
-
-### Enum Metrics
-
-Enum metrics represent state as a gauge:
-
-```python
-from prometheus_emulator import enum
-
-# Create enum metric
-task_state = enum(
-    "task_state",
-    "Current task state",
-    ["pending", "running", "completed", "failed"]
-)
-
-# Set state
-task_state.set(1, state="running")
-task_state.set(0, state="pending")
-task_state.set(0, state="completed")
-task_state.set(0, state="failed")
-```
-
-### Complete Application Example
-
-```python
-from prometheus_emulator import (
-    Counter, Gauge, Histogram, Registry,
-    start_http_server, Timer
-)
-import time
-import random
-
-# Create registry
-registry = Registry()
-
-# Define metrics
-http_requests = Counter(
-    "http_requests_total",
-    "Total HTTP requests",
-    labels=["method", "endpoint", "status"]
-)
-
-active_connections = Gauge(
-    "active_connections",
-    "Number of active connections"
-)
-
-request_duration = Histogram(
-    "http_request_duration_seconds",
-    "HTTP request duration",
-    labels=["endpoint"],
-    buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 5.0]
-)
+# Create custom registry
+my_registry = CollectorRegistry()
 
 # Register metrics
-registry.register(http_requests)
-registry.register(active_connections)
-registry.register(request_duration)
+counter = Counter('my_counter', 'My counter')
+my_registry.register(counter)
 
-# Start metrics server
-start_http_server(8000, registry)
+# Unregister
+my_registry.unregister(counter)
 
-# Application logic
-def handle_request(method, endpoint):
-    # Track active connections
-    active_connections.inc()
-    
-    try:
-        # Time the request
-        with Timer(request_duration, endpoint=endpoint):
-            # Simulate processing
-            duration = random.uniform(0.01, 0.5)
-            time.sleep(duration)
-            
-            # Simulate success/failure
-            status = "200" if random.random() > 0.1 else "500"
-            
-        # Record request
-        http_requests.inc(method=method, endpoint=endpoint, status=status)
-        
-        return status
-        
-    finally:
-        # Decrease active connections
-        active_connections.dec()
+# Get all collectors
+collectors = my_registry.collect()
 
-# Simulate traffic
-endpoints = ["/api/users", "/api/posts", "/api/comments"]
-methods = ["GET", "POST", "PUT", "DELETE"]
+# Get specific metric value
+value = my_registry.get_sample_value('my_counter', {'label': 'value'})
+```
 
-for _ in range(100):
-    endpoint = random.choice(endpoints)
-    method = random.choice(methods)
-    status = handle_request(method, endpoint)
-    print(f"{method} {endpoint} -> {status}")
+### Metrics Exposition
 
-# Print metrics
-print("\n=== Metrics Summary ===")
-print(f"Total requests: {http_requests.get(method='GET', endpoint='/api/users', status='200')}")
-print(f"Active connections: {active_connections.get()}")
-print(f"Request count: {request_duration.get_count(endpoint='/api/users')}")
+```python
+from prometheus_client_emulator import generate_latest, REGISTRY
+
+# Generate Prometheus text format
+metrics_text = generate_latest(REGISTRY)
+print(metrics_text)
+
+# Output:
+# # HELP http_requests_total Total HTTP requests
+# # TYPE http_requests_total counter
+# http_requests_total{method="GET",endpoint="/api/users"} 1.0
+# http_requests_total{method="POST",endpoint="/api/users"} 5.0
+```
+
+### Process Metrics
+
+```python
+from prometheus_client_emulator import ProcessCollector, REGISTRY
+
+# Add process metrics
+process_collector = ProcessCollector(REGISTRY)
+
+# Metrics added:
+# - process_cpu_seconds_total
+# - process_open_fds
+# - process_max_fds
+# - process_virtual_memory_bytes
+# - process_resident_memory_bytes
+# - process_start_time_seconds
+```
+
+### Platform Metrics
+
+```python
+from prometheus_client_emulator import PlatformCollector, REGISTRY
+
+# Add platform metrics
+platform_collector = PlatformCollector(REGISTRY)
+
+# Metrics added:
+# - python_info (with version, implementation, etc.)
 ```
 
 ## Testing
 
-Run the comprehensive test suite:
+Run the test suite:
 
 ```bash
-# Run all tests
-python test_prometheus_emulator.py
-
-# Run with verbose output
-python test_prometheus_emulator.py -v
-
-# Run specific test class
-python -m unittest test_prometheus_emulator.TestCounter
+python test_prometheus_client_emulator.py
 ```
 
-The test suite covers:
-- Counter operations (increment, labels, reset)
-- Gauge operations (set, increment, decrement)
-- Histogram bucketing and observations
-- Summary quantile calculations
-- Registry management
-- Timer context manager
-- Function decoration
-- Integration scenarios
+## Implementation Notes
 
-## Use Cases
+- **Thread-safe**: All metric operations use locks for thread safety
+- **No network**: Metrics are stored in-memory, not sent to Prometheus
+- **Text format only**: Only Prometheus text format is supported
+- **Simplified quantiles**: Summary metrics track observations but don't calculate quantiles
+- **Basic process metrics**: Process collector provides structure but may not populate all values on all platforms
 
-Perfect for:
-- **Application Monitoring** - Track application metrics and performance
-- **Infrastructure Monitoring** - Monitor servers, containers, and services
-- **Business Metrics** - Track business KPIs and SLAs
-- **Development** - Test monitoring code without Prometheus server
-- **CI/CD** - Monitor build and deployment metrics
-- **Learning** - Learn Prometheus concepts and patterns
+## API Compatibility
+
+This emulator implements the core Prometheus client API:
+
+**Metrics:**
+- `Counter` - Monotonically increasing counter
+- `Gauge` - Value that can go up or down
+- `Histogram` - Observations with buckets
+- `Summary` - Observations with sum and count
+
+**Methods:**
+- `inc()` - Increment counter/gauge
+- `dec()` - Decrement gauge
+- `set()` - Set gauge value
+- `observe()` - Add observation to histogram/summary
+- `time()` - Context manager for timing
+- `labels()` - Get child metric with labels
+
+**Registry:**
+- `register()` - Register a collector
+- `unregister()` - Unregister a collector
+- `collect()` - Get all collectors
+- `get_sample_value()` - Get metric value
+
+**Exposition:**
+- `generate_latest()` - Generate Prometheus text format
+
+## Differences from Official Client
+
+- **No HTTP server**: Use `generate_latest()` manually
+- **No push gateway support**: Metrics stay in-memory
+- **Simplified summaries**: No quantile calculation
+- **No custom collectors**: Only built-in metric types
+- **Basic process metrics**: Limited platform support
+- **No multiprocess support**: Single process only
+
+## Example Use Cases
+
+### Web Application Monitoring
+
+```python
+from prometheus_client_emulator import Counter, Histogram, REGISTRY, generate_latest
+
+# Request counter
+http_requests = Counter(
+    'http_requests_total',
+    'Total HTTP requests',
+    ('method', 'endpoint', 'status')
+)
+REGISTRY.register(http_requests)
+
+# Request duration
+http_duration = Histogram(
+    'http_request_duration_seconds',
+    'HTTP request duration',
+    ('method', 'endpoint')
+)
+REGISTRY.register(http_duration)
+
+def handle_request(method, endpoint):
+    with http_duration.labels(method=method, endpoint=endpoint).time():
+        # Process request
+        status = process()
+        http_requests.labels(
+            method=method,
+            endpoint=endpoint,
+            status=str(status)
+        ).inc()
+        return status
+
+# Expose metrics
+def metrics_endpoint():
+    return generate_latest(REGISTRY)
+```
+
+### Background Job Monitoring
+
+```python
+from prometheus_client_emulator import Counter, Gauge, Summary, REGISTRY
+
+# Job counters
+jobs_started = Counter('jobs_started_total', 'Jobs started', ('job_type',))
+jobs_completed = Counter('jobs_completed_total', 'Jobs completed', ('job_type', 'status'))
+REGISTRY.register(jobs_started)
+REGISTRY.register(jobs_completed)
+
+# Active jobs gauge
+jobs_active = Gauge('jobs_active', 'Currently active jobs', ('job_type',))
+REGISTRY.register(jobs_active)
+
+# Job duration
+job_duration = Summary('job_duration_seconds', 'Job duration', ('job_type',))
+REGISTRY.register(job_duration)
+
+def run_job(job_type):
+    jobs_started.labels(job_type=job_type).inc()
+    jobs_active.labels(job_type=job_type).inc()
+    
+    try:
+        with job_duration.labels(job_type=job_type).time():
+            # Process job
+            result = process_job()
+        
+        jobs_completed.labels(job_type=job_type, status='success').inc()
+        return result
+    except Exception as e:
+        jobs_completed.labels(job_type=job_type, status='failure').inc()
+        raise
+    finally:
+        jobs_active.labels(job_type=job_type).dec()
+```
+
+### Database Connection Pool Monitoring
+
+```python
+from prometheus_client_emulator import Gauge, Counter, Histogram, REGISTRY
+
+# Pool metrics
+db_connections_active = Gauge('db_connections_active', 'Active database connections')
+db_connections_idle = Gauge('db_connections_idle', 'Idle database connections')
+db_queries_total = Counter('db_queries_total', 'Total database queries', ('operation',))
+db_query_duration = Histogram('db_query_duration_seconds', 'Query duration', ('operation',))
+
+REGISTRY.register(db_connections_active)
+REGISTRY.register(db_connections_idle)
+REGISTRY.register(db_queries_total)
+REGISTRY.register(db_query_duration)
+
+class DatabasePool:
+    def query(self, operation, sql):
+        db_connections_idle.dec()
+        db_connections_active.inc()
+        db_queries_total.labels(operation=operation).inc()
+        
+        try:
+            with db_query_duration.labels(operation=operation).time():
+                return execute_query(sql)
+        finally:
+            db_connections_active.dec()
+            db_connections_idle.inc()
+```
+
+## Performance Considerations
+
+- **Memory**: Metrics are stored in-memory; label cardinality affects memory usage
+- **Locking**: All operations use locks; high contention may impact performance
+- **Label cardinality**: Keep label values bounded to prevent memory growth
+- **Histogram buckets**: More buckets = more memory per observation
+- **Summary observations**: Stored in memory; may grow unbounded
 
 ## Best Practices
 
-### Metric Naming
-
-Follow Prometheus naming conventions:
-
-```python
-# Good metric names
-http_requests_total          # Counter
-http_request_duration_seconds # Histogram
-memory_usage_bytes           # Gauge
-batch_job_last_success_time  # Gauge
-
-# Include unit in name
-# Use base units (seconds, bytes, not milliseconds, megabytes)
-# Use descriptive names
-```
-
-### Label Usage
-
-```python
-# Good: Specific, bounded label values
-requests = Counter("requests", "Requests", labels=["method", "status"])
-requests.inc(method="GET", status="200")
-
-# Bad: Unbounded label values (user IDs, timestamps, etc.)
-# Don't do this - it creates too many time series
-requests.inc(user_id="12345")  # BAD
-```
-
-### Metric Types
-
-Choose the right metric type:
-
-```python
-# Counter: For values that only increase
-error_count = Counter("errors_total", "Total errors")
-
-# Gauge: For values that can increase or decrease
-memory_usage = Gauge("memory_bytes", "Memory usage")
-
-# Histogram: For observing distributions
-request_size = Histogram("request_size_bytes", "Request sizes")
-
-# Summary: For quantiles over sliding time window
-response_time = Summary("response_time_seconds", "Response times")
-```
-
-## Limitations
-
-This is an emulator for development and testing:
-- In-memory storage only (no persistence)
-- No PromQL query language
-- No time series database
-- No scraping or service discovery
-- No alerting rules
-- Simplified quantile calculation
-- No remote write/read
-
-## Supported Operations
-
-### Metric Types
-- ✅ Counter (inc, get, reset)
-- ✅ Gauge (set, inc, dec, set_to_current_time)
-- ✅ Histogram (observe, buckets, sum, count)
-- ✅ Summary (observe, quantiles, sum, count)
-
-### Registry
-- ✅ Register/unregister metrics
-- ✅ Collect metrics
-- ✅ Thread-safe operations
-
-### Utilities
-- ✅ HTTP server simulation
-- ✅ Pushgateway support
-- ✅ Timer context manager
-- ✅ Function decorator
-- ✅ Info metrics
-- ✅ Enum metrics
-
-## Compatibility
-
-Emulates core features of:
-- Prometheus Python client library
-- Prometheus data model
-- Prometheus exposition format
-- Common monitoring patterns
-
-## Integration
-
-Use as a drop-in replacement for Prometheus client:
-
-```python
-# Instead of:
-# from prometheus_client import Counter, Gauge, Histogram
-
-# Use:
-from prometheus_emulator import Counter, Gauge, Histogram
-
-# Your code works the same way
-```
+1. **Keep label cardinality low**: Don't use unbounded values (user IDs, timestamps) as labels
+2. **Use appropriate metric types**: Counter for things that increase, Gauge for current state
+3. **Choose histogram buckets carefully**: Based on expected value distribution
+4. **Name metrics clearly**: Use `_total` suffix for counters, `_seconds` for durations
+5. **Document metrics**: Provide clear documentation strings
+6. **Use base units**: Seconds (not milliseconds), bytes (not kilobytes)
 
 ## License
 
-Part of the Emu-Soft project. See main repository LICENSE.
+This emulator is part of the CIV-ARCOS project and is original code written from scratch. While it emulates Prometheus client functionality, it contains no code from the official Prometheus client library.
