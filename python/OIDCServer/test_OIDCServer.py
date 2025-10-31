@@ -8,7 +8,7 @@ import urllib.parse
 import hashlib
 import base64
 import secrets
-from oauth_server_emulator_tool import (
+from OIDCServer import (
     OAuthServer, Client, User, GrantType, TokenType
 )
 
