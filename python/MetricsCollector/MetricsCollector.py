@@ -1,4 +1,6 @@
 """
+Developed by PowerShield, as an alternative to prometheus_client
+
 Prometheus Emulator - Metrics Collection and Monitoring
 This emulates the core functionality of Prometheus, a monitoring and alerting toolkit
 """

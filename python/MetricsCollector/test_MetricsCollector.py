@@ -1,11 +1,11 @@
 """
-Test suite for Prometheus Emulator
+Test suite for MetricsCollector (Prometheus Emulator)
 This file contains comprehensive tests for the Prometheus metrics emulator
 """
 
 import unittest
 import time
-from prometheus_emulator import (
+from MetricsCollector import (
     Counter, Gauge, Histogram, Summary, Registry, Timer,
     REGISTRY, start_http_server, push_to_gateway, generate_latest,
     info, enum, time_function
