@@ -11,13 +11,13 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 ## JavaScript/Node.js Ecosystem - will need to be placed into a new folder in the root called javascript/
 - Express.js - Web framework (COMPLETE)
-- React - Frontend library
+- React - Frontend library (COMPLETE)
 - lodash - Utility library (COMPLETE)
 - axios - HTTP client (COMPLETE)
-- Jest - Testing framework
+- Jest - Testing framework (COMPLETE)
 - Webpack - Module bundler
 - ESLint - Linting
-- Prettier - Code formatting
+- Prettier - Code formatting (COMPLETE)
 
 ## Go Language Tools - will need to be placed into a new folder in the root called go/
 - Gin - Web framework
