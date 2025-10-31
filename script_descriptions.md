@@ -2088,10 +2088,97 @@ This approach ensures:
 
 ---
 
+### factory_boy_emulator_tool/
+**What it emulates:** factory_boy (Test fixture replacement tool)
+
+**Scripts:**
+- `factory_boy_emulator.py` - Factory pattern implementation for test fixtures
+  - Factory pattern for creating test objects
+  - Sequence generators for auto-incrementing values
+  - Faker integration for realistic data (names, emails, addresses, etc.)
+  - LazyAttribute for computed attributes
+  - SubFactory for related object creation
+  - Batch creation methods (build_batch, create_batch)
+  - Stub creation for dictionary-like objects
+  - Factory inheritance and overrides
+  - Resetable sequence counters
+  
+- `test_factory_boy_emulator.py` - Test suite for factory_boy emulator
+  - Validates factory creation and inheritance
+  - Tests sequence generation
+  - Tests faker data generators
+  - Tests lazy attributes
+  - Tests subfactory relationships
+  - Tests batch creation
+  - Tests attribute overrides (11 tests total)
+
+**Use:** Simplifies test data creation by providing reusable factories for generating model instances. Eliminates repetitive test setup code. Supports complex object graphs with related objects. Includes realistic fake data generation for various types (names, emails, URLs, etc.). Essential for clean, maintainable test suites.
+
+---
+
+### responses_emulator_tool/
+**What it emulates:** responses (HTTP request mocking library)
+
+**Scripts:**
+- `responses_emulator.py` - HTTP request mocking implementation
+  - Mock HTTP requests without making real network calls
+  - Support for all HTTP methods (GET, POST, PUT, PATCH, DELETE, etc.)
+  - URL matching (exact and regex patterns)
+  - Query string matching (optional)
+  - JSON and text response bodies
+  - Custom status codes and headers
+  - Callback-based dynamic responses
+  - Call recording and inspection
+  - Context manager and decorator support
+  - Request verification
+  
+- `test_responses_emulator.py` - Test suite for responses emulator
+  - Tests URL matching (exact and regex)
+  - Tests query string handling
+  - Tests all HTTP methods
+  - Tests JSON and text responses
+  - Tests custom headers and status codes
+  - Tests callback responses
+  - Tests call recording
+  - Integration tests with requests library (15 tests total)
+
+**Use:** Enables testing of code that makes HTTP requests without making real network calls. Makes tests fast, reliable, and isolated. Allows testing of error conditions and edge cases. Supports verification that correct requests were made. Essential for testing API clients, integrations, and services that depend on external APIs.
+
+---
+
+### freezegun_emulator_tool/
+**What it emulates:** freezegun (Time mocking library)
+
+**Scripts:**
+- `freezegun_emulator.py` - Time freezing and manipulation
+  - Freeze datetime.datetime.now()
+  - Freeze datetime.date.today()
+  - Freeze datetime.datetime.utcnow()
+  - Freeze time.time()
+  - Move to different points in time
+  - Tick time forward (seconds or timedeltas)
+  - Context manager and decorator support
+  - Multiple time format support (ISO strings, datetime/date objects)
+  - Manual start/stop control
+  - Nested freezing support
+  
+- `test_freezegun_emulator.py` - Test suite for freezegun emulator
+  - Tests basic time freezing
+  - Tests all freezable functions (now, today, utcnow, time.time)
+  - Tests time manipulation (tick, move_to)
+  - Tests various time formats
+  - Tests decorator usage
+  - Tests nested freezing
+  - Tests time-dependent logic (17 tests total)
+
+**Use:** Makes time-dependent code testable and deterministic. Freeze time at specific points to test time-based logic reliably. Move through time to test expiration, scheduling, and time-based features. Essential for testing scheduled tasks, rate limiting, expiration logic, business hours checks, and any code that depends on current time.
+
+---
+
 ## Total Count
-- **56 major folders/systems** (was 53, now includes mkdocs_emulator_tool, pdoc_emulator_tool, hypothesis_emulator_tool)
-- **226 Python scripts** (includes emulators, tests, and support scripts)
-- **74 documentation files** (READMEs and guides)
+- **59 major folders/systems** (was 56, now includes factory_boy_emulator_tool, responses_emulator_tool, freezegun_emulator_tool)
+- **235 Python scripts** (includes emulators, tests, and support scripts)
+- **77 documentation files** (READMEs and guides)
 - **All built without external tool dependencies (except watchdog for live-reload)**
 - **Comprehensive testing and documentation**
 
