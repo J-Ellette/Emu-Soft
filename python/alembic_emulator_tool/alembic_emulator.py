@@ -387,8 +387,8 @@ def revision(
     config = config or Config()
     script = ScriptDirectory.from_config(config)
     
-    # Generate revision ID
-    revid = uuid.uuid4().hex[:12]
+    # Generate revision ID (using first 16 chars for better uniqueness)
+    revid = uuid.uuid4().hex[:16]
     
     # Generate revision
     rev = script.generate_revision(revid, message, head=head, **kwargs)
@@ -613,7 +613,8 @@ def merge(revisions: List[str], message: Optional[str] = None, config: Optional[
     """
     config = config or Config()
     
-    merge_revid = uuid.uuid4().hex[:12]
+    # Generate merge revision ID (using first 16 chars for better uniqueness)
+    merge_revid = uuid.uuid4().hex[:16]
     
     merge_rev = {
         'revision': merge_revid,

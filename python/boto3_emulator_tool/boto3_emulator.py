@@ -505,9 +505,19 @@ class S3Bucket:
         return self.client.delete_bucket(Bucket=self.name)
     
     def upload_file(self, filename: str, key: str):
-        """Upload a file to the bucket."""
-        with open(filename, 'rb') as f:
-            return self.client.put_object(Bucket=self.name, Key=key, Body=f.read())
+        """Upload a file to the bucket.
+        
+        Note: This is a simplified emulator implementation.
+        In production, file I/O errors should be handled.
+        """
+        try:
+            with open(filename, 'rb') as f:
+                return self.client.put_object(Bucket=self.name, Key=key, Body=f.read())
+        except (IOError, OSError) as e:
+            raise ClientError(
+                {'Error': {'Code': 'FileReadError', 'Message': f'Failed to read file: {e}'}},
+                'UploadFile'
+            )
     
     def download_file(self, key: str, filename: str):
         """Download a file from the bucket."""

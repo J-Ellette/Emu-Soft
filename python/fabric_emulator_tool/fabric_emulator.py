@@ -56,9 +56,9 @@ class Result:
     stdout: str = ""
     stderr: str = ""
     exited: int = 0
-    ok: bool = True
-    failed: bool = False
-    return_code: int = 0
+    ok: bool = field(init=False)
+    failed: bool = field(init=False)
+    return_code: int = field(init=False)
     encoding: str = "utf-8"
     hide: Optional[tuple] = None
     
@@ -400,10 +400,7 @@ class RunConfig:
     hide: bool = False
     pty: bool = True
     echo: bool = False
-    env: Optional[Dict[str, str]] = None
-    
-    def __post_init__(self):
-        self.env = self.env or {}
+    env: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
 @dataclass
