@@ -24,12 +24,12 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Cobra - CLI framework (COMPLETE)
 - Viper - Configuration management (COMPLETE)
 - Testify - Testing toolkit (COMPLETE)
-- GORM - ORM
-- Redis Go client
+- GORM - ORM (COMPLETE)
+- Redis Go client (COMPLETE)
 - Go-kit - Microservices toolkit
 
 ## Rust Ecosystem - will need to be placed into a new folder in the root called rust/
-- Actix-web - Web framework
+- Actix-web - Web framework (COMPLETE)
 - Serde - Serialization framework
 - Tokio - Async runtime
 - Clap - CLI argument parsing
