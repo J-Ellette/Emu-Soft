@@ -1041,7 +1041,7 @@ This document lists all scripts and modules in the repository, organized by fold
 
 ---
 
-### isort_emulator_tool/
+### Import_Sorter/
 **What it emulates:** isort (Python import statement sorting tool)
 
 **Scripts:**

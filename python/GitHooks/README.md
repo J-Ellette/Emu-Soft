@@ -541,7 +541,7 @@ These limitations keep the implementation simple while covering common use cases
 ```yaml
 - id: isort
   name: Sort Imports
-  entry: python -m isort_emulator_tool.isort_emulator
+  entry: python -m Import_Sorter
   language: system
   types: [python]
 ```
