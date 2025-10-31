@@ -35,7 +35,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Clap - CLI argument parsing (COMPLETE)
 - Diesel - ORM and query builder (COMPLETE)
 
-## System Tools & DevOps - will need to be placed into a new folder in the root called devops/
+## System Tools & DevOps - will need to be placed into a folder that includes the specific language of the script.
 - Docker - Containerization platform
 - Nginx - Web server/reverse proxy
 - Kubernetes - Container orchestration (components)
@@ -49,7 +49,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - SAML authentication provider
 - Certificate Authority (CA) implementation
 
-## Monitoring & Observability - will need to be placed into a new folder in the root called monitor_observe/
+## Monitoring & Observability - will need to be placed into a folder that includes the specific language of the script.
 - Prometheus - Metrics collection (COMPLETE)
 - Grafana - Visualization (simplified)
 - Jaeger - Distributed tracing
