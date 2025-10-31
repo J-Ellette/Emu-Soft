@@ -206,73 +206,97 @@ namespace SignalREmulator
     // Connection manager
     public class ConnectionManager
     {
+        private static readonly object _lock = new object();
         private static readonly Dictionary<string, HubConnection> _connections = new Dictionary<string, HubConnection>();
         private static readonly Dictionary<string, List<string>> _groups = new Dictionary<string, List<string>>();
         private static readonly Dictionary<string, List<string>> _users = new Dictionary<string, List<string>>();
 
         public HubConnection AddConnection(string connectionId, string userId = null)
         {
-            var connection = new HubConnection(connectionId) { UserId = userId };
-            _connections[connectionId] = connection;
-
-            if (!string.IsNullOrEmpty(userId))
+            lock (_lock)
             {
-                if (!_users.ContainsKey(userId))
-                    _users[userId] = new List<string>();
-                _users[userId].Add(connectionId);
-            }
+                var connection = new HubConnection(connectionId) { UserId = userId };
+                _connections[connectionId] = connection;
 
-            return connection;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    if (!_users.ContainsKey(userId))
+                        _users[userId] = new List<string>();
+                    _users[userId].Add(connectionId);
+                }
+
+                return connection;
+            }
         }
 
         public void RemoveConnection(string connectionId)
         {
-            if (_connections.TryGetValue(connectionId, out var connection))
+            lock (_lock)
             {
-                // Remove from groups
-                foreach (var group in connection.Groups.ToList())
+                if (_connections.TryGetValue(connectionId, out var connection))
                 {
-                    RemoveFromGroup(connectionId, group);
-                }
+                    // Remove from groups
+                    foreach (var group in connection.Groups.ToList())
+                    {
+                        RemoveFromGroupInternal(connectionId, group);
+                    }
 
-                // Remove from users
-                if (!string.IsNullOrEmpty(connection.UserId) && _users.ContainsKey(connection.UserId))
-                {
-                    _users[connection.UserId].Remove(connectionId);
-                    if (_users[connection.UserId].Count == 0)
-                        _users.Remove(connection.UserId);
-                }
+                    // Remove from users
+                    if (!string.IsNullOrEmpty(connection.UserId) && _users.ContainsKey(connection.UserId))
+                    {
+                        _users[connection.UserId].Remove(connectionId);
+                        if (_users[connection.UserId].Count == 0)
+                            _users.Remove(connection.UserId);
+                    }
 
-                _connections.Remove(connectionId);
+                    _connections.Remove(connectionId);
+                }
             }
         }
 
         public HubConnection GetConnection(string connectionId)
         {
-            return _connections.TryGetValue(connectionId, out var connection) ? connection : null;
+            lock (_lock)
+            {
+                return _connections.TryGetValue(connectionId, out var connection) ? connection : null;
+            }
         }
 
         public List<HubConnection> GetAllConnections()
         {
-            return _connections.Values.ToList();
+            lock (_lock)
+            {
+                return _connections.Values.ToList();
+            }
         }
 
         public void AddToGroup(string connectionId, string groupName)
         {
-            if (_connections.TryGetValue(connectionId, out var connection))
+            lock (_lock)
             {
-                if (!_groups.ContainsKey(groupName))
-                    _groups[groupName] = new List<string>();
-
-                if (!_groups[groupName].Contains(connectionId))
+                if (_connections.TryGetValue(connectionId, out var connection))
                 {
-                    _groups[groupName].Add(connectionId);
-                    connection.Groups.Add(groupName);
+                    if (!_groups.ContainsKey(groupName))
+                        _groups[groupName] = new List<string>();
+
+                    if (!_groups[groupName].Contains(connectionId))
+                    {
+                        _groups[groupName].Add(connectionId);
+                        connection.Groups.Add(groupName);
+                    }
                 }
             }
         }
 
         public void RemoveFromGroup(string connectionId, string groupName)
+        {
+            lock (_lock)
+            {
+                RemoveFromGroupInternal(connectionId, groupName);
+            }
+        }
+
+        private void RemoveFromGroupInternal(string connectionId, string groupName)
         {
             if (_groups.ContainsKey(groupName))
             {
@@ -289,20 +313,31 @@ namespace SignalREmulator
 
         public List<HubConnection> GetGroupConnections(string groupName)
         {
-            if (_groups.TryGetValue(groupName, out var connectionIds))
+            lock (_lock)
             {
-                return connectionIds.Select(id => GetConnection(id)).Where(c => c != null).ToList();
+                if (_groups.TryGetValue(groupName, out var connectionIds))
+                {
+                    return connectionIds.Select(id => GetConnectionInternal(id)).Where(c => c != null).ToList();
+                }
+                return new List<HubConnection>();
             }
-            return new List<HubConnection>();
         }
 
         public List<HubConnection> GetUserConnections(string userId)
         {
-            if (_users.TryGetValue(userId, out var connectionIds))
+            lock (_lock)
             {
-                return connectionIds.Select(id => GetConnection(id)).Where(c => c != null).ToList();
+                if (_users.TryGetValue(userId, out var connectionIds))
+                {
+                    return connectionIds.Select(id => GetConnectionInternal(id)).Where(c => c != null).ToList();
+                }
+                return new List<HubConnection>();
             }
-            return new List<HubConnection>();
+        }
+
+        private HubConnection GetConnectionInternal(string connectionId)
+        {
+            return _connections.TryGetValue(connectionId, out var connection) ? connection : null;
         }
     }
 

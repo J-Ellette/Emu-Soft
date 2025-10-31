@@ -173,6 +173,10 @@ module Sidekiq
     @@retries = []
     @@mutex = Mutex.new
     
+    # Exponential backoff constants
+    RETRY_EXPONENT = 4  # Exponential growth factor
+    RETRY_BASE_DELAY = 15  # Base delay in seconds
+    
     def self.add(job, error)
       @@mutex.synchronize do
         job['retry_count'] ||= 0
@@ -184,8 +188,8 @@ module Sidekiq
         max_retries = job['retry'] || 3
         
         if job['retry_count'] < max_retries
-          # Calculate exponential backoff
-          retry_delay = (job['retry_count'] ** 4) + 15
+          # Calculate exponential backoff: (retry_count^4) + 15
+          retry_delay = (job['retry_count'] ** RETRY_EXPONENT) + RETRY_BASE_DELAY
           job['scheduled_at'] = Time.now.to_f + retry_delay
           @@retries << job
           @@retries.sort_by! { |j| j['scheduled_at'] }
@@ -381,9 +385,10 @@ module Sidekiq
     def start
       @running = true
       
-      # Start processors for each queue
+      # Start processors for each queue - ensure at least one processor per queue
       @queues.each do |queue|
-        (@concurrency / @queues.size).times do
+        processors_per_queue = [@concurrency / @queues.size, 1].max
+        processors_per_queue.times do
           processor = Processor.new(queue)
           processor.start
           @processors << processor
