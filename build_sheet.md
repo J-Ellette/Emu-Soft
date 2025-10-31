@@ -77,9 +77,9 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - google-cloud-storage - Google Cloud SDK
 
-- kubernetes - K8s Python client
+- kubernetes - K8s Python client (COMPLETE)
 
-- docker-py - Docker API client
+- docker-py - Docker API client (COMPLETE)
 
 - fabric - SSH deployment automation (COMPLETE)
 
@@ -89,7 +89,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - Redis client (I may have this already)
 
-- elasticsearch-py - Elasticsearch client
+- elasticsearch-py - Elasticsearch client (COMPLETE)
 
 - graphene - GraphQL framework
 
