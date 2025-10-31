@@ -131,28 +131,28 @@ def test_dev_tools():
     black = Black()
     print("  ✓ formatter.py works")
     
-    # Test new individual folders (they import from the same modules)
-    import pytest_emulator_tool
-    import coverage_emulator_tool
-    import code_formatter_tool
+    # Test new individual folders with renamed modules
+    import TestRunner
+    import CodeCoverage
+    import CodeFormatter
     import live_reload_tool
     import cms_cli_tool
     print("  ✓ New folder structure works")
     
-    # Test newly added emulators
-    from mypy_emulator_tool.mypy_emulator import MypyEmulator
+    # Test newly renamed emulators
+    from TypeChecker.TypeChecker import MypyEmulator
     mypy_emu = MypyEmulator()
-    print("  ✓ mypy_emulator.py works")
+    print("  ✓ TypeChecker (mypy_emulator) works")
     
-    from flake8_emulator_tool.flake8_emulator import Flake8Emulator
+    from CodeLinter.CodeLinter import Flake8Emulator
     flake8_emu = Flake8Emulator()
-    print("  ✓ flake8_emulator.py works")
+    print("  ✓ CodeLinter (flake8_emulator) works")
     
-    from uvicorn_emulator_tool.uvicorn_emulator import ASGIServer, ASGIRequest
+    from ASGIServer.ASGIServer import ASGIServer, ASGIRequest
     # Test instantiable classes
     raw_request = b"GET / HTTP/1.1\r\n\r\n"
     request = ASGIRequest(raw_request, ('127.0.0.1', 12345))
-    print("  ✓ uvicorn_emulator.py works")
+    print("  ✓ ASGIServer (uvicorn_emulator) works")
 
 if __name__ == "__main__":
     print("=" * 60)

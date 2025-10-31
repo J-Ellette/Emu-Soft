@@ -9,10 +9,10 @@ import os
 def demo_mypy():
     """Demonstrate MyPy emulator"""
     print("=" * 60)
-    print("MyPy Emulator Demo - Type Checking")
+    print("TypeChecker (MyPy) Emulator Demo - Type Checking")
     print("=" * 60)
     
-    from mypy_emulator_tool.mypy_emulator import MypyEmulator
+    from TypeChecker.TypeChecker import MypyEmulator
     
     # Create a test file with type errors
     code = """
@@ -51,10 +51,10 @@ result = add(1, 2)
 def demo_flake8():
     """Demonstrate Flake8 emulator"""
     print("=" * 60)
-    print("Flake8 Emulator Demo - Linting")
+    print("CodeLinter (Flake8) Emulator Demo - Linting")
     print("=" * 60)
     
-    from flake8_emulator_tool.flake8_emulator import Flake8Emulator
+    from CodeLinter.CodeLinter import Flake8Emulator
     
     # Create a test file with linting issues
     code = """
@@ -92,10 +92,10 @@ x = 1
 def demo_uvicorn():
     """Demonstrate Uvicorn emulator components"""
     print("=" * 60)
-    print("Uvicorn Emulator Demo - ASGI Server")
+    print("ASGIServer (Uvicorn) Emulator Demo - ASGI Server")
     print("=" * 60)
     
-    from uvicorn_emulator_tool.uvicorn_emulator import ASGIRequest, ASGIResponse
+    from ASGIServer.ASGIServer import ASGIRequest, ASGIResponse
     
     # Demo request parsing
     raw_request = b"GET /api/users?limit=10 HTTP/1.1\r\nHost: localhost:8000\r\n\r\n"
@@ -121,8 +121,8 @@ def demo_uvicorn():
     print(f"  Body: {response.body.decode('utf-8')}")
     
     print(f"\nTo run ASGI server:")
-    print(f"  python uvicorn_emulator.py main:app")
-    print(f"  python uvicorn_emulator.py main:app --reload")
+    print(f"  python ASGIServer.py main:app")
+    print(f"  python ASGIServer.py main:app --reload")
     print()
 
 
