@@ -33,13 +33,13 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Serde - Serialization framework (COMPLETE)
 - Tokio - Async runtime (COMPLETE)
 - Clap - CLI argument parsing (COMPLETE)
-- Diesel - ORM and query builder
+- Diesel - ORM and query builder (COMPLETE)
 
 ## System Tools & DevOps - will need to be placed into a new folder in the root called devops/
 - Docker - Containerization platform
 - Nginx - Web server/reverse proxy
 - Kubernetes - Container orchestration (components)
-- Terraform - Infrastructure as code
+- Terraform - Infrastructure as code (COMPLETE)
 - Ansible - Configuration management
 - Jenkins - CI/CD server
 
@@ -50,14 +50,14 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Certificate Authority (CA) implementation
 
 ## Monitoring & Observability - will need to be placed into a new folder in the root called monitor_observe/
-- Prometheus - Metrics collection
+- Prometheus - Metrics collection (COMPLETE)
 - Grafana - Visualization (simplified)
 - Jaeger - Distributed tracing
 - Fluentd - Log collection
 - AlertManager - Alert routing
 
 ## Java Enterprise - will need to be placed into a new folder in the root called java/
-- Spring Boot - Enterprise framework
+- Spring Boot - Enterprise framework (COMPLETE)
 - Hibernate - ORM standard
 - Maven/Gradle - Build tools
 

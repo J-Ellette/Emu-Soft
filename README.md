@@ -41,7 +41,23 @@ Emu-Soft/
 ├── go/                  # Go language emulator tools
 │   ├── gin_emulator_tool/       # Gin web framework
 │   ├── cobra_emulator_tool/     # Cobra CLI framework
-│   └── viper_emulator_tool/     # Viper configuration management
+│   ├── viper_emulator_tool/     # Viper configuration management
+│   ├── gorm_emulator_tool/      # GORM ORM
+│   ├── testify_emulator_tool/   # Testify testing toolkit
+│   ├── redis_emulator_tool/     # Redis Go client
+│   └── gokit_emulator_tool/     # Go-kit microservices toolkit
+├── rust/                # Rust language emulator tools
+│   ├── actix_web_emulator_tool/ # Actix-web framework
+│   ├── serde_emulator_tool/     # Serde serialization
+│   ├── tokio_emulator_tool/     # Tokio async runtime
+│   ├── clap_emulator_tool/      # Clap CLI parsing
+│   └── diesel_emulator_tool/    # Diesel ORM
+├── java/                # Java emulator tools
+│   └── spring_boot_emulator_tool/ # Spring Boot framework
+├── devops/              # DevOps tools emulators
+│   └── terraform_emulator_tool/   # Terraform IaC
+├── monitor_observe/     # Monitoring and observability tools
+│   └── prometheus_emulator_tool/  # Prometheus metrics
 ├── LICENSE              # Repository license
 ├── .gitignore           # Git ignore rules
 └── .gitattributes       # Git attributes
@@ -65,6 +81,26 @@ See [python/README.md](python/README.md) for a comprehensive list of Python emul
 - **Gin** - High-performance HTTP web framework
 - **Cobra** - Powerful CLI application framework
 - **Viper** - Complete configuration solution
+- **GORM** - ORM for database operations
+- **Testify** - Testing toolkit with assertions and mocks
+- **Redis Client** - Go client for Redis
+- **Go-kit** - Microservices toolkit
+
+### Rust
+- **Actix-web** - High-performance web framework
+- **Serde** - Serialization and deserialization framework
+- **Tokio** - Asynchronous runtime for Rust
+- **Clap** - Command-line argument parsing
+- **Diesel** - Safe, extensible ORM and query builder
+
+### Java
+- **Spring Boot** - Enterprise web application framework
+
+### DevOps
+- **Terraform** - Infrastructure as Code tool
+
+### Monitoring & Observability
+- **Prometheus** - Metrics collection and monitoring system
 
 ## Getting Started
 
