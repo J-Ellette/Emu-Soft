@@ -284,6 +284,10 @@ class Expectation {
     }
 
     toThrow(expectedError) {
+        if (typeof this.actual !== 'function') {
+            throw new Error('Expected value must be a function');
+        }
+        
         let didThrow = false;
         let thrownError = null;
         

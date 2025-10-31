@@ -90,11 +90,17 @@ function tokenize(code) {
             while (i < code.length && code[i] !== quote) {
                 if (code[i] === '\\') {
                     str += code[i++];
+                    if (i < code.length) {
+                        str += code[i++];
+                    }
+                } else {
+                    str += code[i++];
                 }
-                str += code[i++];
             }
-            str += quote;
-            i++;
+            if (i < code.length) {
+                str += quote;
+                i++;
+            }
             tokens.push({ type: TokenType.STRING, value: str, quote });
             continue;
         }
@@ -345,7 +351,8 @@ function formatHTML(code, options) {
         formatted += indent.repeat(indentLevel) + line + '\n';
         
         // Opening tag - increase indent after
-        if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>') && !line.includes('</')) {
+        const isOpeningTag = line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>') && !line.includes('</');
+        if (isOpeningTag) {
             indentLevel++;
         }
     }

@@ -286,7 +286,7 @@ function renderComponent(Component, props = {}) {
     
     if (typeof Component === 'function') {
         // Check if it's a class component
-        if (Component.prototype && Component.prototype.isReactComponent) {
+        if (Component.prototype?.isReactComponent) {
             const instance = new Component(props);
             instance._isMounted = true;
             
