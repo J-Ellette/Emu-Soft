@@ -75,7 +75,7 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - boto3 - AWS SDK (massive enterprise value) (COMPLETE)
 
-- google-cloud-storage - Google Cloud SDK
+- google-cloud-storage - Google Cloud SDK (COMPLETE)
 
 - kubernetes - K8s Python client (COMPLETE)
 
@@ -83,11 +83,11 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 
 - fabric - SSH deployment automation (COMPLETE)
 
-- SQLAlchemy Core - Lower-level SQL toolkit (since you have ORM)
+- SQLAlchemy Core - Lower-level SQL toolkit (since you have ORM) (COMPLETE)
 
 - alembic - Database migrations (COMPLETE)
 
-- Redis client (I may have this already)
+- Redis client (I may have this already) (COMPLETE)
 
 - elasticsearch-py - Elasticsearch client (COMPLETE)
 
