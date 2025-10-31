@@ -67,6 +67,7 @@ func (v *Viper) GetString(key string) string {
 }
 
 // GetInt gets an integer configuration value
+// Note: String to int conversion errors are silently ignored, returning 0
 func (v *Viper) GetInt(key string) int {
 	val := v.Get(key)
 	if val == nil {
@@ -80,7 +81,7 @@ func (v *Viper) GetInt(key string) int {
 		return int(v)
 	case string:
 		var result int
-		fmt.Sscanf(v, "%d", &result)
+		fmt.Sscanf(v, "%d", &result) // Parse errors return 0
 		return result
 	default:
 		return 0
@@ -105,6 +106,7 @@ func (v *Viper) GetBool(key string) bool {
 }
 
 // GetFloat64 gets a float64 configuration value
+// Note: String to float conversion errors are silently ignored, returning 0.0
 func (v *Viper) GetFloat64(key string) float64 {
 	val := v.Get(key)
 	if val == nil {
@@ -118,7 +120,7 @@ func (v *Viper) GetFloat64(key string) float64 {
 		return float64(v)
 	case string:
 		var result float64
-		fmt.Sscanf(v, "%f", &result)
+		fmt.Sscanf(v, "%f", &result) // Parse errors return 0.0
 		return result
 	default:
 		return 0.0
@@ -177,14 +179,17 @@ func (v *Viper) BindEnv(key string, envVars ...string) error {
 }
 
 // SetEnvPrefix sets a prefix for environment variables
+// In this simplified emulator, the prefix is not used in automatic binding
 func (v *Viper) SetEnvPrefix(prefix string) {
-	// In a full implementation, this would affect BindEnv behavior
-	// For simplicity, we'll just store it
+	// Simplified: In a full implementation, this would affect automatic environment variable binding
+	// For this emulator, use explicit BindEnv() calls instead
 }
 
 // AutomaticEnv enables automatic environment variable binding
+// In this simplified emulator, use explicit BindEnv() calls for environment variable binding
 func (v *Viper) AutomaticEnv() {
-	// In a full implementation, this would automatically bind all keys to env vars
+	// Simplified: In a full implementation, this would automatically bind all config keys to environment variables
+	// For this emulator, use explicit BindEnv() for specific keys instead
 }
 
 // SetConfigFile sets the configuration file path

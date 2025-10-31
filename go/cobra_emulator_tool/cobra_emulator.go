@@ -231,6 +231,7 @@ func (c *Command) GetString(name string) string {
 }
 
 // GetInt gets an int flag value
+// Note: String to int conversion errors are silently ignored, returning 0
 func (c *Command) GetInt(name string) int {
 	if flag, exists := c.flags[name]; exists {
 		if i, ok := flag.Value.(*int); ok {
@@ -239,7 +240,7 @@ func (c *Command) GetInt(name string) int {
 		if str, ok := flag.Value.(string); ok {
 			// Try to parse string as int
 			var result int
-			fmt.Sscanf(str, "%d", &result)
+			fmt.Sscanf(str, "%d", &result) // Parse errors return 0
 			return result
 		}
 	}
