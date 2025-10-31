@@ -4,18 +4,33 @@ The following emulator tools have not yet been given their final names and need 
 
 ## NEW: Recently Added Emulators
 
+- **jenkins_emulator_tool** - CI/CD automation server emulator
+  - Location: `python/jenkins_emulator_tool/`
+  - Emulates: Jenkins
+  - Suggested name: TBD
+
+- **fluentd_emulator_tool** - Unified logging layer emulator
+  - Location: `python/fluentd_emulator_tool/`
+  - Emulates: Fluentd
+  - Suggested name: TBD
+
+- **alertmanager_emulator_tool** - Alert routing and management emulator
+  - Location: `python/alertmanager_emulator_tool/`
+  - Emulates: Prometheus AlertManager
+  - Suggested name: TBD
+
 - **nginx_emulator_tool** - Web server and reverse proxy emulator
-  - Location: `devops/nginx_emulator_tool/`
+  - Location: `python/nginx_emulator_tool/`
   - Emulates: Nginx
   - Suggested name: ReverseProxy
 
 - **vault_emulator_tool** - Secrets management emulator
-  - Location: `security/vault_emulator_tool/`
+  - Location: `python/vault_emulator_tool/`
   - Emulates: HashiCorp Vault
   - Suggested name: SecretMan
 
 - **grafana_emulator_tool** - Visualization and monitoring platform emulator
-  - Location: `monitor_observe/grafana_emulator_tool/`
+  - Location: `python/grafana_emulator_tool/`
   - Emulates: Grafana
   - Suggested name: VisMonPlatform
 
@@ -25,17 +40,17 @@ The following emulator tools have not yet been given their final names and need 
   - Suggested name: JavaORMframework
 
 - **docker_emulator_tool** - Container platform emulator
-  - Location: `devops/docker_emulator_tool/`
+  - Location: `python/docker_emulator_tool/`
   - Emulates: Docker
   - Suggested name: ContainerPlatform
 
 - **ansible_emulator_tool** - Configuration management and automation emulator
-  - Location: `devops/ansible_emulator_tool/`
+  - Location: `python/ansible_emulator_tool/`
   - Emulates: Ansible
   - Suggested name: ConfigMan
 
 - **jaeger_emulator_tool** - Distributed tracing system emulator
-  - Location: `monitor_observe/jaeger_emulator_tool/`
+  - Location: `python/jaeger_emulator_tool/`
   - Emulates: Jaeger
   - Suggested name: DistTrace
 
