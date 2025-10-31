@@ -4,7 +4,7 @@ Test suite for SAML Emulator
 
 import unittest
 from datetime import datetime, timedelta
-from saml_emulator import (
+from SAMLAuth import (
     SAMLEmulator, SAMLServiceProvider,
     IdentityProvider, ServiceProvider, User,
     NameIDFormat, StatusCode, Attribute

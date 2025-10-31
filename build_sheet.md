@@ -38,16 +38,16 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## System Tools & DevOps - will need to be placed into a folder that includes the specific language of the script.
 - Docker - Containerization platform (COMPLETE)
 - Nginx - Web server/reverse proxy (COMPLETE)
-- Kubernetes - Container orchestration (components) (COMPLETE)
+- Kubernetes - Container orchestration (components) (COMPLETE) → Orchestrator
 - Terraform - Infrastructure as code (COMPLETE)
 - Ansible - Configuration management (COMPLETE)
 - Jenkins - CI/CD server (COMPLETE)
 
 ## Security Tools - will need to be placed into a folder that includes the specific language of the script.
 - Vault (HashiCorp) - Secrets management (COMPLETE)
-- OAuth 2.0/OIDC server implementation (COMPLETE)
-- SAML authentication provider (COMPLETE)
-- Certificate Authority (CA) implementation (COMPLETE)
+- OAuth 2.0/OIDC server implementation (COMPLETE) → OIDCServer
+- SAML authentication provider (COMPLETE) → SAMLAuth
+- Certificate Authority (CA) implementation (COMPLETE) → CertAuth
 
 ## Monitoring & Observability - will need to be placed into a folder that includes the specific language of the script.
 - Prometheus - Metrics collection (COMPLETE)
@@ -59,17 +59,17 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## Java Enterprise - will need to be placed into a new folder in the root called java/
 - Spring Boot - Enterprise framework (COMPLETE)
 - Hibernate - ORM standard (COMPLETE)
-- Maven/Gradle - Build tools (COMPLETE)
+- Maven/Gradle - Build tools (COMPLETE) → JavaGrade
 
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
-- ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/
-- Entity Framework - ORM (COMPLETE)
-- SignalR - Real-time communication (COMPLETE)
+- ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/ (COMPLETE) → ViperNet
+- Entity Framework - ORM (COMPLETE) → StructureFramer
+- SignalR - Real-time communication (COMPLETE) → RealSignal
 
 ## Ruby - will need to be placed into a new folder in the root called ruby/
-- Rails - Web framework (COMPLETE)
-- RSpec - Testing framework (COMPLETE)
-- Sidekiq - Background jobs (COMPLETE)
+- Rails - Web framework (COMPLETE) → GemTracks
+- RSpec - Testing framework (COMPLETE) → Re_Spec_t
+- Sidekiq - Background jobs (COMPLETE) → SideKick
 
 ### Remaining High-Value Python Libraries - will go inside their own subfolders, inside the python directory
 

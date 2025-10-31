@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'rails_emulator'
+require_relative 'GemTracks'
 
 puts "=== Rails Emulator Tests ===\n\n"
 

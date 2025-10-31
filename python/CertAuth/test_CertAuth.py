@@ -5,7 +5,7 @@ Tests for Certificate Authority Emulator
 
 import unittest
 from datetime import datetime, timedelta
-from ca_emulator_tool import (
+from CertAuth import (
     CertificateAuthority, DistinguishedName, RevocationReason,
     CertificateType, KeyAlgorithm
 )

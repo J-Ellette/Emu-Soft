@@ -1,4 +1,4 @@
-require_relative 'sidekiq_emulator'
+require_relative 'SideKick'
 
 puts "=== Sidekiq Emulator Tests ===\n\n"
 

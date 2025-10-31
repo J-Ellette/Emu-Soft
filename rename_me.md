@@ -5,28 +5,28 @@
 The following newly implemented emulator tools need names assigned:
 
 ### C# .NET Tools
-- ✅ signalr_emulator_tool → **[Needs Name]** (SignalR real-time communication emulator in c_sharp/signalr_emulator_tool/)
+- ✅ signalr_emulator_tool → **RealSignal** (SignalR real-time communication emulator in c_sharp/RealSignal/)
 
 ### Ruby Tools
-- ✅ sidekiq_emulator_tool → **[Needs Name]** (Sidekiq background jobs emulator in ruby/sidekiq_emulator_tool/)
+- ✅ sidekiq_emulator_tool → **SideKick** (Sidekiq background jobs emulator in ruby/SideKick/)
 
 ### Python Security Tools
-- ✅ oauth_server_emulator_tool → **[Needs Name]** (OAuth 2.0/OIDC server emulator in python/)
-- ✅ ca_emulator_tool → **[Needs Name]** (Certificate Authority emulator in python/)
-- ✅ saml_emulator_tool → **[Needs Name]** (SAML authentication provider emulator in python/saml_emulator_tool/)
+- ✅ oauth_server_emulator_tool → **OIDCServer** (OAuth 2.0/OIDC server emulator in python/OIDCServer/)
+- ✅ ca_emulator_tool → **CertAuth** (Certificate Authority emulator in python/CertAuth/)
+- ✅ saml_emulator_tool → **SAMLAuth** (SAML authentication provider emulator in python/SAMLAuth/)
 
 ### Python System Tools  
-- ✅ kubernetes_orchestrator_tool → **[Needs Name]** (Kubernetes orchestration emulator in python/)
+- ✅ kubernetes_orchestrator_tool → **Orchestrator** (Kubernetes orchestration emulator in python/Orchestrator/)
 
 ### Java Build Tools
-- ✅ gradle_emulator_tool → **[Needs Name]** (Gradle build tool emulator in java/)
+- ✅ gradle_emulator_tool → **JavaGrade** (Gradle build tool emulator in java/JavaGrade/)
 
 ### C# .NET Tools
-- ✅ entity_framework_emulator_tool → **[Needs Name]** (Entity Framework ORM emulator in c_sharp/entity_framework_emulator_tool/)
+- ✅ entity_framework_emulator_tool → **StructureFramer** (Entity Framework ORM emulator in c_sharp/StructureFramer/)
 
 ### Ruby Tools
-- ✅ rails_emulator_tool → **[Needs Name]** (Ruby on Rails web framework emulator in ruby/rails_emulator_tool/)
-- ✅ rspec_emulator_tool → **[Needs Name]** (RSpec testing framework emulator in ruby/rspec_emulator_tool/)
+- ✅ rails_emulator_tool → **GemTracks** (Ruby on Rails web framework emulator in ruby/GemTracks/)
+- ✅ rspec_emulator_tool → **Re_Spec_t** (RSpec testing framework emulator in ruby/Re_Spec_t/)
 
 ---
 
