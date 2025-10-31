@@ -45,3 +45,8 @@ go/*/*/viper_test
 **/target/
 **/*.rs.bk
 Cargo.lock
+rust/**/*_demo
+rust/**/*_test
+rust/**/test_*_emulator
+rust/**/*_emulator
+!rust/**/*.rs
