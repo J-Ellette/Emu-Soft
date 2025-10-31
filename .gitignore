@@ -50,3 +50,4 @@ rust/**/*_test
 rust/**/test_*_emulator
 rust/**/*_emulator
 !rust/**/*.rs
+*.class

@@ -1,0 +1,14 @@
+[package]
+name = "diesel_emulator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+name = "diesel_emulator"
+path = "diesel_emulator.rs"
+
+[[bin]]
+name = "test_diesel_emulator"
+path = "test_diesel_emulator.rs"
