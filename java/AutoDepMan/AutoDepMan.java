@@ -213,7 +213,7 @@ public class AutoDepMan {
     private Map<String, Artifact> localRepository;
     private List<Repository> remoteRepositories;
     
-    public MavenEmulator() {
+    public AutoDepMan() {
         this.projects = new HashMap<>();
         this.localRepository = new HashMap<>();
         this.remoteRepositories = new ArrayList<>();
@@ -478,7 +478,7 @@ public class AutoDepMan {
     
     // Example usage
     public static void main(String[] args) {
-        MavenEmulator maven = new MavenEmulator();
+        AutoDepMan maven = new AutoDepMan();
         
         // Create a project
         POM pom = new POM("com.example", "my-app", "1.0.0");
