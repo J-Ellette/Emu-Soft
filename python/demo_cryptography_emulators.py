@@ -1,9 +1,9 @@
 """
-Demo script for itsdangerous and cryptography emulators
+Demo script for SecureSign (itsdangerous) and CryptoLib (cryptography) emulators
 
 This script demonstrates the key features of both emulators:
-- itsdangerous: Cryptographic signing and serialization
-- cryptography: Modern cryptographic operations
+- SecureSign: Cryptographic signing and serialization
+- CryptoLib: Modern cryptographic operations
 """
 
 import sys
@@ -13,16 +13,16 @@ import json
 import traceback
 
 # Add paths for imports
-sys.path.insert(0, 'itsdangerous_emulator_tool')
-sys.path.insert(0, 'cryptography_emulator_tool')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'SecureSign'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'CryptoLib'))
 
-from itsdangerous_emulator import (
+from SecureSign import (
     Signer, TimestampSigner, Serializer, TimedSerializer,
     URLSafeSerializer, URLSafeTimedSerializer,
     BadSignature, SignatureExpired
 )
 
-from cryptography_emulator import (
+from CryptoLib import (
     Fernet, MultiFernet,
     Hash, HMAC, SHA256, SHA512,
     PBKDF2HMAC, Scrypt, HKDF,
