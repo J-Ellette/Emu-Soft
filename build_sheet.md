@@ -15,15 +15,15 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - lodash - Utility library (COMPLETE)
 - axios - HTTP client (COMPLETE)
 - Jest - Testing framework (COMPLETE)
-- Webpack - Module bundler
-- ESLint - Linting
+- Webpack - Module bundler (COMPLETE)
+- ESLint - Linting (COMPLETE)
 - Prettier - Code formatting (COMPLETE)
 
 ## Go Language Tools - will need to be placed into a new folder in the root called go/
 - Gin - Web framework (COMPLETE)
 - Cobra - CLI framework (COMPLETE)
 - Viper - Configuration management (COMPLETE)
-- Testify - Testing toolkit
+- Testify - Testing toolkit (COMPLETE)
 - GORM - ORM
 - Redis Go client
 - Go-kit - Microservices toolkit
