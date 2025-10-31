@@ -1,0 +1,3 @@
+[submodule "PowerScript/PowerShield"]
+	path = PowerScript/PowerShield
+	url = https://github.com/J-Ellette/PowerShield.git
