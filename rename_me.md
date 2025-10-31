@@ -4,6 +4,12 @@
 
 The following newly implemented emulator tools need names assigned:
 
+### C# .NET Tools
+- ✅ signalr_emulator_tool → **[Needs Name]** (SignalR real-time communication emulator in c_sharp/signalr_emulator_tool/)
+
+### Ruby Tools
+- ✅ sidekiq_emulator_tool → **[Needs Name]** (Sidekiq background jobs emulator in ruby/sidekiq_emulator_tool/)
+
 ### Python Security Tools
 - ✅ oauth_server_emulator_tool → **[Needs Name]** (OAuth 2.0/OIDC server emulator in python/)
 - ✅ ca_emulator_tool → **[Needs Name]** (Certificate Authority emulator in python/)

@@ -64,12 +64,12 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
 - ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/
 - Entity Framework - ORM (COMPLETE)
-- SignalR - Real-time communication
+- SignalR - Real-time communication (COMPLETE)
 
 ## Ruby - will need to be placed into a new folder in the root called ruby/
 - Rails - Web framework (COMPLETE)
 - RSpec - Testing framework (COMPLETE)
-- Sidekiq - Background jobs
+- Sidekiq - Background jobs (COMPLETE)
 
 ### Remaining High-Value Python Libraries - will go inside their own subfolders, inside the python directory
 
