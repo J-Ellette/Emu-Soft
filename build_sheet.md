@@ -10,10 +10,10 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 ### NON-Python Technologies to Tackle Next
 
 ## JavaScript/Node.js Ecosystem - will need to be placed into a new folder in the root called javascript/
-- Express.js - Web framework
+- Express.js - Web framework (COMPLETE)
 - React - Frontend library
-- lodash - Utility library
-- axios - HTTP client
+- lodash - Utility library (COMPLETE)
+- axios - HTTP client (COMPLETE)
 - Jest - Testing framework
 - Webpack - Module bundler
 - ESLint - Linting
