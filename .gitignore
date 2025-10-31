@@ -40,3 +40,8 @@ Thumbs.db
 go/*/*/gin_test
 go/*/*/cobra_test
 go/*/*/viper_test
+
+# Rust
+**/target/
+**/*.rs.bk
+Cargo.lock
