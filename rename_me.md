@@ -24,6 +24,26 @@ The following emulator tools in the `python/` directory have not yet been given 
   - Emulates: Hibernate
   - Suggested name: TBD
 
+- **docker_emulator_tool** - Container platform emulator
+  - Location: `devops/docker_emulator_tool/`
+  - Emulates: Docker
+  - Suggested name: TBD
+
+- **ansible_emulator_tool** - Configuration management and automation emulator
+  - Location: `devops/ansible_emulator_tool/`
+  - Emulates: Ansible
+  - Suggested name: TBD
+
+- **jaeger_emulator_tool** - Distributed tracing system emulator
+  - Location: `monitor_observe/jaeger_emulator_tool/`
+  - Emulates: Jaeger
+  - Suggested name: TBD
+
+- **maven_emulator_tool** - Build automation and dependency management emulator
+  - Location: `java/maven_emulator_tool/`
+  - Emulates: Maven
+  - Suggested name: TBD
+
 ## Infrastructure & DevOps Tools
 
 - **terraform_emulator_tool** - Infrastructure as Code tool (Terraform emulator)
