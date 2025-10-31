@@ -36,30 +36,30 @@ Each script in each folder/subfolder should be proveided with a readme.md detail
 - Diesel - ORM and query builder (COMPLETE)
 
 ## System Tools & DevOps - will need to be placed into a folder that includes the specific language of the script.
-- Docker - Containerization platform
-- Nginx - Web server/reverse proxy
+- Docker - Containerization platform (COMPLETE)
+- Nginx - Web server/reverse proxy (COMPLETE)
 - Kubernetes - Container orchestration (components)
 - Terraform - Infrastructure as code (COMPLETE)
-- Ansible - Configuration management
-- Jenkins - CI/CD server
+- Ansible - Configuration management (COMPLETE)
+- Jenkins - CI/CD server (COMPLETE)
 
 ## Security Tools - will need to be placed into a folder that includes the specific language of the script.
-- Vault (HashiCorp) - Secrets management
+- Vault (HashiCorp) - Secrets management (COMPLETE)
 - OAuth 2.0/OIDC server implementation
 - SAML authentication provider
 - Certificate Authority (CA) implementation
 
 ## Monitoring & Observability - will need to be placed into a folder that includes the specific language of the script.
 - Prometheus - Metrics collection (COMPLETE)
-- Grafana - Visualization (simplified)
-- Jaeger - Distributed tracing
-- Fluentd - Log collection
-- AlertManager - Alert routing
+- Grafana - Visualization (simplified) (COMPLETE)
+- Jaeger - Distributed tracing (COMPLETE)
+- Fluentd - Log collection (COMPLETE)
+- AlertManager - Alert routing (COMPLETE)
 
 ## Java Enterprise - will need to be placed into a new folder in the root called java/
 - Spring Boot - Enterprise framework (COMPLETE)
-- Hibernate - ORM standard
-- Maven/Gradle - Build tools
+- Hibernate - ORM standard (COMPLETE)
+- Maven/Gradle - Build tools (COMPLETE - Maven)
 
 ## C# .NET - will need to be placed into a new folder in the root called c_sharp
 - ASP.NET Core - Web framework - will need to be placed into a new folder in the root called asp_net/
