@@ -1,648 +1,584 @@
 """
-Developed by PowerShield
-"""
+Developed by PowerShield, as an application topology mapper
 
-#!/usr/bin/env python3
-"""
 TopoMapper - Application Topology Mapper from Actual Traffic
 
-This module analyzes actual network traffic to automatically discover and map
-application topology, service dependencies, and communication patterns.
+This module analyzes actual network traffic and service interactions to
+automatically build and visualize application topology maps.
 
 Features:
-- Automatic service discovery from traffic
-- Dependency mapping between services
-- Protocol detection (HTTP, gRPC, TCP, etc.)
-- Traffic pattern analysis
-- Health status tracking
-- Topology visualization data generation
-- Multi-protocol support
+- Service discovery from traffic patterns
+- Dependency graph construction
+- Communication protocol detection
+- Traffic flow analysis
+- Service health scoring
+- Topology visualization (text and DOT format)
+- Change detection and versioning
+- Export to various formats (JSON, DOT, text)
+
+Note: This is a pure Python implementation using only standard library.
 """
 
+import json
 import time
 import threading
-from typing import Dict, List, Optional, Set, Any, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
 from collections import defaultdict
-from datetime import datetime
 from enum import Enum
-import json
-import hashlib
 
 
 class Protocol(Enum):
-    """Network protocols"""
-    HTTP = "http"
-    HTTPS = "https"
-    GRPC = "grpc"
-    TCP = "tcp"
-    UDP = "udp"
-    WEBSOCKET = "websocket"
-    UNKNOWN = "unknown"
+    """Communication protocols"""
+    HTTP = "HTTP"
+    HTTPS = "HTTPS"
+    GRPC = "gRPC"
+    WEBSOCKET = "WebSocket"
+    TCP = "TCP"
+    UDP = "UDP"
+    UNKNOWN = "Unknown"
 
 
 class ServiceStatus(Enum):
     """Service health status"""
-    HEALTHY = "healthy"
-    DEGRADED = "degraded"
-    UNHEALTHY = "unhealthy"
-    UNKNOWN = "unknown"
+    HEALTHY = "Healthy"
+    DEGRADED = "Degraded"
+    UNHEALTHY = "Unhealthy"
+    UNKNOWN = "Unknown"
 
 
 @dataclass
-class NetworkConnection:
-    """Represents a network connection"""
-    source_host: str
-    source_port: int
-    destination_host: str
-    destination_port: int
+class Connection:
+    """Represents a connection between two services"""
+    source: str
+    destination: str
     protocol: Protocol
-    timestamp: float
-    bytes_sent: int = 0
-    bytes_received: int = 0
-    status_code: Optional[int] = None
-    method: Optional[str] = None
-    path: Optional[str] = None
-    duration_ms: Optional[float] = None
+    request_count: int = 0
+    error_count: int = 0
+    total_bytes: int = 0
+    avg_latency_ms: float = 0.0
+    latencies: List[float] = field(default_factory=list)
+    first_seen: float = field(default_factory=time.time)
+    last_seen: float = field(default_factory=time.time)
     
-    def get_connection_key(self) -> str:
-        """Generate unique key for this connection type"""
-        return f"{self.source_host}:{self.source_port}->{self.destination_host}:{self.destination_port}:{self.protocol.value}"
+    def add_request(self, bytes_transferred: int, latency_ms: float, is_error: bool = False):
+        """Record a request on this connection"""
+        self.request_count += 1
+        if is_error:
+            self.error_count += 1
+        self.total_bytes += bytes_transferred
+        self.latencies.append(latency_ms)
+        
+        # Update average latency
+        self.avg_latency_ms = sum(self.latencies) / len(self.latencies)
+        self.last_seen = time.time()
+    
+    def get_error_rate(self) -> float:
+        """Calculate error rate"""
+        if self.request_count == 0:
+            return 0.0
+        return self.error_count / self.request_count
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return {
+            'source': self.source,
+            'destination': self.destination,
+            'protocol': self.protocol.value,
+            'request_count': self.request_count,
+            'error_count': self.error_count,
+            'error_rate': self.get_error_rate(),
+            'total_bytes': self.total_bytes,
+            'avg_latency_ms': self.avg_latency_ms,
+            'first_seen': self.first_seen,
+            'last_seen': self.last_seen
+        }
 
 
 @dataclass
 class Service:
-    """Represents a discovered service"""
+    """Represents a service in the topology"""
     name: str
-    host: str
-    port: int
-    protocol: Protocol
-    first_seen: float
-    last_seen: float
-    total_requests: int = 0
+    ip_addresses: Set[str] = field(default_factory=set)
+    ports: Set[int] = field(default_factory=set)
+    protocols: Set[Protocol] = field(default_factory=set)
+    incoming_connections: int = 0
+    outgoing_connections: int = 0
+    total_requests_received: int = 0
+    total_requests_sent: int = 0
     total_errors: int = 0
-    total_bytes_sent: int = 0
-    total_bytes_received: int = 0
-    endpoints: Set[str] = field(default_factory=set)
-    status: ServiceStatus = ServiceStatus.UNKNOWN
+    first_seen: float = field(default_factory=time.time)
+    last_seen: float = field(default_factory=time.time)
+    metadata: Dict[str, Any] = field(default_factory=dict)
     
-    def get_error_rate(self) -> float:
-        """Calculate error rate"""
-        return self.total_errors / self.total_requests if self.total_requests > 0 else 0.0
-    
-    def update_status(self):
-        """Update service health status based on error rate"""
-        error_rate = self.get_error_rate()
-        if error_rate < 0.01:  # Less than 1% errors
-            self.status = ServiceStatus.HEALTHY
+    def get_status(self) -> ServiceStatus:
+        """Determine service health status"""
+        if self.total_requests_received == 0:
+            return ServiceStatus.UNKNOWN
+        
+        error_rate = self.total_errors / self.total_requests_received
+        
+        if error_rate == 0:
+            return ServiceStatus.HEALTHY
         elif error_rate < 0.05:  # Less than 5% errors
-            self.status = ServiceStatus.DEGRADED
+            return ServiceStatus.HEALTHY
+        elif error_rate < 0.20:  # 5-20% errors
+            return ServiceStatus.DEGRADED
         else:
-            self.status = ServiceStatus.UNHEALTHY
-
-
-@dataclass
-class ServiceDependency:
-    """Represents a dependency between services"""
-    from_service: str
-    to_service: str
-    protocol: Protocol
-    connection_count: int = 0
-    total_requests: int = 0
-    total_errors: int = 0
-    total_bytes: int = 0
-    average_latency_ms: float = 0.0
-    endpoints_used: Set[str] = field(default_factory=set)
+            return ServiceStatus.UNHEALTHY
     
-    def get_error_rate(self) -> float:
-        """Calculate error rate for this dependency"""
-        return self.total_errors / self.total_requests if self.total_requests > 0 else 0.0
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return {
+            'name': self.name,
+            'ip_addresses': list(self.ip_addresses),
+            'ports': list(self.ports),
+            'protocols': [p.value for p in self.protocols],
+            'incoming_connections': self.incoming_connections,
+            'outgoing_connections': self.outgoing_connections,
+            'total_requests_received': self.total_requests_received,
+            'total_requests_sent': self.total_requests_sent,
+            'total_errors': self.total_errors,
+            'status': self.get_status().value,
+            'first_seen': self.first_seen,
+            'last_seen': self.last_seen,
+            'metadata': self.metadata
+        }
 
 
-@dataclass
-class TopologyNode:
-    """Node in topology graph"""
-    service_name: str
-    host: str
-    port: int
-    protocol: str
-    status: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
-class TopologyEdge:
-    """Edge in topology graph"""
-    from_service: str
-    to_service: str
-    protocol: str
-    request_count: int
-    error_rate: float
-    average_latency_ms: float
-    metadata: Dict[str, Any] = field(default_factory=dict)
-
-
-class TopoMapper:
-    """Application Topology Mapper"""
+class TopologyMapper:
+    """Maps application topology from network traffic"""
     
-    def __init__(self, service_timeout_seconds: int = 300):
-        """
-        Initialize the topology mapper
-        
-        Args:
-            service_timeout_seconds: Time before marking service as inactive
-        """
-        self.service_timeout = service_timeout_seconds
+    def __init__(self):
+        """Initialize the topology mapper"""
         self.services: Dict[str, Service] = {}
-        self.dependencies: Dict[Tuple[str, str], ServiceDependency] = {}
-        self.connections: List[NetworkConnection] = []
+        self.connections: Dict[Tuple[str, str], Connection] = {}
         self.lock = threading.Lock()
-        
-        # Service naming rules
-        self.service_names: Dict[Tuple[str, int], str] = {}
+        self.snapshot_history: List[Dict[str, Any]] = []
     
-    def register_service_name(self, host: str, port: int, name: str):
-        """
-        Register a known service name
-        
-        Args:
-            host: Service host
-            port: Service port
-            name: Service name
-        """
+    def observe_traffic(
+        self,
+        source: str,
+        destination: str,
+        protocol: Protocol = Protocol.UNKNOWN,
+        bytes_transferred: int = 0,
+        latency_ms: float = 0.0,
+        is_error: bool = False,
+        source_ip: Optional[str] = None,
+        source_port: Optional[int] = None,
+        dest_ip: Optional[str] = None,
+        dest_port: Optional[int] = None
+    ):
+        """Observe a traffic flow between services"""
         with self.lock:
-            self.service_names[(host, port)] = name
-    
-    def _get_service_name(self, host: str, port: int, protocol: Protocol) -> str:
-        """
-        Get or generate service name
-        
-        Args:
-            host: Service host
-            port: Service port
-            protocol: Service protocol
+            # Ensure services exist
+            if source not in self.services:
+                self.services[source] = Service(name=source)
+            if destination not in self.services:
+                self.services[destination] = Service(name=destination)
             
-        Returns:
-            Service name
-        """
-        # Check if we have a registered name
-        if (host, port) in self.service_names:
-            return self.service_names[(host, port)]
-        
-        # Generate name based on common patterns
-        if port == 80 or port == 8080:
-            return f"{host}-web"
-        elif port == 443 or port == 8443:
-            return f"{host}-https"
-        elif port == 3000:
-            return f"{host}-api"
-        elif port == 5432:
-            return f"{host}-postgres"
-        elif port == 3306:
-            return f"{host}-mysql"
-        elif port == 6379:
-            return f"{host}-redis"
-        elif port == 9092:
-            return f"{host}-kafka"
-        else:
-            return f"{host}:{port}"
-    
-    def ingest_connection(self, connection_data: Dict[str, Any]) -> str:
-        """
-        Ingest a network connection
-        
-        Args:
-            connection_data: Connection data dictionary
+            source_service = self.services[source]
+            dest_service = self.services[destination]
             
-        Returns:
-            Connection key
-        """
+            # Update service information
+            source_service.total_requests_sent += 1
+            dest_service.total_requests_received += 1
+            
+            if is_error:
+                dest_service.total_errors += 1
+            
+            if source_ip:
+                source_service.ip_addresses.add(source_ip)
+            if source_port:
+                source_service.ports.add(source_port)
+            if dest_ip:
+                dest_service.ip_addresses.add(dest_ip)
+            if dest_port:
+                dest_service.ports.add(dest_port)
+            
+            source_service.protocols.add(protocol)
+            dest_service.protocols.add(protocol)
+            source_service.last_seen = time.time()
+            dest_service.last_seen = time.time()
+            
+            # Get or create connection
+            conn_key = (source, destination)
+            if conn_key not in self.connections:
+                self.connections[conn_key] = Connection(
+                    source=source,
+                    destination=destination,
+                    protocol=protocol
+                )
+                source_service.outgoing_connections += 1
+                dest_service.incoming_connections += 1
+            
+            connection = self.connections[conn_key]
+            connection.add_request(bytes_transferred, latency_ms, is_error)
+    
+    def get_service(self, name: str) -> Optional[Service]:
+        """Get a service by name"""
         with self.lock:
-            # Create connection object
-            connection = NetworkConnection(
-                source_host=connection_data['source_host'],
-                source_port=connection_data['source_port'],
-                destination_host=connection_data['destination_host'],
-                destination_port=connection_data['destination_port'],
-                protocol=Protocol(connection_data.get('protocol', 'tcp')),
-                timestamp=connection_data.get('timestamp', time.time()),
-                bytes_sent=connection_data.get('bytes_sent', 0),
-                bytes_received=connection_data.get('bytes_received', 0),
-                status_code=connection_data.get('status_code'),
-                method=connection_data.get('method'),
-                path=connection_data.get('path'),
-                duration_ms=connection_data.get('duration_ms')
-            )
-            
-            self.connections.append(connection)
-            
-            # Update services
-            self._update_services(connection)
-            
-            # Update dependencies
-            self._update_dependencies(connection)
-            
-            return connection.get_connection_key()
+            return self.services.get(name)
     
-    def _update_services(self, connection: NetworkConnection):
-        """Update service information from connection"""
-        # Update source service
-        source_name = self._get_service_name(
-            connection.source_host,
-            connection.source_port,
-            connection.protocol
-        )
-        
-        if source_name not in self.services:
-            self.services[source_name] = Service(
-                name=source_name,
-                host=connection.source_host,
-                port=connection.source_port,
-                protocol=connection.protocol,
-                first_seen=connection.timestamp,
-                last_seen=connection.timestamp
-            )
-        
-        source_service = self.services[source_name]
-        source_service.last_seen = connection.timestamp
-        source_service.total_bytes_sent += connection.bytes_sent
-        
-        # Update destination service
-        dest_name = self._get_service_name(
-            connection.destination_host,
-            connection.destination_port,
-            connection.protocol
-        )
-        
-        if dest_name not in self.services:
-            self.services[dest_name] = Service(
-                name=dest_name,
-                host=connection.destination_host,
-                port=connection.destination_port,
-                protocol=connection.protocol,
-                first_seen=connection.timestamp,
-                last_seen=connection.timestamp
-            )
-        
-        dest_service = self.services[dest_name]
-        dest_service.last_seen = connection.timestamp
-        dest_service.total_requests += 1
-        dest_service.total_bytes_received += connection.bytes_received
-        
-        # Track endpoints
-        if connection.path:
-            dest_service.endpoints.add(connection.path)
-        
-        # Track errors
-        if connection.status_code and connection.status_code >= 400:
-            dest_service.total_errors += 1
-        
-        # Update health status
-        dest_service.update_status()
-    
-    def _update_dependencies(self, connection: NetworkConnection):
-        """Update service dependencies from connection"""
-        source_name = self._get_service_name(
-            connection.source_host,
-            connection.source_port,
-            connection.protocol
-        )
-        dest_name = self._get_service_name(
-            connection.destination_host,
-            connection.destination_port,
-            connection.protocol
-        )
-        
-        dep_key = (source_name, dest_name)
-        
-        if dep_key not in self.dependencies:
-            self.dependencies[dep_key] = ServiceDependency(
-                from_service=source_name,
-                to_service=dest_name,
-                protocol=connection.protocol
-            )
-        
-        dep = self.dependencies[dep_key]
-        dep.connection_count += 1
-        dep.total_requests += 1
-        dep.total_bytes += connection.bytes_sent + connection.bytes_received
-        
-        # Track endpoints
-        if connection.path:
-            dep.endpoints_used.add(connection.path)
-        
-        # Track errors
-        if connection.status_code and connection.status_code >= 400:
-            dep.total_errors += 1
-        
-        # Update latency
-        if connection.duration_ms:
-            # Running average
-            n = dep.total_requests
-            dep.average_latency_ms = (
-                (dep.average_latency_ms * (n - 1) + connection.duration_ms) / n
-            )
-    
-    def get_services(self) -> List[Service]:
+    def get_all_services(self) -> List[Service]:
         """Get all discovered services"""
         with self.lock:
             return list(self.services.values())
     
-    def get_service(self, service_name: str) -> Optional[Service]:
-        """Get a specific service"""
+    def get_connection(self, source: str, destination: str) -> Optional[Connection]:
+        """Get a connection between two services"""
         with self.lock:
-            return self.services.get(service_name)
+            return self.connections.get((source, destination))
     
-    def get_dependencies(self) -> List[ServiceDependency]:
-        """Get all service dependencies"""
+    def get_all_connections(self) -> List[Connection]:
+        """Get all connections"""
         with self.lock:
-            return list(self.dependencies.values())
+            return list(self.connections.values())
     
-    def get_topology_graph(self) -> Dict[str, List[str]]:
-        """
-        Get topology as a graph
-        
-        Returns:
-            Dictionary mapping service names to their downstream dependencies
-        """
+    def get_service_dependencies(self, service_name: str) -> Dict[str, List[str]]:
+        """Get dependencies for a specific service"""
         with self.lock:
-            graph = defaultdict(list)
-            for (from_service, to_service), dep in self.dependencies.items():
-                graph[from_service].append(to_service)
+            dependencies = {
+                'depends_on': [],  # Services this service calls
+                'depended_by': []  # Services that call this service
+            }
+            
+            for (source, dest), conn in self.connections.items():
+                if source == service_name:
+                    dependencies['depends_on'].append(dest)
+                elif dest == service_name:
+                    dependencies['depended_by'].append(source)
+            
+            return dependencies
+    
+    def get_dependency_graph(self) -> Dict[str, Set[str]]:
+        """Get the full dependency graph"""
+        with self.lock:
+            graph = defaultdict(set)
+            for source, dest in self.connections.keys():
+                graph[source].add(dest)
             return dict(graph)
     
-    def get_topology_visualization(self) -> Dict[str, Any]:
-        """
-        Get topology data for visualization
-        
-        Returns:
-            Dictionary with nodes and edges for visualization
-        """
-        with self.lock:
-            nodes = []
-            edges = []
-            
-            # Create nodes
-            for service in self.services.values():
-                nodes.append(TopologyNode(
-                    service_name=service.name,
-                    host=service.host,
-                    port=service.port,
-                    protocol=service.protocol.value,
-                    status=service.status.value,
-                    metadata={
-                        'total_requests': service.total_requests,
-                        'error_rate': service.get_error_rate(),
-                        'endpoints': list(service.endpoints)[:10]  # Limit to 10
-                    }
-                ))
-            
-            # Create edges
-            for dep in self.dependencies.values():
-                edges.append(TopologyEdge(
-                    from_service=dep.from_service,
-                    to_service=dep.to_service,
-                    protocol=dep.protocol.value,
-                    request_count=dep.total_requests,
-                    error_rate=dep.get_error_rate(),
-                    average_latency_ms=dep.average_latency_ms,
-                    metadata={
-                        'total_bytes': dep.total_bytes,
-                        'endpoints': list(dep.endpoints_used)[:5]  # Limit to 5
-                    }
-                ))
-            
-            return {
-                'nodes': [
-                    {
-                        'id': node.service_name,
-                        'host': node.host,
-                        'port': node.port,
-                        'protocol': node.protocol,
-                        'status': node.status,
-                        'metadata': node.metadata
-                    }
-                    for node in nodes
-                ],
-                'edges': [
-                    {
-                        'from': edge.from_service,
-                        'to': edge.to_service,
-                        'protocol': edge.protocol,
-                        'requests': edge.request_count,
-                        'error_rate': edge.error_rate,
-                        'latency_ms': edge.average_latency_ms,
-                        'metadata': edge.metadata
-                    }
-                    for edge in edges
-                ]
-            }
-    
     def find_entry_points(self) -> List[str]:
-        """
-        Find entry point services (services that don't receive calls from others)
-        
-        Returns:
-            List of entry point service names
-        """
+        """Find services that are likely entry points (no incoming from other services)"""
         with self.lock:
-            all_services = set(self.services.keys())
-            downstream_services = set()
-            
-            for (from_service, to_service) in self.dependencies.keys():
-                downstream_services.add(to_service)
-            
-            entry_points = all_services - downstream_services
-            return list(entry_points)
+            return self._find_entry_points_unlocked()
+    
+    def _find_entry_points_unlocked(self) -> List[str]:
+        """Internal method to find entry points without locking"""
+        all_services = set(self.services.keys())
+        services_with_incoming = set()
+        
+        for source, dest in self.connections.keys():
+            services_with_incoming.add(dest)
+        
+        # Entry points have no incoming connections
+        entry_points = all_services - services_with_incoming
+        return list(entry_points)
     
     def find_leaf_services(self) -> List[str]:
-        """
-        Find leaf services (services that don't call other services)
-        
-        Returns:
-            List of leaf service names
-        """
+        """Find leaf services (no outgoing connections)"""
         with self.lock:
-            all_services = set(self.services.keys())
-            upstream_services = set()
-            
-            for (from_service, to_service) in self.dependencies.keys():
-                upstream_services.add(from_service)
-            
-            leaf_services = all_services - upstream_services
-            return list(leaf_services)
+            return self._find_leaf_services_unlocked()
     
-    def find_critical_services(self, min_dependents: int = 2) -> List[Dict[str, Any]]:
-        """
-        Find critical services (services with many dependents)
+    def _find_leaf_services_unlocked(self) -> List[str]:
+        """Internal method to find leaf services without locking"""
+        all_services = set(self.services.keys())
+        services_with_outgoing = set()
         
-        Args:
-            min_dependents: Minimum number of dependents to be considered critical
-            
-        Returns:
-            List of critical services with their metrics
-        """
-        with self.lock:
-            # Count dependents for each service
-            dependents = defaultdict(set)
-            for (from_service, to_service) in self.dependencies.keys():
-                dependents[to_service].add(from_service)
-            
-            critical = []
-            for service_name, dependent_set in dependents.items():
-                if len(dependent_set) >= min_dependents:
-                    service = self.services.get(service_name)
-                    if service:
-                        critical.append({
-                            'service': service_name,
-                            'dependent_count': len(dependent_set),
-                            'dependents': list(dependent_set),
-                            'total_requests': service.total_requests,
-                            'error_rate': service.get_error_rate(),
-                            'status': service.status.value
-                        })
-            
-            # Sort by number of dependents
-            critical.sort(key=lambda x: x['dependent_count'], reverse=True)
-            return critical
+        for source, dest in self.connections.keys():
+            services_with_outgoing.add(source)
+        
+        # Leaf services have no outgoing connections
+        leaf_services = all_services - services_with_outgoing
+        return list(leaf_services)
     
-    def analyze_traffic_patterns(self) -> Dict[str, Any]:
-        """
-        Analyze traffic patterns
-        
-        Returns:
-            Dictionary with traffic analysis
-        """
+    def find_critical_services(self, min_dependents: int = 2) -> List[Tuple[str, int]]:
+        """Find critical services (many other services depend on them)"""
         with self.lock:
-            if not self.connections:
-                return {}
+            return self._find_critical_services_unlocked(min_dependents)
+    
+    def _find_critical_services_unlocked(self, min_dependents: int = 2) -> List[Tuple[str, int]]:
+        """Internal method to find critical services without locking"""
+        dependent_counts = defaultdict(int)
+        
+        for source, dest in self.connections.keys():
+            dependent_counts[dest] += 1
+        
+        critical = [
+            (service, count) 
+            for service, count in dependent_counts.items()
+            if count >= min_dependents
+        ]
+        
+        critical.sort(key=lambda x: x[1], reverse=True)
+        return critical
+    
+    def detect_circular_dependencies(self) -> List[List[str]]:
+        """Detect circular dependencies in the topology"""
+        # Get graph outside of recursive calls to avoid issues
+        graph = self.get_dependency_graph()
+        cycles = []
+        visited = set()
+        rec_stack = []
+        
+        def dfs(node: str) -> bool:
+            """DFS to detect cycles. Returns True if cycle found."""
+            if node in rec_stack:
+                # Found a cycle
+                cycle_start = rec_stack.index(node)
+                cycle = rec_stack[cycle_start:] + [node]
+                # Avoid duplicate cycles
+                if cycle not in cycles and list(reversed(cycle)) not in cycles:
+                    cycles.append(cycle)
+                return True
             
-            # Protocol distribution
-            protocol_counts = defaultdict(int)
-            for conn in self.connections:
-                protocol_counts[conn.protocol.value] += 1
+            if node in visited:
+                return False
             
-            # Traffic over time (bucket by minute)
-            if self.connections:
-                start_time = self.connections[0].timestamp
-                time_buckets = defaultdict(int)
+            visited.add(node)
+            rec_stack.append(node)
+            
+            if node in graph:
+                for neighbor in graph[node]:
+                    dfs(neighbor)
+            
+            rec_stack.pop()
+            return False
+        
+        with self.lock:
+            for service in self.services.keys():
+                if service not in visited:
+                    dfs(service)
+        
+        return cycles
+    
+    def generate_dot_graph(self, include_stats: bool = True) -> str:
+        """Generate a DOT format graph for Graphviz visualization"""
+        with self.lock:
+            lines = []
+            lines.append("digraph topology {")
+            lines.append("  rankdir=LR;")
+            lines.append("  node [shape=box, style=rounded];")
+            lines.append("")
+            
+            # Add nodes (services)
+            for service_name, service in self.services.items():
+                status = service.get_status()
+                color = {
+                    ServiceStatus.HEALTHY: "green",
+                    ServiceStatus.DEGRADED: "yellow",
+                    ServiceStatus.UNHEALTHY: "red",
+                    ServiceStatus.UNKNOWN: "gray"
+                }.get(status, "gray")
                 
-                for conn in self.connections:
-                    bucket = int((conn.timestamp - start_time) / 60)  # 1-minute buckets
-                    time_buckets[bucket] += 1
-            else:
-                time_buckets = {}
+                label = service_name
+                if include_stats:
+                    label += f"\\n{service.total_requests_received} reqs"
+                    label += f"\\nStatus: {status.value}"
+                
+                lines.append(f'  "{service_name}" [color={color}, label="{label}"];')
             
-            # Top endpoints
-            endpoint_counts = defaultdict(int)
-            for conn in self.connections:
-                if conn.path:
-                    endpoint_counts[conn.path] += 1
+            lines.append("")
             
-            top_endpoints = sorted(
-                endpoint_counts.items(),
-                key=lambda x: x[1],
-                reverse=True
-            )[:10]
+            # Add edges (connections)
+            for (source, dest), conn in self.connections.items():
+                label = f"{conn.request_count} reqs"
+                if include_stats:
+                    label += f"\\n{conn.protocol.value}"
+                    label += f"\\n{conn.avg_latency_ms:.1f}ms avg"
+                    if conn.error_count > 0:
+                        label += f"\\n{conn.error_count} errors"
+                
+                # Color edge based on error rate
+                error_rate = conn.get_error_rate()
+                edge_color = "green" if error_rate == 0 else ("orange" if error_rate < 0.1 else "red")
+                
+                lines.append(f'  "{source}" -> "{dest}" [label="{label}", color={edge_color}];')
+            
+            lines.append("}")
+            return "\n".join(lines)
+    
+    def generate_text_topology(self) -> str:
+        """Generate a text-based topology visualization"""
+        with self.lock:
+            lines = []
+            lines.append("=" * 80)
+            lines.append("Application Topology Map")
+            lines.append("=" * 80)
+            lines.append("")
+            
+            # Services
+            lines.append("Services:")
+            lines.append("-" * 80)
+            for service in sorted(self.services.values(), key=lambda s: s.name):
+                status = service.get_status()
+                lines.append(f"  {service.name} [{status.value}]")
+                lines.append(f"    Requests: {service.total_requests_received} in, {service.total_requests_sent} out")
+                lines.append(f"    Connections: {service.incoming_connections} in, {service.outgoing_connections} out")
+                if service.protocols:
+                    protocols = ", ".join(p.value for p in service.protocols)
+                    lines.append(f"    Protocols: {protocols}")
+                lines.append("")
+            
+            # Connections
+            lines.append("Connections:")
+            lines.append("-" * 80)
+            for conn in sorted(self.connections.values(), key=lambda c: c.request_count, reverse=True):
+                lines.append(f"  {conn.source} -> {conn.destination}")
+                lines.append(f"    Protocol: {conn.protocol.value}")
+                lines.append(f"    Requests: {conn.request_count}")
+                lines.append(f"    Errors: {conn.error_count} ({conn.get_error_rate():.1%})")
+                lines.append(f"    Avg Latency: {conn.avg_latency_ms:.2f}ms")
+                lines.append(f"    Total Bytes: {conn.total_bytes}")
+                lines.append("")
+            
+            lines.append("=" * 80)
+            return "\n".join(lines)
+    
+    def get_topology_summary(self) -> Dict[str, Any]:
+        """Get a summary of the topology"""
+        # Get circular dependencies first (it needs to call get_dependency_graph)
+        circular_deps = self.detect_circular_dependencies()
+        
+        with self.lock:
+            entry_points = self._find_entry_points_unlocked()
+            leaf_services = self._find_leaf_services_unlocked()
+            critical_services = self._find_critical_services_unlocked(min_dependents=2)
+            
+            total_requests = sum(s.total_requests_received for s in self.services.values())
+            total_errors = sum(s.total_errors for s in self.services.values())
+            
+            healthy_services = sum(1 for s in self.services.values() if s.get_status() == ServiceStatus.HEALTHY)
             
             return {
+                'total_services': len(self.services),
                 'total_connections': len(self.connections),
-                'protocols': dict(protocol_counts),
-                'traffic_over_time': dict(time_buckets),
-                'top_endpoints': [
-                    {'path': path, 'count': count}
-                    for path, count in top_endpoints
-                ]
+                'total_requests': total_requests,
+                'total_errors': total_errors,
+                'overall_error_rate': total_errors / total_requests if total_requests > 0 else 0.0,
+                'healthy_services': healthy_services,
+                'entry_points': entry_points,
+                'leaf_services': leaf_services,
+                'critical_services': [name for name, _ in critical_services[:5]],
+                'circular_dependencies_count': len(circular_deps),
+                'has_circular_dependencies': len(circular_deps) > 0
             }
     
-    def get_service_health_summary(self) -> Dict[str, int]:
-        """
-        Get summary of service health
+    def take_snapshot(self) -> Dict[str, Any]:
+        """Take a snapshot of the current topology"""
+        # Get summary first (needs lock)
+        summary = self.get_topology_summary()
         
-        Returns:
-            Dictionary with counts of services by status
-        """
         with self.lock:
-            summary = defaultdict(int)
-            for service in self.services.values():
-                summary[service.status.value] += 1
-            return dict(summary)
+            snapshot = {
+                'timestamp': time.time(),
+                'services': {name: svc.to_dict() for name, svc in self.services.items()},
+                'connections': [conn.to_dict() for conn in self.connections.values()],
+                'summary': summary
+            }
+            
+            self.snapshot_history.append(snapshot)
+            return snapshot
     
-    def cleanup_inactive_services(self) -> int:
-        """
-        Remove services that haven't been seen recently
+    def detect_changes(self, previous_snapshot: Dict[str, Any]) -> Dict[str, Any]:
+        """Detect changes between current topology and a previous snapshot"""
+        current = self.take_snapshot()
         
-        Returns:
-            Number of services removed
-        """
-        with self.lock:
-            current_time = time.time()
-            cutoff_time = current_time - self.service_timeout
-            
-            inactive_services = [
-                name for name, service in self.services.items()
-                if service.last_seen < cutoff_time
-            ]
-            
-            for service_name in inactive_services:
-                del self.services[service_name]
-                
-                # Also remove related dependencies
-                deps_to_remove = [
-                    key for key in self.dependencies.keys()
-                    if key[0] == service_name or key[1] == service_name
-                ]
-                for key in deps_to_remove:
-                    del self.dependencies[key]
-            
-            return len(inactive_services)
-    
-    def export_topology(self) -> Dict[str, Any]:
-        """
-        Export complete topology data
-        
-        Returns:
-            Complete topology data as dictionary
-        """
-        return {
-            'services': [
-                {
-                    'name': s.name,
-                    'host': s.host,
-                    'port': s.port,
-                    'protocol': s.protocol.value,
-                    'status': s.status.value,
-                    'total_requests': s.total_requests,
-                    'error_rate': s.get_error_rate(),
-                    'endpoints': list(s.endpoints)
-                }
-                for s in self.get_services()
-            ],
-            'dependencies': [
-                {
-                    'from': d.from_service,
-                    'to': d.to_service,
-                    'protocol': d.protocol.value,
-                    'requests': d.total_requests,
-                    'errors': d.total_errors,
-                    'error_rate': d.get_error_rate(),
-                    'avg_latency_ms': d.average_latency_ms,
-                    'endpoints': list(d.endpoints_used)
-                }
-                for d in self.get_dependencies()
-            ],
-            'topology_graph': self.get_topology_graph(),
-            'entry_points': self.find_entry_points(),
-            'leaf_services': self.find_leaf_services(),
-            'critical_services': self.find_critical_services(),
-            'health_summary': self.get_service_health_summary(),
-            'traffic_patterns': self.analyze_traffic_patterns()
+        changes = {
+            'timestamp': current['timestamp'],
+            'new_services': [],
+            'removed_services': [],
+            'new_connections': [],
+            'removed_connections': [],
+            'status_changes': []
         }
+        
+        # Detect service changes
+        prev_services = set(previous_snapshot['services'].keys())
+        curr_services = set(current['services'].keys())
+        
+        changes['new_services'] = list(curr_services - prev_services)
+        changes['removed_services'] = list(prev_services - curr_services)
+        
+        # Detect status changes
+        for service_name in prev_services & curr_services:
+            prev_status = previous_snapshot['services'][service_name]['status']
+            curr_status = current['services'][service_name]['status']
+            if prev_status != curr_status:
+                changes['status_changes'].append({
+                    'service': service_name,
+                    'from': prev_status,
+                    'to': curr_status
+                })
+        
+        # Detect connection changes
+        prev_conns = set((c['source'], c['destination']) for c in previous_snapshot['connections'])
+        curr_conns = set((c['source'], c['destination']) for c in current['connections'])
+        
+        changes['new_connections'] = [f"{s} -> {d}" for s, d in (curr_conns - prev_conns)]
+        changes['removed_connections'] = [f"{s} -> {d}" for s, d in (prev_conns - curr_conns)]
+        
+        return changes
+    
+    def export_to_json(self, filename: str):
+        """Export topology to JSON file"""
+        snapshot = self.take_snapshot()
+        
+        with open(filename, 'w') as f:
+            json.dump(snapshot, f, indent=2)
+    
+    def import_from_json(self, filename: str):
+        """Import topology from JSON file"""
+        with open(filename, 'r') as f:
+            data = json.load(f)
+        
+        with self.lock:
+            # Clear existing data
+            self.services.clear()
+            self.connections.clear()
+            
+            # Import services
+            for name, svc_data in data['services'].items():
+                service = Service(
+                    name=name,
+                    ip_addresses=set(svc_data['ip_addresses']),
+                    ports=set(svc_data['ports']),
+                    protocols=set(Protocol(p) for p in svc_data['protocols']),
+                    incoming_connections=svc_data['incoming_connections'],
+                    outgoing_connections=svc_data['outgoing_connections'],
+                    total_requests_received=svc_data['total_requests_received'],
+                    total_requests_sent=svc_data['total_requests_sent'],
+                    total_errors=svc_data['total_errors'],
+                    first_seen=svc_data['first_seen'],
+                    last_seen=svc_data['last_seen'],
+                    metadata=svc_data['metadata']
+                )
+                self.services[name] = service
+            
+            # Import connections
+            for conn_data in data['connections']:
+                conn = Connection(
+                    source=conn_data['source'],
+                    destination=conn_data['destination'],
+                    protocol=Protocol(conn_data['protocol']),
+                    request_count=conn_data['request_count'],
+                    error_count=conn_data['error_count'],
+                    total_bytes=conn_data['total_bytes'],
+                    avg_latency_ms=conn_data['avg_latency_ms'],
+                    first_seen=conn_data['first_seen'],
+                    last_seen=conn_data['last_seen']
+                )
+                self.connections[(conn.source, conn.destination)] = conn
     
     def clear(self):
         """Clear all topology data"""
         with self.lock:
             self.services.clear()
-            self.dependencies.clear()
             self.connections.clear()
-            self.service_names.clear()
+            self.snapshot_history.clear()
+
+
+def create_mapper() -> TopologyMapper:
+    """Create a new topology mapper instance"""
+    return TopologyMapper()

@@ -1,582 +1,640 @@
 """
-Developed by PowerShield
+Developed by PowerShield, as an application topology mapper
+
+Tests for TopoMapper - Application Topology Mapper
+
+This test suite validates the core functionality of TopoMapper.
 """
 
-#!/usr/bin/env python3
-"""
-Test suite for TopoMapper - Application Topology Mapper
-
-Tests core functionality including:
-- Connection ingestion
-- Service discovery
-- Dependency mapping
-- Topology analysis
-- Health monitoring
-"""
-
-import unittest
+import sys
+import os
+import json
 import time
-from TopoMapper import TopoMapper, Protocol, ServiceStatus
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from TopoMapper import (
+    TopologyMapper, Service, Connection, Protocol, ServiceStatus,
+    create_mapper
+)
 
 
-class TestBasicFunctionality(unittest.TestCase):
-    """Test basic topology mapping"""
+def test_service_creation():
+    """Test service creation"""
+    print("Testing service creation...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    service = Service(name="test-service")
+    assert service.name == "test-service"
+    assert service.incoming_connections == 0
+    assert service.outgoing_connections == 0
+    assert service.get_status() == ServiceStatus.UNKNOWN
     
-    def test_initialization(self):
-        """Test mapper initialization"""
-        self.assertEqual(len(self.mapper.get_services()), 0)
-        self.assertEqual(len(self.mapper.get_dependencies()), 0)
-    
-    def test_single_connection_ingestion(self):
-        """Test ingesting a single connection"""
-        connection = {
-            'source_host': '10.0.0.1',
-            'source_port': 5000,
-            'destination_host': '10.0.0.2',
-            'destination_port': 8080,
-            'protocol': 'http',
-            'bytes_sent': 1024,
-            'bytes_received': 2048
-        }
-        
-        key = self.mapper.ingest_connection(connection)
-        self.assertIsNotNone(key)
-        
-        services = self.mapper.get_services()
-        self.assertGreaterEqual(len(services), 2)
-    
-    def test_service_discovery(self):
-        """Test automatic service discovery"""
-        connection = {
-            'source_host': 'api-gateway',
-            'source_port': 8080,
-            'destination_host': 'user-service',
-            'destination_port': 3000,
-            'protocol': 'http'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        services = self.mapper.get_services()
-        service_hosts = [s.host for s in services]
-        
-        self.assertIn('api-gateway', service_hosts)
-        self.assertIn('user-service', service_hosts)
-    
-    def test_service_naming(self):
-        """Test service name generation"""
-        self.mapper.register_service_name('10.0.0.1', 8080, 'my-api')
-        
-        connection = {
-            'source_host': '10.0.0.1',
-            'source_port': 8080,
-            'destination_host': '10.0.0.2',
-            'destination_port': 5432,
-            'protocol': 'tcp'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        service = self.mapper.get_service('my-api')
-        self.assertIsNotNone(service)
-        self.assertEqual(service.host, '10.0.0.1')
+    print("✓ Service creation works")
 
 
-class TestDependencyMapping(unittest.TestCase):
-    """Test service dependency mapping"""
+def test_service_status():
+    """Test service health status"""
+    print("Testing service status...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    service = Service(name="test")
     
-    def test_dependency_creation(self):
-        """Test creating service dependencies"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        dependencies = self.mapper.get_dependencies()
-        self.assertEqual(len(dependencies), 1)
-        
-        dep = dependencies[0]
-        self.assertIn('service-a', dep.from_service)
-        self.assertIn('service-b', dep.to_service)
+    # No requests = unknown
+    assert service.get_status() == ServiceStatus.UNKNOWN
     
-    def test_dependency_metrics(self):
-        """Test dependency metrics tracking"""
-        # Multiple connections
-        for i in range(10):
-            connection = {
-                'source_host': 'api',
-                'source_port': 8080,
-                'destination_host': 'backend',
-                'destination_port': 9000,
-                'protocol': 'http',
-                'status_code': 200,
-                'duration_ms': 50.0 + i
-            }
-            self.mapper.ingest_connection(connection)
-        
-        dependencies = self.mapper.get_dependencies()
-        self.assertEqual(len(dependencies), 1)
-        
-        dep = dependencies[0]
-        self.assertEqual(dep.total_requests, 10)
-        self.assertGreater(dep.average_latency_ms, 0)
+    # All successful = healthy
+    service.total_requests_received = 100
+    service.total_errors = 0
+    assert service.get_status() == ServiceStatus.HEALTHY
     
-    def test_error_tracking(self):
-        """Test error tracking in dependencies"""
-        # 8 successful, 2 errors
-        for i in range(10):
-            connection = {
-                'source_host': 'api',
-                'source_port': 8080,
-                'destination_host': 'backend',
-                'destination_port': 9000,
-                'protocol': 'http',
-                'status_code': 500 if i < 2 else 200
-            }
-            self.mapper.ingest_connection(connection)
-        
-        dependencies = self.mapper.get_dependencies()
-        dep = dependencies[0]
-        
-        self.assertEqual(dep.total_errors, 2)
-        self.assertAlmostEqual(dep.get_error_rate(), 0.2, places=2)
+    # 3% errors = healthy
+    service.total_errors = 3
+    assert service.get_status() == ServiceStatus.HEALTHY
+    
+    # 10% errors = degraded
+    service.total_errors = 10
+    assert service.get_status() == ServiceStatus.DEGRADED
+    
+    # 25% errors = unhealthy
+    service.total_errors = 25
+    assert service.get_status() == ServiceStatus.UNHEALTHY
+    
+    print("✓ Service status works")
 
 
-class TestTopologyAnalysis(unittest.TestCase):
-    """Test topology analysis features"""
+def test_connection_creation():
+    """Test connection creation"""
+    print("Testing connection creation...")
     
-    def setUp(self):
-        """Set up test mapper with sample topology"""
-        self.mapper = TopoMapper()
-        
-        # Create a simple topology:
-        # client -> api-gateway -> user-service -> database
-        #                       -> order-service -> database
-        
-        connections = [
-            # Client to API Gateway
-            {
-                'source_host': 'client',
-                'source_port': 50000,
-                'destination_host': 'api-gateway',
-                'destination_port': 8080,
-                'protocol': 'http'
-            },
-            # API Gateway to User Service
-            {
-                'source_host': 'api-gateway',
-                'source_port': 8080,
-                'destination_host': 'user-service',
-                'destination_port': 3000,
-                'protocol': 'http'
-            },
-            # API Gateway to Order Service
-            {
-                'source_host': 'api-gateway',
-                'source_port': 8080,
-                'destination_host': 'order-service',
-                'destination_port': 3001,
-                'protocol': 'http'
-            },
-            # User Service to Database
-            {
-                'source_host': 'user-service',
-                'source_port': 3000,
-                'destination_host': 'database',
-                'destination_port': 5432,
-                'protocol': 'tcp'
-            },
-            # Order Service to Database
-            {
-                'source_host': 'order-service',
-                'source_port': 3001,
-                'destination_host': 'database',
-                'destination_port': 5432,
-                'protocol': 'tcp'
-            }
-        ]
-        
-        for conn in connections:
-            self.mapper.ingest_connection(conn)
+    conn = Connection(
+        source="service-a",
+        destination="service-b",
+        protocol=Protocol.HTTP
+    )
     
-    def test_topology_graph(self):
-        """Test topology graph generation"""
-        graph = self.mapper.get_topology_graph()
-        
-        self.assertIsInstance(graph, dict)
-        self.assertGreater(len(graph), 0)
-        
-        # Check that api-gateway has downstream services
-        api_gateway_key = [k for k in graph.keys() if 'api-gateway' in k]
-        if api_gateway_key:
-            self.assertGreater(len(graph[api_gateway_key[0]]), 0)
+    assert conn.source == "service-a"
+    assert conn.destination == "service-b"
+    assert conn.protocol == Protocol.HTTP
+    assert conn.request_count == 0
+    assert conn.error_count == 0
     
-    def test_entry_points(self):
-        """Test finding entry point services"""
-        entry_points = self.mapper.find_entry_points()
-        
-        self.assertGreater(len(entry_points), 0)
-        
-        # Client should be an entry point (no one calls it)
-        client_services = [ep for ep in entry_points if 'client' in ep]
-        self.assertGreater(len(client_services), 0)
-    
-    def test_leaf_services(self):
-        """Test finding leaf services"""
-        leaf_services = self.mapper.find_leaf_services()
-        
-        self.assertGreater(len(leaf_services), 0)
-        
-        # Database should be a leaf (doesn't call others)
-        database_services = [ls for ls in leaf_services if 'database' in ls]
-        self.assertGreater(len(database_services), 0)
-    
-    def test_critical_services(self):
-        """Test finding critical services"""
-        critical = self.mapper.find_critical_services(min_dependents=2)
-        
-        # Database should be critical (called by multiple services)
-        if critical:
-            critical_names = [c['service'] for c in critical]
-            database_critical = [name for name in critical_names if 'database' in name]
-            self.assertGreater(len(database_critical), 0)
+    print("✓ Connection creation works")
 
 
-class TestVisualization(unittest.TestCase):
-    """Test topology visualization data"""
+def test_connection_add_request():
+    """Test adding requests to connection"""
+    print("Testing connection add_request...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    conn = Connection("a", "b", Protocol.HTTP)
     
-    def test_visualization_structure(self):
-        """Test visualization data structure"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        viz = self.mapper.get_topology_visualization()
-        
-        self.assertIn('nodes', viz)
-        self.assertIn('edges', viz)
-        self.assertIsInstance(viz['nodes'], list)
-        self.assertIsInstance(viz['edges'], list)
+    conn.add_request(bytes_transferred=1000, latency_ms=50.0)
+    assert conn.request_count == 1
+    assert conn.total_bytes == 1000
+    assert conn.avg_latency_ms == 50.0
     
-    def test_visualization_nodes(self):
-        """Test visualization node data"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http',
-            'status_code': 200
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        viz = self.mapper.get_topology_visualization()
-        nodes = viz['nodes']
-        
-        self.assertGreater(len(nodes), 0)
-        
-        for node in nodes:
-            self.assertIn('id', node)
-            self.assertIn('host', node)
-            self.assertIn('port', node)
-            self.assertIn('protocol', node)
-            self.assertIn('status', node)
+    conn.add_request(bytes_transferred=2000, latency_ms=100.0, is_error=True)
+    assert conn.request_count == 2
+    assert conn.error_count == 1
+    assert conn.total_bytes == 3000
+    assert conn.avg_latency_ms == 75.0  # (50 + 100) / 2
     
-    def test_visualization_edges(self):
-        """Test visualization edge data"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http',
-            'status_code': 200
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        viz = self.mapper.get_topology_visualization()
-        edges = viz['edges']
-        
-        self.assertGreater(len(edges), 0)
-        
-        for edge in edges:
-            self.assertIn('from', edge)
-            self.assertIn('to', edge)
-            self.assertIn('protocol', edge)
-            self.assertIn('requests', edge)
+    print("✓ Connection add_request works")
 
 
-class TestHealthMonitoring(unittest.TestCase):
-    """Test service health monitoring"""
+def test_connection_error_rate():
+    """Test connection error rate calculation"""
+    print("Testing connection error rate...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    conn = Connection("a", "b", Protocol.HTTP)
     
-    def test_healthy_service(self):
-        """Test healthy service detection"""
-        # All successful requests
-        for i in range(100):
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'service',
-                'destination_port': 8000,
-                'protocol': 'http',
-                'status_code': 200
-            }
-            self.mapper.ingest_connection(connection)
-        
-        service_key = [k for k in self.mapper.services.keys() if 'service' in k][0]
-        service = self.mapper.get_service(service_key)
-        
-        self.assertEqual(service.status, ServiceStatus.HEALTHY)
+    # Add requests with some errors
+    for i in range(10):
+        conn.add_request(1000, 50.0, is_error=(i % 5 == 0))
     
-    def test_degraded_service(self):
-        """Test degraded service detection"""
-        # 3% error rate (degraded)
-        for i in range(100):
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'service',
-                'destination_port': 8000,
-                'protocol': 'http',
-                'status_code': 500 if i < 3 else 200
-            }
-            self.mapper.ingest_connection(connection)
-        
-        service_key = [k for k in self.mapper.services.keys() if 'service' in k][0]
-        service = self.mapper.get_service(service_key)
-        
-        self.assertEqual(service.status, ServiceStatus.DEGRADED)
+    # Should be 20% (2 errors out of 10 requests)
+    assert conn.get_error_rate() == 0.2
     
-    def test_unhealthy_service(self):
-        """Test unhealthy service detection"""
-        # 10% error rate (unhealthy)
-        for i in range(100):
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'service',
-                'destination_port': 8000,
-                'protocol': 'http',
-                'status_code': 500 if i < 10 else 200
-            }
-            self.mapper.ingest_connection(connection)
-        
-        service_key = [k for k in self.mapper.services.keys() if 'service' in k][0]
-        service = self.mapper.get_service(service_key)
-        
-        self.assertEqual(service.status, ServiceStatus.UNHEALTHY)
-    
-    def test_health_summary(self):
-        """Test health summary generation"""
-        # Create services with different health states
-        for i in range(100):
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'healthy-service',
-                'destination_port': 8000,
-                'protocol': 'http',
-                'status_code': 200
-            }
-            self.mapper.ingest_connection(connection)
-        
-        summary = self.mapper.get_service_health_summary()
-        
-        self.assertIsInstance(summary, dict)
-        self.assertIn('healthy', summary)
+    print("✓ Connection error rate works")
 
 
-class TestTrafficAnalysis(unittest.TestCase):
-    """Test traffic pattern analysis"""
+def test_mapper_creation():
+    """Test mapper creation"""
+    print("Testing mapper creation...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    mapper = create_mapper()
+    assert mapper is not None
+    assert len(mapper.get_all_services()) == 0
+    assert len(mapper.get_all_connections()) == 0
     
-    def test_traffic_patterns(self):
-        """Test traffic pattern analysis"""
-        # Add various connections
-        for i in range(50):
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'service',
-                'destination_port': 8080,
-                'protocol': 'http',
-                'path': f'/api/endpoint{i % 5}'
-            }
-            self.mapper.ingest_connection(connection)
-        
-        patterns = self.mapper.analyze_traffic_patterns()
-        
-        self.assertIn('total_connections', patterns)
-        self.assertIn('protocols', patterns)
-        self.assertIn('top_endpoints', patterns)
-        
-        self.assertEqual(patterns['total_connections'], 50)
-    
-    def test_protocol_distribution(self):
-        """Test protocol distribution tracking"""
-        # Add HTTP connections
-        for i in range(30):
-            self.mapper.ingest_connection({
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'service',
-                'destination_port': 8080,
-                'protocol': 'http'
-            })
-        
-        # Add TCP connections
-        for i in range(20):
-            self.mapper.ingest_connection({
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'database',
-                'destination_port': 5432,
-                'protocol': 'tcp'
-            })
-        
-        patterns = self.mapper.analyze_traffic_patterns()
-        protocols = patterns['protocols']
-        
-        self.assertIn('http', protocols)
-        self.assertIn('tcp', protocols)
-        self.assertEqual(protocols['http'], 30)
-        self.assertEqual(protocols['tcp'], 20)
+    print("✓ Mapper creation works")
 
 
-class TestEndpointTracking(unittest.TestCase):
-    """Test endpoint tracking"""
+def test_observe_traffic():
+    """Test observing traffic"""
+    print("Testing observe_traffic...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    mapper = TopologyMapper()
     
-    def test_endpoint_discovery(self):
-        """Test endpoint discovery from paths"""
-        endpoints = ['/api/users', '/api/orders', '/api/products']
-        
-        for endpoint in endpoints:
-            connection = {
-                'source_host': 'client',
-                'source_port': 5000,
-                'destination_host': 'api',
-                'destination_port': 8080,
-                'protocol': 'http',
-                'path': endpoint
-            }
-            self.mapper.ingest_connection(connection)
-        
-        service_key = [k for k in self.mapper.services.keys() if 'api' in k][0]
-        service = self.mapper.get_service(service_key)
-        
-        self.assertGreaterEqual(len(service.endpoints), 3)
-        for endpoint in endpoints:
-            self.assertIn(endpoint, service.endpoints)
+    mapper.observe_traffic(
+        source="api",
+        destination="database",
+        protocol=Protocol.HTTP,
+        bytes_transferred=1024,
+        latency_ms=25.5
+    )
+    
+    # Check services were created
+    assert len(mapper.get_all_services()) == 2
+    assert mapper.get_service("api") is not None
+    assert mapper.get_service("database") is not None
+    
+    # Check connection was created
+    conn = mapper.get_connection("api", "database")
+    assert conn is not None
+    assert conn.request_count == 1
+    
+    print("✓ Observe traffic works")
 
 
-class TestExportAndCleanup(unittest.TestCase):
-    """Test export and cleanup functionality"""
+def test_observe_multiple_traffic():
+    """Test observing multiple traffic flows"""
+    print("Testing multiple traffic observation...")
     
-    def setUp(self):
-        """Set up test mapper"""
-        self.mapper = TopoMapper()
+    mapper = TopologyMapper()
     
-    def test_export_topology(self):
-        """Test topology export"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        exported = self.mapper.export_topology()
-        
-        self.assertIn('services', exported)
-        self.assertIn('dependencies', exported)
-        self.assertIn('topology_graph', exported)
-        self.assertIn('entry_points', exported)
-        self.assertIn('leaf_services', exported)
-        self.assertIn('critical_services', exported)
+    mapper.observe_traffic("web", "api", Protocol.HTTPS)
+    mapper.observe_traffic("api", "database", Protocol.TCP)
+    mapper.observe_traffic("api", "cache", Protocol.TCP)
     
-    def test_cleanup_inactive_services(self):
-        """Test cleaning up inactive services"""
-        mapper = TopoMapper(service_timeout_seconds=1)
-        
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http'
-        }
-        
-        mapper.ingest_connection(connection)
-        
-        self.assertGreater(len(mapper.get_services()), 0)
-        
-        # Wait for timeout
-        time.sleep(1.1)
-        
-        # Cleanup
-        removed = mapper.cleanup_inactive_services()
-        
-        self.assertGreater(removed, 0)
-        self.assertEqual(len(mapper.get_services()), 0)
+    assert len(mapper.get_all_services()) == 4
+    assert len(mapper.get_all_connections()) == 3
     
-    def test_clear(self):
-        """Test clearing all data"""
-        connection = {
-            'source_host': 'service-a',
-            'source_port': 8000,
-            'destination_host': 'service-b',
-            'destination_port': 8001,
-            'protocol': 'http'
-        }
-        
-        self.mapper.ingest_connection(connection)
-        
-        self.assertGreater(len(self.mapper.get_services()), 0)
-        
-        self.mapper.clear()
-        
-        self.assertEqual(len(self.mapper.get_services()), 0)
-        self.assertEqual(len(self.mapper.get_dependencies()), 0)
+    print("✓ Multiple traffic observation works")
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_service_statistics():
+    """Test service statistics tracking"""
+    print("Testing service statistics...")
+    
+    mapper = TopologyMapper()
+    
+    # Service A sends to B and C
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    mapper.observe_traffic("a", "c", Protocol.HTTP)
+    
+    # Service B sends to C
+    mapper.observe_traffic("b", "c", Protocol.HTTP)
+    
+    service_a = mapper.get_service("a")
+    assert service_a.total_requests_sent == 2
+    assert service_a.outgoing_connections == 2
+    
+    service_c = mapper.get_service("c")
+    assert service_c.total_requests_received == 2
+    assert service_c.incoming_connections == 2
+    
+    print("✓ Service statistics work")
+
+
+def test_get_dependency_graph():
+    """Test dependency graph generation"""
+    print("Testing dependency graph...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("frontend", "api", Protocol.HTTPS)
+    mapper.observe_traffic("api", "users", Protocol.HTTP)
+    mapper.observe_traffic("api", "orders", Protocol.HTTP)
+    mapper.observe_traffic("users", "database", Protocol.TCP)
+    
+    graph = mapper.get_dependency_graph()
+    
+    assert "api" in graph["frontend"]
+    assert "users" in graph["api"]
+    assert "orders" in graph["api"]
+    assert "database" in graph["users"]
+    
+    print("✓ Dependency graph works")
+
+
+def test_get_service_dependencies():
+    """Test getting dependencies for specific service"""
+    print("Testing service dependencies...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("frontend", "api", Protocol.HTTP)
+    mapper.observe_traffic("api", "database", Protocol.TCP)
+    mapper.observe_traffic("mobile", "api", Protocol.HTTP)
+    
+    deps = mapper.get_service_dependencies("api")
+    
+    assert "database" in deps['depends_on']
+    assert "frontend" in deps['depended_by']
+    assert "mobile" in deps['depended_by']
+    
+    print("✓ Service dependencies work")
+
+
+def test_find_entry_points():
+    """Test finding entry point services"""
+    print("Testing find entry points...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("load-balancer", "api", Protocol.HTTPS)
+    mapper.observe_traffic("api", "database", Protocol.TCP)
+    mapper.observe_traffic("api", "cache", Protocol.TCP)
+    
+    entry_points = mapper.find_entry_points()
+    
+    assert "load-balancer" in entry_points
+    assert "api" not in entry_points
+    assert len(entry_points) == 1
+    
+    print("✓ Find entry points works")
+
+
+def test_find_leaf_services():
+    """Test finding leaf services"""
+    print("Testing find leaf services...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("api", "database", Protocol.TCP)
+    mapper.observe_traffic("api", "cache", Protocol.TCP)
+    mapper.observe_traffic("worker", "database", Protocol.TCP)
+    
+    leaves = mapper.find_leaf_services()
+    
+    assert "database" in leaves
+    assert "cache" in leaves
+    assert "api" not in leaves
+    
+    print("✓ Find leaf services works")
+
+
+def test_find_critical_services():
+    """Test finding critical services"""
+    print("Testing find critical services...")
+    
+    mapper = TopologyMapper()
+    
+    # Multiple services depend on auth
+    mapper.observe_traffic("api", "auth", Protocol.HTTP)
+    mapper.observe_traffic("web", "auth", Protocol.HTTP)
+    mapper.observe_traffic("mobile", "auth", Protocol.HTTP)
+    mapper.observe_traffic("admin", "auth", Protocol.HTTP)
+    
+    # Only one depends on logging
+    mapper.observe_traffic("api", "logging", Protocol.HTTP)
+    
+    critical = mapper.find_critical_services(min_dependents=2)
+    
+    assert len(critical) > 0
+    assert critical[0][0] == "auth"
+    assert critical[0][1] == 4
+    
+    print("✓ Find critical services works")
+
+
+def test_detect_circular_dependencies():
+    """Test circular dependency detection"""
+    print("Testing circular dependency detection...")
+    
+    mapper = TopologyMapper()
+    
+    # Create a circular dependency
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    mapper.observe_traffic("b", "c", Protocol.HTTP)
+    mapper.observe_traffic("c", "a", Protocol.HTTP)
+    
+    cycles = mapper.detect_circular_dependencies()
+    
+    assert len(cycles) > 0
+    
+    print("✓ Circular dependency detection works")
+
+
+def test_no_circular_dependencies():
+    """Test with no circular dependencies"""
+    print("Testing no circular dependencies...")
+    
+    mapper = TopologyMapper()
+    
+    # Linear dependency chain
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    mapper.observe_traffic("b", "c", Protocol.HTTP)
+    mapper.observe_traffic("c", "d", Protocol.HTTP)
+    
+    cycles = mapper.detect_circular_dependencies()
+    
+    assert len(cycles) == 0
+    
+    print("✓ No circular dependencies works")
+
+
+def test_generate_text_topology():
+    """Test text topology generation"""
+    print("Testing text topology generation...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("web", "api", Protocol.HTTPS, 1000, 50.0)
+    mapper.observe_traffic("api", "database", Protocol.TCP, 2000, 25.0)
+    
+    text = mapper.generate_text_topology()
+    
+    assert len(text) > 0
+    assert "Application Topology Map" in text
+    assert "web" in text
+    assert "api" in text
+    assert "database" in text
+    
+    print("✓ Text topology generation works")
+
+
+def test_generate_dot_graph():
+    """Test DOT graph generation"""
+    print("Testing DOT graph generation...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("frontend", "api", Protocol.HTTPS)
+    mapper.observe_traffic("api", "backend", Protocol.HTTP)
+    
+    dot = mapper.generate_dot_graph(include_stats=True)
+    
+    assert "digraph topology" in dot
+    assert "frontend" in dot
+    assert "api" in dot
+    assert "backend" in dot
+    assert "->" in dot
+    
+    print("✓ DOT graph generation works")
+
+
+def test_get_topology_summary():
+    """Test topology summary"""
+    print("Testing topology summary...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("web", "api", Protocol.HTTP)
+    mapper.observe_traffic("api", "db", Protocol.TCP)
+    mapper.observe_traffic("api", "cache", Protocol.TCP)
+    
+    summary = mapper.get_topology_summary()
+    
+    assert summary['total_services'] == 4
+    assert summary['total_connections'] == 3
+    assert 'entry_points' in summary
+    assert 'leaf_services' in summary
+    
+    print("✓ Topology summary works")
+
+
+def test_take_snapshot():
+    """Test taking snapshots"""
+    print("Testing take snapshot...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    mapper.observe_traffic("b", "c", Protocol.HTTP)
+    
+    snapshot = mapper.take_snapshot()
+    
+    assert 'timestamp' in snapshot
+    assert 'services' in snapshot
+    assert 'connections' in snapshot
+    assert 'summary' in snapshot
+    assert len(snapshot['services']) == 3
+    
+    print("✓ Take snapshot works")
+
+
+def test_detect_changes():
+    """Test change detection"""
+    print("Testing change detection...")
+    
+    mapper = TopologyMapper()
+    
+    # Initial topology
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    snapshot1 = mapper.take_snapshot()
+    
+    time.sleep(0.1)
+    
+    # Add new service and connection
+    mapper.observe_traffic("a", "c", Protocol.HTTP)
+    mapper.observe_traffic("b", "d", Protocol.HTTP)
+    
+    changes = mapper.detect_changes(snapshot1)
+    
+    assert len(changes['new_services']) == 2  # c and d
+    assert len(changes['new_connections']) == 2
+    
+    print("✓ Change detection works")
+
+
+def test_export_import_json():
+    """Test JSON export and import"""
+    print("Testing JSON export/import...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("web", "api", Protocol.HTTPS, 1000, 50.0)
+    mapper.observe_traffic("api", "db", Protocol.TCP, 2000, 25.0)
+    
+    # Export
+    filename = "/tmp/test_topology.json"
+    mapper.export_to_json(filename)
+    
+    assert os.path.exists(filename)
+    
+    # Import into new mapper
+    new_mapper = TopologyMapper()
+    new_mapper.import_from_json(filename)
+    
+    assert len(new_mapper.get_all_services()) == 3
+    assert len(new_mapper.get_all_connections()) == 2
+    
+    # Cleanup
+    os.remove(filename)
+    
+    print("✓ JSON export/import works")
+
+
+def test_clear():
+    """Test clearing mapper data"""
+    print("Testing clear...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic("a", "b", Protocol.HTTP)
+    mapper.observe_traffic("b", "c", Protocol.HTTP)
+    
+    assert len(mapper.get_all_services()) > 0
+    
+    mapper.clear()
+    
+    assert len(mapper.get_all_services()) == 0
+    assert len(mapper.get_all_connections()) == 0
+    
+    print("✓ Clear works")
+
+
+def test_protocol_types():
+    """Test different protocol types"""
+    print("Testing protocol types...")
+    
+    mapper = TopologyMapper()
+    
+    protocols = [
+        Protocol.HTTP,
+        Protocol.HTTPS,
+        Protocol.GRPC,
+        Protocol.WEBSOCKET,
+        Protocol.TCP,
+        Protocol.UDP,
+        Protocol.UNKNOWN
+    ]
+    
+    for i, protocol in enumerate(protocols):
+        mapper.observe_traffic(f"service-{i}", f"service-{i+1}", protocol)
+    
+    assert len(mapper.get_all_connections()) == len(protocols)
+    
+    print("✓ Protocol types work")
+
+
+def test_ip_and_port_tracking():
+    """Test IP and port tracking"""
+    print("Testing IP and port tracking...")
+    
+    mapper = TopologyMapper()
+    
+    mapper.observe_traffic(
+        "web-server",
+        "api",
+        Protocol.HTTPS,
+        source_ip="192.168.1.10",
+        source_port=54321,
+        dest_ip="10.0.0.5",
+        dest_port=443
+    )
+    
+    api_service = mapper.get_service("api")
+    assert "10.0.0.5" in api_service.ip_addresses
+    assert 443 in api_service.ports
+    
+    web_service = mapper.get_service("web-server")
+    assert "192.168.1.10" in web_service.ip_addresses
+    assert 54321 in web_service.ports
+    
+    print("✓ IP and port tracking works")
+
+
+def test_service_to_dict():
+    """Test service serialization"""
+    print("Testing service to_dict...")
+    
+    service = Service(name="test-service")
+    service.ip_addresses.add("192.168.1.1")
+    service.ports.add(8080)
+    service.protocols.add(Protocol.HTTP)
+    service.total_requests_received = 100
+    
+    service_dict = service.to_dict()
+    
+    assert service_dict['name'] == "test-service"
+    assert "192.168.1.1" in service_dict['ip_addresses']
+    assert 8080 in service_dict['ports']
+    assert service_dict['total_requests_received'] == 100
+    
+    print("✓ Service serialization works")
+
+
+def test_connection_to_dict():
+    """Test connection serialization"""
+    print("Testing connection to_dict...")
+    
+    conn = Connection("a", "b", Protocol.HTTP)
+    conn.add_request(1000, 50.0)
+    conn.add_request(2000, 100.0, is_error=True)
+    
+    conn_dict = conn.to_dict()
+    
+    assert conn_dict['source'] == "a"
+    assert conn_dict['destination'] == "b"
+    assert conn_dict['protocol'] == "HTTP"
+    assert conn_dict['request_count'] == 2
+    assert conn_dict['error_count'] == 1
+    assert conn_dict['error_rate'] == 0.5
+    
+    print("✓ Connection serialization works")
+
+
+def run_all_tests():
+    """Run all test functions"""
+    print("=" * 60)
+    print("Running TopoMapper Tests")
+    print("=" * 60)
+    print()
+    
+    test_functions = [
+        test_service_creation,
+        test_service_status,
+        test_connection_creation,
+        test_connection_add_request,
+        test_connection_error_rate,
+        test_mapper_creation,
+        test_observe_traffic,
+        test_observe_multiple_traffic,
+        test_service_statistics,
+        test_get_dependency_graph,
+        test_get_service_dependencies,
+        test_find_entry_points,
+        test_find_leaf_services,
+        test_find_critical_services,
+        test_detect_circular_dependencies,
+        test_no_circular_dependencies,
+        test_generate_text_topology,
+        test_generate_dot_graph,
+        test_get_topology_summary,
+        test_take_snapshot,
+        test_detect_changes,
+        test_export_import_json,
+        test_clear,
+        test_protocol_types,
+        test_ip_and_port_tracking,
+        test_service_to_dict,
+        test_connection_to_dict,
+    ]
+    
+    passed = 0
+    failed = 0
+    
+    for test_func in test_functions:
+        try:
+            test_func()
+            passed += 1
+        except AssertionError as e:
+            print(f"✗ {test_func.__name__} failed: {e}")
+            failed += 1
+        except Exception as e:
+            print(f"✗ {test_func.__name__} error: {e}")
+            failed += 1
+        print()
+    
+    print("=" * 60)
+    print(f"Results: {passed} passed, {failed} failed")
+    print("=" * 60)
+    
+    return failed == 0
+
+
+if __name__ == "__main__":
+    success = run_all_tests()
+    sys.exit(0 if success else 1)

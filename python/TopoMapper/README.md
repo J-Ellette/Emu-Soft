@@ -1,385 +1,411 @@
-# TopoMapper - Application Topology Mapper from Actual Traffic
+# TopoMapper - Application Topology Mapper
 
-A pure Python implementation of an application topology mapper that discovers and visualizes service architecture by analyzing actual network traffic, without external dependencies.
+A pure Python application topology mapper that builds service dependency graphs from actual network traffic.
 
-## What This Provides
+## What This Tool Does
 
-**Purpose:** Automatically discover and map application topology from real network traffic
-**Use Case:** Understanding microservice architectures, dependency mapping, and traffic analysis
+**Purpose:** TopoMapper observes network traffic between services to automatically discover and map your application's topology, identify dependencies, and detect architectural patterns.
 
 ## Features
 
-- **Automatic Service Discovery** from network traffic
-- **Dependency Mapping** between services with metrics
-- **Protocol Detection** (HTTP, HTTPS, gRPC, TCP, UDP, WebSocket)
-- **Health Monitoring** with automatic status detection
-- **Traffic Pattern Analysis** with endpoint tracking
-- **Topology Visualization** data generation
-- **Critical Service Detection** identifying key dependencies
-- **Entry Point & Leaf Service** identification
-- **Real-time Updates** as traffic flows
-- **Thread-safe** concurrent ingestion
+- **Automatic Service Discovery** - Discover services from traffic patterns
+- **Dependency Mapping** - Build complete service dependency graphs
+- **Protocol Detection** - Identify communication protocols (HTTP, gRPC, WebSocket, etc.)
+- **Health Monitoring** - Track service health based on error rates
+- **Critical Service Detection** - Identify services many others depend on
+- **Entry Point Discovery** - Find external-facing services
+- **Circular Dependency Detection** - Detect dependency cycles
+- **Topology Visualization** - Generate DOT graphs and text visualizations
+- **Change Detection** - Track topology changes over time
+- **Export/Import** - Save and load topology data
+- **Thread-safe** - Concurrent traffic observation
 
 ## Core Components
 
-- **TopoMapper.py**: Main implementation
-  - `TopoMapper`: Main topology mapper class
-  - `NetworkConnection`: Represents network connection
-  - `Service`: Discovered service with metrics
-  - `ServiceDependency`: Dependency between services
-  - `Protocol`: Network protocol enumeration
-  - `ServiceStatus`: Health status enumeration
-  - `TopologyNode` / `TopologyEdge`: Visualization data structures
+- **TopologyMapper**: Main class for topology mapping
+- **Service**: Represents a service in the topology
+- **Connection**: Represents communication between services
+- **Protocol**: Enumeration of supported protocols
+- **ServiceStatus**: Health status (Healthy, Degraded, Unhealthy)
 
 ## Usage
 
-### Basic Connection Ingestion
+### Basic Traffic Observation
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-# Initialize mapper
-mapper = TopoMapper(service_timeout_seconds=300)
+# Create mapper
+mapper = create_mapper()
 
-# Ingest a network connection
-connection_data = {
-    'source_host': 'api-gateway',
-    'source_port': 8080,
-    'destination_host': 'user-service',
-    'destination_port': 3000,
-    'protocol': 'http',
-    'bytes_sent': 1024,
-    'bytes_received': 2048,
-    'status_code': 200,
-    'method': 'GET',
-    'path': '/api/users',
-    'duration_ms': 45.5
-}
+# Observe traffic
+mapper.observe_traffic(
+    source="api-gateway",
+    destination="user-service",
+    protocol=Protocol.HTTP,
+    bytes_transferred=1024,
+    latency_ms=25.5
+)
 
-key = mapper.ingest_connection(connection_data)
-print(f"Ingested connection: {key}")
-```
+mapper.observe_traffic(
+    source="user-service",
+    destination="database",
+    protocol=Protocol.TCP,
+    bytes_transferred=2048,
+    latency_ms=10.2
+)
 
-### Service Discovery
-
-```python
-from TopoMapper import TopoMapper
-
-mapper = TopoMapper()
-
-# Ingest multiple connections
-connections = [
-    {
-        'source_host': 'client-app',
-        'source_port': 50000,
-        'destination_host': 'api-gateway',
-        'destination_port': 8080,
-        'protocol': 'http'
-    },
-    {
-        'source_host': 'api-gateway',
-        'source_port': 8080,
-        'destination_host': 'user-service',
-        'destination_port': 3000,
-        'protocol': 'http'
-    },
-    {
-        'source_host': 'user-service',
-        'source_port': 3000,
-        'destination_host': 'postgres-db',
-        'destination_port': 5432,
-        'protocol': 'tcp'
-    }
-]
-
-for conn in connections:
-    mapper.ingest_connection(conn)
-
-# Get discovered services
-services = mapper.get_services()
-print(f"Discovered {len(services)} services:")
+# View discovered services
+services = mapper.get_all_services()
 for service in services:
-    print(f"  - {service.name} ({service.host}:{service.port}) [{service.protocol.value}]")
-    print(f"    Status: {service.status.value}")
-    print(f"    Requests: {service.total_requests}")
-    print(f"    Error Rate: {service.get_error_rate():.2%}")
+    print(f"Service: {service.name}, Status: {service.get_status().value}")
 ```
 
-### Service Naming
+### Building Service Dependencies
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# Register known service names
-mapper.register_service_name('10.0.0.1', 8080, 'api-gateway')
-mapper.register_service_name('10.0.0.2', 3000, 'user-service')
-mapper.register_service_name('10.0.0.3', 5432, 'main-database')
+# Simulate microservice traffic
+mapper.observe_traffic("frontend", "api-gateway", Protocol.HTTPS)
+mapper.observe_traffic("api-gateway", "auth-service", Protocol.GRPC)
+mapper.observe_traffic("api-gateway", "user-service", Protocol.HTTP)
+mapper.observe_traffic("user-service", "database", Protocol.TCP)
+mapper.observe_traffic("api-gateway", "order-service", Protocol.HTTP)
+mapper.observe_traffic("order-service", "payment-service", Protocol.HTTPS)
+mapper.observe_traffic("order-service", "inventory-service", Protocol.HTTP)
 
-# Now connections will use these names
-connection = {
-    'source_host': '10.0.0.1',
-    'source_port': 8080,
-    'destination_host': '10.0.0.2',
-    'destination_port': 3000,
-    'protocol': 'http'
-}
-
-mapper.ingest_connection(connection)
-
-# Retrieve by registered name
-service = mapper.get_service('api-gateway')
-print(f"Service: {service.name}")
+# Get dependency graph
+dependencies = mapper.get_dependency_graph()
+print("Service Dependencies:")
+for service, depends_on in dependencies.items():
+    print(f"  {service} -> {', '.join(depends_on)}")
 ```
 
-### Dependency Mapping
+### Finding Entry Points
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# Simulate traffic flow
-for i in range(100):
-    mapper.ingest_connection({
-        'source_host': 'api',
-        'source_port': 8080,
-        'destination_host': 'backend',
-        'destination_port': 9000,
-        'protocol': 'http',
-        'status_code': 500 if i < 5 else 200,
-        'duration_ms': 50.0 + i % 10,
-        'path': f'/api/endpoint{i % 3}'
-    })
+# Observe traffic
+mapper.observe_traffic("load-balancer", "api-gateway", Protocol.HTTPS)
+mapper.observe_traffic("api-gateway", "service-a", Protocol.HTTP)
+mapper.observe_traffic("service-a", "service-b", Protocol.GRPC)
 
-# Get dependencies
-dependencies = mapper.get_dependencies()
-for dep in dependencies:
-    print(f"\n{dep.from_service} -> {dep.to_service}")
-    print(f"  Protocol: {dep.protocol.value}")
-    print(f"  Requests: {dep.total_requests}")
-    print(f"  Errors: {dep.total_errors}")
-    print(f"  Error Rate: {dep.get_error_rate():.2%}")
-    print(f"  Avg Latency: {dep.average_latency_ms:.2f}ms")
-    print(f"  Endpoints: {', '.join(list(dep.endpoints_used)[:5])}")
-```
-
-### Topology Graph
-
-```python
-from TopoMapper import TopoMapper
-
-mapper = TopoMapper()
-
-# Build topology through traffic
-# ... ingest connections ...
-
-# Get topology graph
-graph = mapper.get_topology_graph()
-
-print("Topology Graph:")
-for service, downstream_services in graph.items():
-    print(f"{service} calls:")
-    for downstream in downstream_services:
-        print(f"  -> {downstream}")
-```
-
-### Finding Key Services
-
-```python
-from TopoMapper import TopoMapper
-
-mapper = TopoMapper()
-
-# ... ingest connections ...
-
-# Find entry points (services receiving external traffic)
+# Find entry points (services with no incoming connections)
 entry_points = mapper.find_entry_points()
-print("Entry Point Services:")
-for service in entry_points:
-    print(f"  - {service}")
+print(f"Entry points: {', '.join(entry_points)}")  # load-balancer
+```
 
-# Find leaf services (databases, external APIs, etc.)
-leaf_services = mapper.find_leaf_services()
-print("\nLeaf Services:")
-for service in leaf_services:
-    print(f"  - {service}")
+### Finding Leaf Services
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+mapper = create_mapper()
+
+# Build topology
+mapper.observe_traffic("api", "service-a", Protocol.HTTP)
+mapper.observe_traffic("service-a", "database", Protocol.TCP)
+mapper.observe_traffic("service-a", "cache", Protocol.TCP)
+
+# Find leaf services (services with no outgoing connections)
+leaves = mapper.find_leaf_services()
+print(f"Leaf services: {', '.join(leaves)}")  # database, cache
+```
+
+### Detecting Critical Services
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+mapper = create_mapper()
+
+# Multiple services depend on auth-service
+mapper.observe_traffic("api", "auth-service", Protocol.HTTP)
+mapper.observe_traffic("frontend", "auth-service", Protocol.HTTP)
+mapper.observe_traffic("admin", "auth-service", Protocol.HTTP)
+mapper.observe_traffic("mobile-app", "auth-service", Protocol.HTTP)
 
 # Find critical services (many dependents)
 critical = mapper.find_critical_services(min_dependents=2)
-print("\nCritical Services:")
-for crit in critical:
-    print(f"  - {crit['service']}")
-    print(f"    Dependents: {crit['dependent_count']}")
-    print(f"    Status: {crit['status']}")
-    print(f"    Error Rate: {crit['error_rate']:.2%}")
+print("Critical Services:")
+for service, dependent_count in critical:
+    print(f"  {service}: {dependent_count} services depend on it")
 ```
 
-### Health Monitoring
+### Tracking Service Health
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# Simulate healthy and unhealthy services
+# Simulate successful requests
+for _ in range(95):
+    mapper.observe_traffic(
+        "api", "service-a", Protocol.HTTP,
+        bytes_transferred=1000,
+        latency_ms=50.0,
+        is_error=False
+    )
+
+# Simulate errors
+for _ in range(5):
+    mapper.observe_traffic(
+        "api", "service-a", Protocol.HTTP,
+        bytes_transferred=500,
+        latency_ms=100.0,
+        is_error=True
+    )
+
+# Check service health
+service = mapper.get_service("service-a")
+print(f"Service: {service.name}")
+print(f"Status: {service.get_status().value}")
+print(f"Requests: {service.total_requests_received}")
+print(f"Errors: {service.total_errors}")
+```
+
+### Analyzing Connection Statistics
+
+```python
+from TopoMapper import create_mapper, Protocol
+import random
+
+mapper = create_mapper()
+
+# Simulate varied traffic
 for i in range(100):
-    # Healthy service
-    mapper.ingest_connection({
-        'source_host': 'client',
-        'source_port': 5000,
-        'destination_host': 'healthy-api',
-        'destination_port': 8000,
-        'protocol': 'http',
-        'status_code': 200
-    })
-    
-    # Unhealthy service (10% errors)
-    mapper.ingest_connection({
-        'source_host': 'client',
-        'source_port': 5000,
-        'destination_host': 'unhealthy-api',
-        'destination_port': 8001,
-        'protocol': 'http',
-        'status_code': 500 if i < 10 else 200
-    })
+    mapper.observe_traffic(
+        "api", "backend", Protocol.HTTP,
+        bytes_transferred=random.randint(500, 2000),
+        latency_ms=random.uniform(10.0, 100.0),
+        is_error=(i % 20 == 0)  # 5% error rate
+    )
 
-# Get health summary
-health = mapper.get_service_health_summary()
-print("Service Health Summary:")
-for status, count in health.items():
-    print(f"  {status}: {count} services")
-
-# Check individual service
-service = mapper.get_service('unhealthy-api:8001')
-if service:
-    print(f"\n{service.name}:")
-    print(f"  Status: {service.status.value}")
-    print(f"  Error Rate: {service.get_error_rate():.2%}")
+# Get connection details
+conn = mapper.get_connection("api", "backend")
+print(f"Connection: {conn.source} -> {conn.destination}")
+print(f"  Protocol: {conn.protocol.value}")
+print(f"  Requests: {conn.request_count}")
+print(f"  Errors: {conn.error_count} ({conn.get_error_rate():.1%})")
+print(f"  Avg Latency: {conn.avg_latency_ms:.2f}ms")
+print(f"  Total Bytes: {conn.total_bytes}")
 ```
 
-### Traffic Analysis
+### Detecting Circular Dependencies
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# Ingest diverse traffic
-protocols = ['http', 'tcp', 'grpc']
-endpoints = ['/api/users', '/api/orders', '/api/products']
+# Create a circular dependency
+mapper.observe_traffic("service-a", "service-b", Protocol.HTTP)
+mapper.observe_traffic("service-b", "service-c", Protocol.HTTP)
+mapper.observe_traffic("service-c", "service-a", Protocol.HTTP)  # Circular!
 
-for i in range(150):
-    mapper.ingest_connection({
-        'source_host': 'client',
-        'source_port': 5000,
-        'destination_host': 'api',
-        'destination_port': 8080,
-        'protocol': protocols[i % 3],
-        'path': endpoints[i % 3] if i % 3 == 0 else None
-    })
-
-# Analyze patterns
-patterns = mapper.analyze_traffic_patterns()
-
-print(f"Total Connections: {patterns['total_connections']}")
-
-print("\nProtocol Distribution:")
-for protocol, count in patterns['protocols'].items():
-    print(f"  {protocol}: {count}")
-
-print("\nTop Endpoints:")
-for endpoint_info in patterns['top_endpoints']:
-    print(f"  {endpoint_info['path']}: {endpoint_info['count']} requests")
-
-print("\nTraffic Over Time:")
-for bucket, count in patterns['traffic_over_time'].items():
-    print(f"  Minute {bucket}: {count} connections")
+# Detect cycles
+cycles = mapper.detect_circular_dependencies()
+if cycles:
+    print("Circular Dependencies Detected:")
+    for cycle in cycles:
+        print(f"  {' -> '.join(cycle)}")
+else:
+    print("No circular dependencies found")
 ```
 
-### Visualization Data
+### Generating Text Topology
 
 ```python
-from TopoMapper import TopoMapper
-import json
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# ... ingest connections ...
+# Build sample topology
+mapper.observe_traffic("web", "api", Protocol.HTTPS, 1024, 50.0)
+mapper.observe_traffic("api", "database", Protocol.TCP, 2048, 25.0)
+mapper.observe_traffic("api", "cache", Protocol.TCP, 512, 5.0)
 
-# Get visualization data
-viz = mapper.get_topology_visualization()
-
-print(f"Nodes: {len(viz['nodes'])}")
-print(f"Edges: {len(viz['edges'])}")
-
-# Export to JSON for visualization tools
-with open('topology.json', 'w') as f:
-    json.dump(viz, f, indent=2)
-
-# Access nodes
-for node in viz['nodes']:
-    print(f"\nNode: {node['id']}")
-    print(f"  Host: {node['host']}:{node['port']}")
-    print(f"  Status: {node['status']}")
-    print(f"  Requests: {node['metadata']['total_requests']}")
-
-# Access edges
-for edge in viz['edges']:
-    print(f"\nEdge: {edge['from']} -> {edge['to']}")
-    print(f"  Requests: {edge['requests']}")
-    print(f"  Latency: {edge['latency_ms']:.2f}ms")
-    print(f"  Error Rate: {edge['error_rate']:.2%}")
+# Generate text visualization
+topology_text = mapper.generate_text_topology()
+print(topology_text)
 ```
 
-### Complete Export
+### Generating DOT Graph for Graphviz
 
 ```python
-from TopoMapper import TopoMapper
-import json
+from TopoMapper import create_mapper, Protocol
 
-mapper = TopoMapper()
+mapper = create_mapper()
 
-# ... build topology from traffic ...
+# Build topology
+mapper.observe_traffic("frontend", "api", Protocol.HTTPS, 1000, 40.0)
+mapper.observe_traffic("api", "users", Protocol.HTTP, 800, 30.0)
+mapper.observe_traffic("api", "orders", Protocol.HTTP, 1200, 45.0)
+mapper.observe_traffic("users", "db", Protocol.TCP, 2000, 15.0)
+mapper.observe_traffic("orders", "db", Protocol.TCP, 2500, 20.0)
 
-# Export everything
-topology = mapper.export_topology()
+# Generate DOT graph
+dot_graph = mapper.generate_dot_graph(include_stats=True)
+print(dot_graph)
 
-# Save to file
-with open('complete_topology.json', 'w') as f:
-    json.dump(topology, f, indent=2)
+# Save to file for Graphviz
+with open("topology.dot", "w") as f:
+    f.write(dot_graph)
 
-# Access exported data
-print(f"Services: {len(topology['services'])}")
-print(f"Dependencies: {len(topology['dependencies'])}")
-print(f"Entry Points: {topology['entry_points']}")
-print(f"Leaf Services: {topology['leaf_services']}")
-print(f"Critical Services: {len(topology['critical_services'])}")
-
-# Traffic patterns
-patterns = topology['traffic_patterns']
-print(f"\nTotal Connections: {patterns['total_connections']}")
-print(f"Protocols: {patterns['protocols']}")
+# Then use: dot -Tpng topology.dot -o topology.png
 ```
 
-### Cleanup and Maintenance
+### Taking Snapshots
 
 ```python
-from TopoMapper import TopoMapper
+from TopoMapper import create_mapper, Protocol
 
-# Set short timeout for demo
-mapper = TopoMapper(service_timeout_seconds=60)
+mapper = create_mapper()
 
-# ... ingest connections ...
+# Build initial topology
+mapper.observe_traffic("web", "api", Protocol.HTTP)
+mapper.observe_traffic("api", "db", Protocol.TCP)
 
-# Remove inactive services
-removed = mapper.cleanup_inactive_services()
-print(f"Removed {removed} inactive services")
+# Take snapshot
+snapshot1 = mapper.take_snapshot()
+print(f"Snapshot 1: {snapshot1['summary']['total_services']} services")
 
-# Clear all data
-mapper.clear()
-print("All topology data cleared")
+# Add more traffic
+mapper.observe_traffic("web", "cache", Protocol.TCP)
+mapper.observe_traffic("api", "search", Protocol.GRPC)
+
+# Take another snapshot
+snapshot2 = mapper.take_snapshot()
+print(f"Snapshot 2: {snapshot2['summary']['total_services']} services")
+```
+
+### Detecting Topology Changes
+
+```python
+from TopoMapper import create_mapper, Protocol
+import time
+
+mapper = create_mapper()
+
+# Build initial topology
+mapper.observe_traffic("api", "service-a", Protocol.HTTP)
+mapper.observe_traffic("api", "service-b", Protocol.HTTP)
+
+# Take first snapshot
+snapshot1 = mapper.take_snapshot()
+time.sleep(1)
+
+# Make changes
+mapper.observe_traffic("api", "service-c", Protocol.HTTP)  # New service
+mapper.observe_traffic("service-a", "database", Protocol.TCP)  # New connection
+
+# Detect changes
+changes = mapper.detect_changes(snapshot1)
+print("Changes detected:")
+print(f"  New services: {changes['new_services']}")
+print(f"  New connections: {changes['new_connections']}")
+print(f"  Status changes: {changes['status_changes']}")
+```
+
+### Getting Topology Summary
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+mapper = create_mapper()
+
+# Build complex topology
+services = ["api", "auth", "users", "orders", "payments", "inventory", "db", "cache"]
+for i in range(100):
+    source = services[i % len(services)]
+    dest = services[(i + 1) % len(services)]
+    mapper.observe_traffic(source, dest, Protocol.HTTP, 1000, 50.0)
+
+# Get summary
+summary = mapper.get_topology_summary()
+print("Topology Summary:")
+print(f"  Total Services: {summary['total_services']}")
+print(f"  Total Connections: {summary['total_connections']}")
+print(f"  Total Requests: {summary['total_requests']}")
+print(f"  Overall Error Rate: {summary['overall_error_rate']:.2%}")
+print(f"  Healthy Services: {summary['healthy_services']}")
+print(f"  Entry Points: {', '.join(summary['entry_points'])}")
+print(f"  Leaf Services: {', '.join(summary['leaf_services'])}")
+print(f"  Critical Services: {', '.join(summary['critical_services'])}")
+```
+
+### Export and Import
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+# Create and populate mapper
+mapper = create_mapper()
+mapper.observe_traffic("web", "api", Protocol.HTTPS, 1024, 50.0)
+mapper.observe_traffic("api", "db", Protocol.TCP, 2048, 25.0)
+
+# Export to JSON
+mapper.export_to_json("topology.json")
+print("Topology exported to topology.json")
+
+# Import in another session
+new_mapper = create_mapper()
+new_mapper.import_from_json("topology.json")
+print(f"Loaded {len(new_mapper.get_all_services())} services")
+```
+
+### Including IP and Port Information
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+mapper = create_mapper()
+
+# Observe traffic with network details
+mapper.observe_traffic(
+    source="web-server",
+    destination="api-gateway",
+    protocol=Protocol.HTTPS,
+    bytes_transferred=1500,
+    latency_ms=45.0,
+    source_ip="192.168.1.10",
+    source_port=54321,
+    dest_ip="10.0.0.5",
+    dest_port=443
+)
+
+# Check service details
+service = mapper.get_service("api-gateway")
+print(f"Service: {service.name}")
+print(f"  IPs: {', '.join(service.ip_addresses)}")
+print(f"  Ports: {', '.join(str(p) for p in service.ports)}")
+```
+
+### Monitoring Service Dependencies
+
+```python
+from TopoMapper import create_mapper, Protocol
+
+mapper = create_mapper()
+
+# Build topology
+mapper.observe_traffic("frontend", "api", Protocol.HTTPS)
+mapper.observe_traffic("api", "auth", Protocol.GRPC)
+mapper.observe_traffic("api", "users", Protocol.HTTP)
+mapper.observe_traffic("users", "database", Protocol.TCP)
+
+# Get dependencies for a specific service
+deps = mapper.get_service_dependencies("api")
+print("API Service Dependencies:")
+print(f"  Depends on: {', '.join(deps['depends_on'])}")
+print(f"  Depended by: {', '.join(deps['depended_by'])}")
 ```
 
 ## Testing
@@ -387,260 +413,150 @@ print("All topology data cleared")
 Run the test suite:
 
 ```bash
-cd python/TopoMapper
 python test_TopoMapper.py
-```
-
-Or run specific test classes:
-
-```bash
-python test_TopoMapper.py TestBasicFunctionality
-python test_TopoMapper.py TestDependencyMapping
-python test_TopoMapper.py TestTopologyAnalysis
 ```
 
 ## Implementation Notes
 
 - **Thread-safe**: All operations use locks for concurrent access
-- **Real-time Discovery**: Services discovered as traffic flows
-- **Automatic Naming**: Smart service naming based on ports and patterns
-- **Health Tracking**: Automatic health status based on error rates
-- **Flexible Protocols**: Supports multiple network protocols
-- **Memory Efficient**: Configurable timeout for inactive services
+- **Real-time mapping**: Services and connections discovered as traffic is observed
+- **Automatic health scoring**: Based on error rates
+- **Snapshot history**: Maintains history of topology snapshots
+- **No external dependencies**: Pure Python standard library
 
 ## API Reference
 
-### TopoMapper Class
-
-**Constructor:**
-```python
-TopoMapper(service_timeout_seconds: int = 300)
-```
+### TopologyMapper
 
 **Methods:**
-- `register_service_name(host, port, name)`: Register known service name
-- `ingest_connection(connection_data)`: Ingest network connection
-- `get_services() -> List[Service]`: Get all discovered services
-- `get_service(service_name) -> Optional[Service]`: Get specific service
-- `get_dependencies() -> List[ServiceDependency]`: Get all dependencies
-- `get_topology_graph() -> Dict`: Get topology as graph
-- `get_topology_visualization() -> Dict`: Get visualization data
-- `find_entry_points() -> List[str]`: Find entry point services
-- `find_leaf_services() -> List[str]`: Find leaf services
-- `find_critical_services(min_dependents) -> List[Dict]`: Find critical services
-- `analyze_traffic_patterns() -> Dict`: Analyze traffic patterns
-- `get_service_health_summary() -> Dict`: Get health summary
-- `cleanup_inactive_services() -> int`: Remove inactive services
-- `export_topology() -> Dict`: Export complete topology
-- `clear()`: Clear all data
+- `observe_traffic(source, destination, ...)` - Record traffic between services
+- `get_service(name)` - Get service by name
+- `get_all_services()` - Get all services
+- `get_connection(source, destination)` - Get connection
+- `get_all_connections()` - Get all connections
+- `get_service_dependencies(service_name)` - Get service dependencies
+- `get_dependency_graph()` - Get full dependency graph
+- `find_entry_points()` - Find entry point services
+- `find_leaf_services()` - Find leaf services
+- `find_critical_services(min_dependents)` - Find critical services
+- `detect_circular_dependencies()` - Detect circular dependencies
+- `generate_dot_graph(include_stats)` - Generate DOT graph
+- `generate_text_topology()` - Generate text visualization
+- `get_topology_summary()` - Get topology summary
+- `take_snapshot()` - Take topology snapshot
+- `detect_changes(previous_snapshot)` - Detect changes
+- `export_to_json(filename)` - Export to JSON
+- `import_from_json(filename)` - Import from JSON
+- `clear()` - Clear all data
 
-### Connection Data Format
+### Service
+
+**Attributes:**
+- `name` - Service name
+- `ip_addresses` - Set of IP addresses
+- `ports` - Set of ports
+- `protocols` - Set of protocols used
+- `incoming_connections` - Count of incoming connections
+- `outgoing_connections` - Count of outgoing connections
+- `total_requests_received` - Total requests received
+- `total_requests_sent` - Total requests sent
+- `total_errors` - Total errors
+
+**Methods:**
+- `get_status()` - Get health status
+
+### Connection
+
+**Attributes:**
+- `source` - Source service
+- `destination` - Destination service
+- `protocol` - Communication protocol
+- `request_count` - Total requests
+- `error_count` - Total errors
+- `total_bytes` - Total bytes transferred
+- `avg_latency_ms` - Average latency
+
+**Methods:**
+- `add_request(bytes, latency, is_error)` - Record request
+- `get_error_rate()` - Get error rate
+
+## Use Cases
+
+### Microservice Discovery
+
+Automatically discover all microservices in your environment by observing traffic:
 
 ```python
-{
-    'source_host': str,          # Required
-    'source_port': int,          # Required
-    'destination_host': str,     # Required
-    'destination_port': int,     # Required
-    'protocol': str,             # Required (http, https, grpc, tcp, udp, websocket)
-    'timestamp': float,          # Optional (default: current time)
-    'bytes_sent': int,           # Optional
-    'bytes_received': int,       # Optional
-    'status_code': int,          # Optional (for HTTP-like protocols)
-    'method': str,               # Optional (GET, POST, etc.)
-    'path': str,                 # Optional (endpoint path)
-    'duration_ms': float         # Optional (request duration)
+# Continuously observe traffic
+for traffic_event in traffic_stream:
+    mapper.observe_traffic(
+        traffic_event.source,
+        traffic_event.destination,
+        traffic_event.protocol
+    )
+
+# Periodically check discovered services
+services = mapper.get_all_services()
+```
+
+### Architecture Validation
+
+Validate that your actual architecture matches the intended design:
+
+```python
+# Build expected topology
+expected_deps = {
+    "api-gateway": ["auth", "users", "orders"],
+    "users": ["database"],
+    "orders": ["database", "payments"]
 }
+
+# Compare with actual
+actual_deps = mapper.get_dependency_graph()
+for service, expected in expected_deps.items():
+    actual = actual_deps.get(service, set())
+    if set(expected) != actual:
+        print(f"Mismatch in {service}: expected {expected}, got {actual}")
 ```
 
-## Example Use Cases
+### Dependency Impact Analysis
 
-### Microservice Architecture Discovery
+Understand the impact of service failures:
 
 ```python
-from TopoMapper import TopoMapper
-
-mapper = TopoMapper()
-
-def capture_request(request, response):
-    """Capture HTTP request/response"""
-    mapper.ingest_connection({
-        'source_host': request.client_host,
-        'source_port': request.client_port,
-        'destination_host': request.server_host,
-        'destination_port': request.server_port,
-        'protocol': 'http',
-        'method': request.method,
-        'path': request.path,
-        'status_code': response.status_code,
-        'duration_ms': response.duration_ms,
-        'bytes_sent': len(request.body),
-        'bytes_received': len(response.body)
-    })
-
-# After capturing traffic, analyze
-print("\n=== Discovered Architecture ===")
-
-# Show all services
-services = mapper.get_services()
-print(f"\nServices ({len(services)}):")
-for service in services:
-    print(f"  {service.name}: {service.total_requests} requests")
-
-# Show dependencies
-graph = mapper.get_topology_graph()
-print(f"\nDependencies:")
-for service, deps in graph.items():
-    if deps:
-        print(f"  {service} -> {', '.join(deps)}")
-
-# Identify critical services
-critical = mapper.find_critical_services()
-if critical:
-    print(f"\nCritical Services:")
-    for c in critical:
-        print(f"  {c['service']} ({c['dependent_count']} dependents)")
+critical_services = mapper.find_critical_services(min_dependents=3)
+print("Services with high impact if they fail:")
+for service, count in critical_services:
+    print(f"  {service}: affects {count} services")
 ```
 
-### Real-Time Monitoring Dashboard
+### Performance Monitoring
+
+Track service communication performance:
 
 ```python
-from TopoMapper import TopoMapper
-import time
-
-mapper = TopoMapper()
-
-def monitoring_dashboard():
-    """Display real-time topology monitoring"""
-    while True:
-        # ... connections are ingested continuously ...
-        
-        print("\033[2J\033[H")  # Clear screen
-        print("=== Application Topology Monitor ===\n")
-        
-        # Service health
-        health = mapper.get_service_health_summary()
-        print("Service Health:")
-        for status, count in health.items():
-            print(f"  {status.upper()}: {count}")
-        
-        # Critical services
-        critical = mapper.find_critical_services(min_dependents=2)
-        print(f"\nCritical Services: {len(critical)}")
-        for c in critical[:5]:
-            print(f"  {c['service']}: {c['dependent_count']} deps, "
-                  f"{c['error_rate']:.1%} errors")
-        
-        # Traffic
-        patterns = mapper.analyze_traffic_patterns()
-        print(f"\nTotal Traffic: {patterns['total_connections']} connections")
-        
-        time.sleep(5)
-
-# Run dashboard
-monitoring_dashboard()
+connections = mapper.get_all_connections()
+slow_connections = [
+    c for c in connections 
+    if c.avg_latency_ms > 100
+]
+print("Slow connections:")
+for conn in slow_connections:
+    print(f"  {conn.source} -> {conn.destination}: {conn.avg_latency_ms:.1f}ms")
 ```
 
-### Service Dependency Audit
+## Differences from Full APM Solutions
 
-```python
-from TopoMapper import TopoMapper
+- **No agent required**: Observes external traffic only
+- **Manual instrumentation**: Traffic must be explicitly observed
+- **No distributed tracing**: Connection-level only, not request-level
+- **Simplified protocol detection**: Limited protocol identification
+- **No real-time streaming**: Batch observation model
 
-mapper = TopoMapper()
+## Tips
 
-# ... collect traffic data ...
-
-def audit_dependencies():
-    """Audit service dependencies"""
-    print("=== Dependency Audit Report ===\n")
-    
-    dependencies = mapper.get_dependencies()
-    
-    # Group by source service
-    by_service = {}
-    for dep in dependencies:
-        if dep.from_service not in by_service:
-            by_service[dep.from_service] = []
-        by_service[dep.from_service].append(dep)
-    
-    # Report
-    for service, deps in sorted(by_service.items()):
-        print(f"\n{service} Dependencies:")
-        for dep in sorted(deps, key=lambda d: d.total_requests, reverse=True):
-            print(f"  -> {dep.to_service}")
-            print(f"     Requests: {dep.total_requests:,}")
-            print(f"     Latency: {dep.average_latency_ms:.1f}ms")
-            print(f"     Errors: {dep.get_error_rate():.2%}")
-            if dep.endpoints_used:
-                endpoints = list(dep.endpoints_used)[:3]
-                print(f"     Endpoints: {', '.join(endpoints)}")
-
-audit_dependencies()
-```
-
-### Architecture Visualization Export
-
-```python
-from TopoMapper import TopoMapper
-import json
-
-mapper = TopoMapper()
-
-# ... collect traffic ...
-
-def export_for_visualization():
-    """Export topology for visualization tools"""
-    viz = mapper.get_topology_visualization()
-    
-    # Export for D3.js force-directed graph
-    d3_data = {
-        'nodes': [
-            {
-                'id': node['id'],
-                'label': f"{node['host']}:{node['port']}",
-                'status': node['status'],
-                'size': node['metadata']['total_requests']
-            }
-            for node in viz['nodes']
-        ],
-        'links': [
-            {
-                'source': edge['from'],
-                'target': edge['to'],
-                'value': edge['requests'],
-                'color': 'red' if edge['error_rate'] > 0.05 else 'green'
-            }
-            for edge in viz['edges']
-        ]
-    }
-    
-    with open('topology_d3.json', 'w') as f:
-        json.dump(d3_data, f, indent=2)
-    
-    print("Exported topology for D3.js visualization")
-
-export_for_visualization()
-```
-
-## Performance Considerations
-
-- **Memory**: Stores all connections; configure timeout appropriately
-- **Thread Safety**: Concurrent ingestion supported
-- **Service Timeout**: Balance between persistence and memory usage
-- **Connection Volume**: Efficient for moderate to high traffic volumes
-- **Cleanup**: Regular cleanup recommended for long-running applications
-
-## Best Practices
-
-1. **Register service names**: Use `register_service_name()` for known services
-2. **Include timing data**: Provide `duration_ms` for latency analysis
-3. **Include status codes**: Enable health monitoring with status codes
-4. **Track endpoints**: Provide `path` for endpoint discovery
-5. **Regular cleanup**: Call `cleanup_inactive_services()` periodically
-6. **Export topology**: Export and archive topology snapshots
-7. **Monitor critical services**: Pay attention to services with many dependents
-8. **Analyze patterns**: Use traffic pattern analysis for optimization
-
-## License
-
-This implementation is part of the Emu-Soft project and is original code written from scratch.
+1. **Regular snapshots**: Take periodic snapshots to track changes
+2. **Monitor critical services**: Keep eye on services with many dependents
+3. **Check for cycles**: Circular dependencies can cause issues
+4. **Export regularly**: Save topology data for historical analysis
+5. **Use DOT graphs**: Visualize with Graphviz for better understanding

@@ -1,284 +1,311 @@
 # TracAgg - Distributed Tracing Aggregator
 
-A pure Python implementation of a distributed tracing aggregator for microservices without external dependencies.
+A pure Python distributed tracing aggregator for microservices without external dependencies.
 
-## What This Provides
+## What This Tool Does
 
-**Purpose:** Collect, correlate, and analyze distributed traces from multiple microservices in a system
-**Use Case:** Observability and performance analysis for microservice architectures
+**Purpose:** TracAgg aggregates and analyzes distributed traces from multiple microservices, helping identify performance bottlenecks, service dependencies, and system health issues.
 
 ## Features
 
-- **Trace Collection** from multiple services
-- **Span Correlation** and trace reconstruction
-- **Service Dependency Mapping** with call graphs
-- **Latency Analysis** with percentile calculations
-- **Bottleneck Detection** identifying slow operations
-- **Error Tracking** across distributed traces
-- **Query Capabilities** with multiple filter options
-- **Critical Path Analysis** for trace optimization
-- **Statistics Collection** per service and operation
-- **Trace Export** in JSON format
-- **Thread-safe** operations for concurrent ingestion
+- **Trace Aggregation** - Collect and organize spans into complete traces
+- **Service Dependency Mapping** - Automatically build service dependency graphs
+- **Performance Analysis** - Calculate latencies, percentiles, and identify slow operations
+- **Error Tracking** - Track error rates across services and operations
+- **Critical Path Analysis** - Identify the longest duration path through distributed traces
+- **Trace Search** - Filter traces by service, operation, duration, errors, etc.
+- **Service Metrics** - Compute per-service request counts, error rates, and latencies
+- **Export/Import** - Save and load trace data in JSON format
+- **Thread-safe** - All operations are thread-safe for concurrent usage
 
 ## Core Components
 
-- **TracAgg.py**: Main implementation
-  - `Span`: Individual span in a trace with timing and metadata
-  - `Trace`: Complete trace with multiple spans
-  - `TracAgg`: Main aggregator for collecting and analyzing traces
-  - `ServiceDependency`: Tracks dependencies between services
-  - `SpanKind`: Enumeration of span types (INTERNAL, SERVER, CLIENT, PRODUCER, CONSUMER)
-  - `TraceStatus`: Trace completion status (COMPLETE, INCOMPLETE, ERROR)
+- **Span**: Represents a unit of work in a distributed trace
+- **Trace**: Aggregates related spans into a complete request flow
+- **TracAggregator**: Main class for ingesting and analyzing traces
+- **ServiceMetrics**: Tracks performance and health metrics for each service
+- **SpanKind**: Classifies span types (SERVER, CLIENT, PRODUCER, CONSUMER)
+- **StatusCode**: Indicates success or error status
 
 ## Usage
 
-### Basic Trace Ingestion
+### Basic Trace Aggregation
 
 ```python
-from TracAgg import TracAgg, create_span_data
+from TracAgg import TracAggregator, create_span, StatusCode, SpanKind
 
-# Initialize aggregator
-agg = TracAgg(retention_seconds=3600)  # Keep traces for 1 hour
+# Create aggregator
+aggregator = TracAggregator()
 
-# Create a span
-span_data = create_span_data(
-    trace_id='trace-123',
-    span_id='span-1',
-    service_name='api-gateway',
-    operation_name='GET /users',
-    duration_ms=150.0,
-    status_code=200
+# Create spans from your microservices
+span1 = create_span(
+    trace_id="trace-123",
+    span_id="span-1",
+    service_name="api-gateway",
+    operation_name="handle_request",
+    start_time=1000.0,
+    duration=0.5
 )
 
-# Ingest the span
-trace_id = agg.ingest_span(span_data)
-```
-
-### Multi-Service Trace
-
-```python
-from TracAgg import TracAgg, create_span_data
-
-agg = TracAgg()
-
-# Root span - API Gateway
-root_span = create_span_data(
-    trace_id='trace-456',
-    span_id='span-1',
-    service_name='api-gateway',
-    operation_name='GET /orders',
-    duration_ms=300.0
+span2 = create_span(
+    trace_id="trace-123",
+    span_id="span-2",
+    parent_span_id="span-1",
+    service_name="user-service",
+    operation_name="get_user",
+    start_time=1000.1,
+    duration=0.2
 )
-agg.ingest_span(root_span)
 
-# Child span - Order Service
-order_span = create_span_data(
-    trace_id='trace-456',
-    span_id='span-2',
-    parent_span_id='span-1',
-    service_name='order-service',
-    operation_name='fetch_orders',
-    duration_ms=200.0,
-    kind='client',
-    tags={'peer.service': 'database'}
-)
-agg.ingest_span(order_span)
+# Ingest spans
+aggregator.ingest_spans([span1, span2])
 
-# Grandchild span - Database
-db_span = create_span_data(
-    trace_id='trace-456',
-    span_id='span-3',
-    parent_span_id='span-2',
-    service_name='database',
-    operation_name='SELECT orders',
-    duration_ms=150.0
-)
-agg.ingest_span(db_span)
+# Get trace
+trace = aggregator.get_trace("trace-123")
+print(f"Trace has {trace.span_count} spans across {trace.service_count} services")
 ```
 
-### Retrieving Traces
+### Analyzing Service Performance
 
 ```python
-from TracAgg import TracAgg
+from TracAgg import TracAggregator, create_span, StatusCode
 
-agg = TracAgg()
+aggregator = TracAggregator()
 
-# Get specific trace
-trace = agg.get_trace('trace-456')
-print(f"Trace duration: {trace.duration_ms}ms")
-print(f"Services involved: {trace.services}")
-print(f"Total spans: {len(trace.spans)}")
+# Simulate multiple requests
+for i in range(100):
+    span = create_span(
+        trace_id=f"trace-{i}",
+        span_id=f"span-{i}",
+        service_name="auth-service",
+        operation_name="authenticate",
+        start_time=float(i * 100),
+        duration=0.05 + (i % 10) * 0.01,
+        status=StatusCode.ERROR if i % 20 == 0 else StatusCode.OK
+    )
+    aggregator.ingest_span(span)
 
-# Check trace completion
-if trace.is_complete():
-    print(f"Trace status: {trace.status.value}")
-```
-
-### Querying Traces
-
-```python
-from TracAgg import TracAgg
-
-agg = TracAgg()
-
-# Query by service
-traces = agg.query_traces(service_name='user-service', limit=10)
-
-# Query by operation
-traces = agg.query_traces(operation_name='database_query')
-
-# Query by duration
-slow_traces = agg.query_traces(min_duration_ms=500.0)
-
-# Query traces with errors
-error_traces = agg.query_traces(has_error=True)
-
-# Combined filters
-traces = agg.query_traces(
-    service_name='api-gateway',
-    min_duration_ms=100.0,
-    max_duration_ms=500.0,
-    has_error=False,
-    limit=50
-)
-```
-
-### Service Dependencies
-
-```python
-from TracAgg import TracAgg, create_span_data
-
-agg = TracAgg()
-
-# Ingest span with service dependency
-span = create_span_data(
-    trace_id='trace-789',
-    span_id='span-1',
-    service_name='api-gateway',
-    operation_name='call_user_service',
-    duration_ms=100.0,
-    kind='client',
-    tags={'peer.service': 'user-service'}
-)
-agg.ingest_span(span)
-
-# Get all dependencies
-dependencies = agg.get_service_dependencies()
-for dep in dependencies:
-    print(f"{dep.from_service} -> {dep.to_service}")
-    print(f"  Calls: {dep.call_count}")
-    print(f"  Avg Latency: {dep.average_latency_ms():.2f}ms")
-    print(f"  Error Rate: {dep.error_rate():.2%}")
-
-# Get dependency graph
-graph = agg.get_service_graph()
-for service, downstream in graph.items():
-    print(f"{service} calls: {', '.join(downstream)}")
-```
-
-### Service Statistics
-
-```python
-from TracAgg import TracAgg
-
-agg = TracAgg()
-
-# Get statistics for specific service
-stats = agg.get_service_stats('user-service')
-print(f"Span Count: {stats['span_count']}")
-print(f"Avg Duration: {stats.get('avg_duration_ms', 0):.2f}ms")
-print(f"Error Rate: {stats.get('error_rate', 0):.2%}")
-
-# Get statistics for all services
-all_stats = agg.get_service_stats()
-for service, stats in all_stats.items():
-    print(f"\n{service}:")
-    print(f"  Spans: {stats['span_count']}")
-    print(f"  Avg Duration: {stats.get('avg_duration_ms', 0):.2f}ms")
-```
-
-### Bottleneck Detection
-
-```python
-from TracAgg import TracAgg
-
-agg = TracAgg()
-
-# Find bottlenecks (95th percentile)
-bottlenecks = agg.find_bottlenecks(percentile=0.95)
-
-print("Performance Bottlenecks:")
-for bottleneck in bottlenecks[:10]:  # Top 10
-    print(f"\n{bottleneck['service']}.{bottleneck['operation']}")
-    print(f"  Avg: {bottleneck['avg_duration_ms']:.2f}ms")
-    print(f"  P95: {bottleneck['p95_duration_ms']:.2f}ms")
-    print(f"  Samples: {bottleneck['sample_count']}")
+# Get service metrics
+metrics = aggregator.get_service_metrics("auth-service")
+print(f"Auth Service:")
+print(f"  Requests: {metrics.request_count}")
+print(f"  Errors: {metrics.error_count}")
+print(f"  Error Rate: {metrics.get_error_rate():.2%}")
+print(f"  Avg Duration: {metrics.get_avg_duration():.4f}s")
+print(f"  P95 Duration: {metrics.get_percentile(95):.4f}s")
+print(f"  P99 Duration: {metrics.get_percentile(99):.4f}s")
 ```
 
 ### Critical Path Analysis
 
 ```python
-from TracAgg import TracAgg
+from TracAgg import TracAggregator, create_span
 
-agg = TracAgg()
+aggregator = TracAggregator()
 
-# Get trace
-trace = agg.get_trace('trace-123')
+# Create a complex trace with multiple services
+spans = [
+    create_span("trace-1", "span-1", "api-gateway", "handle", 1000.0, 0.5),
+    create_span("trace-1", "span-2", "user-service", "get_user", 1000.1, 0.2, parent_span_id="span-1"),
+    create_span("trace-1", "span-3", "db-service", "query", 1000.15, 0.15, parent_span_id="span-2"),
+    create_span("trace-1", "span-4", "cache-service", "get", 1000.12, 0.05, parent_span_id="span-2"),
+]
 
-# Get critical path (longest sequential chain)
-critical_path = trace.get_critical_path()
+aggregator.ingest_spans(spans)
 
-print("Critical Path:")
-total_duration = 0
-for span in critical_path:
-    print(f"  {span.service_name}.{span.operation_name}: {span.duration_ms}ms")
-    total_duration += span.duration_ms or 0
+# Analyze the trace
+analysis = aggregator.analyze_trace("trace-1")
+print(f"Total Duration: {analysis['total_duration']:.4f}s")
+print(f"Critical Path:")
+for step in analysis['critical_path']:
+    print(f"  {step['service']}.{step['operation']}: {step['duration']:.4f}s")
 
-print(f"Total Critical Path Duration: {total_duration:.2f}ms")
+print(f"\nService Breakdown:")
+for service, breakdown in analysis['service_breakdown'].items():
+    print(f"  {service}: {breakdown['duration']:.4f}s ({breakdown['percentage']:.1f}%)")
 ```
 
-### Trace Export
+### Service Dependency Mapping
 
 ```python
-from TracAgg import TracAgg
-import json
+from TracAgg import TracAggregator, create_span
 
-agg = TracAgg()
+aggregator = TracAggregator()
 
-# Export trace
-trace_data = agg.export_trace('trace-123')
+# Simulate service calls
+spans = [
+    create_span("trace-1", "span-1", "api-gateway", "handle", 1000.0, 0.5),
+    create_span("trace-1", "span-2", "user-service", "get_user", 1000.1, 0.2, parent_span_id="span-1"),
+    create_span("trace-1", "span-3", "order-service", "get_orders", 1000.15, 0.15, parent_span_id="span-1"),
+    create_span("trace-1", "span-4", "inventory-service", "check", 1000.2, 0.1, parent_span_id="span-3"),
+]
 
-if trace_data:
-    # Save to file
-    with open('trace-123.json', 'w') as f:
-        json.dump(trace_data, f, indent=2)
+aggregator.ingest_spans(spans)
+
+# Get dependency graph
+dependencies = aggregator.get_service_dependencies()
+print("Service Dependencies:")
+for service, depends_on in dependencies.items():
+    print(f"  {service} -> {', '.join(depends_on)}")
+```
+
+### Finding Slow Operations
+
+```python
+from TracAgg import TracAggregator, create_span
+import random
+
+aggregator = TracAggregator()
+
+# Simulate various operations with different latencies
+services = ["api", "user", "order", "payment"]
+operations = ["create", "read", "update", "delete"]
+
+for i in range(1000):
+    service = random.choice(services)
+    operation = random.choice(operations)
+    duration = random.uniform(0.01, 0.5)
     
-    # Or process the data
-    print(f"Trace: {trace_data['trace_id']}")
-    print(f"Duration: {trace_data['duration_ms']}ms")
-    print(f"Services: {', '.join(trace_data['services'])}")
-    print(f"Spans: {len(trace_data['spans'])}")
+    span = create_span(
+        trace_id=f"trace-{i}",
+        span_id=f"span-{i}",
+        service_name=service,
+        operation_name=operation,
+        start_time=float(i),
+        duration=duration
+    )
+    aggregator.ingest_span(span)
+
+# Find slowest operations
+slow_ops = aggregator.get_slowest_operations(limit=5)
+print("Slowest Operations:")
+for service, operation, avg_duration in slow_ops:
+    print(f"  {service}.{operation}: {avg_duration:.4f}s avg")
 ```
 
-### Cleanup and Maintenance
+### Finding Error-Prone Operations
 
 ```python
-from TracAgg import TracAgg
+from TracAgg import TracAggregator, create_span, StatusCode
+import random
 
-# Initialize with retention period
-agg = TracAgg(retention_seconds=3600)  # 1 hour retention
+aggregator = TracAggregator()
 
-# Periodically cleanup old traces
-removed = agg.cleanup_old_traces()
-print(f"Removed {removed} old traces")
+# Simulate operations with varying error rates
+for i in range(1000):
+    # Some operations are more error-prone
+    operation = "risky_operation" if i % 3 == 0 else "safe_operation"
+    has_error = (operation == "risky_operation" and random.random() < 0.3)
+    
+    span = create_span(
+        trace_id=f"trace-{i}",
+        span_id=f"span-{i}",
+        service_name="payment-service",
+        operation_name=operation,
+        start_time=float(i),
+        duration=0.1,
+        status=StatusCode.ERROR if has_error else StatusCode.OK,
+        error_message="Payment failed" if has_error else None
+    )
+    aggregator.ingest_span(span)
 
-# Get current trace count
-count = agg.get_trace_count()
-print(f"Currently storing {count} traces")
+# Find error-prone operations
+error_ops = aggregator.get_error_prone_operations(limit=5)
+print("Error-Prone Operations:")
+for service, operation, error_rate, error_count in error_ops:
+    print(f"  {service}.{operation}: {error_rate:.2%} ({error_count} errors)")
+```
 
-# Clear all data
-agg.clear()
+### Searching Traces
+
+```python
+from TracAgg import TracAggregator, create_span, StatusCode
+
+aggregator = TracAggregator()
+
+# Create various traces
+for i in range(100):
+    spans = [
+        create_span(
+            trace_id=f"trace-{i}",
+            span_id=f"span-{i}-1",
+            service_name="api-gateway",
+            operation_name="handle_request",
+            start_time=float(i * 100),
+            duration=0.5 + (i % 10) * 0.1,
+            status=StatusCode.ERROR if i % 20 == 0 else StatusCode.OK
+        )
+    ]
+    aggregator.ingest_spans(spans)
+
+# Search for slow traces
+slow_traces = aggregator.search_traces(min_duration=1.0)
+print(f"Found {len(slow_traces)} slow traces")
+
+# Search for traces with errors
+error_traces = aggregator.search_traces(has_errors=True)
+print(f"Found {len(error_traces)} traces with errors")
+
+# Search for traces involving specific service
+api_traces = aggregator.search_traces(service_name="api-gateway")
+print(f"Found {len(api_traces)} traces through api-gateway")
+```
+
+### Summary Statistics
+
+```python
+from TracAgg import TracAggregator, create_span
+import random
+
+aggregator = TracAggregator()
+
+# Generate sample data
+for i in range(1000):
+    span = create_span(
+        trace_id=f"trace-{i}",
+        span_id=f"span-{i}",
+        service_name=f"service-{i % 5}",
+        operation_name="process",
+        start_time=float(i),
+        duration=random.uniform(0.01, 1.0)
+    )
+    aggregator.ingest_span(span)
+
+# Get summary statistics
+stats = aggregator.get_summary_statistics()
+print(f"Total Traces: {stats['total_traces']}")
+print(f"Total Spans: {stats['total_spans']}")
+print(f"Services: {stats['service_count']}")
+print(f"Avg Trace Duration: {stats['avg_trace_duration']:.4f}s")
+print(f"P50 Trace Duration: {stats['p50_trace_duration']:.4f}s")
+print(f"P95 Trace Duration: {stats['p95_trace_duration']:.4f}s")
+print(f"P99 Trace Duration: {stats['p99_trace_duration']:.4f}s")
+```
+
+### Export and Import
+
+```python
+from TracAgg import TracAggregator, create_span
+
+# Create and populate aggregator
+aggregator = TracAggregator()
+span = create_span(
+    trace_id="trace-1",
+    span_id="span-1",
+    service_name="api",
+    operation_name="handle",
+    start_time=1000.0,
+    duration=0.5
+)
+aggregator.ingest_span(span)
+
+# Export to JSON
+aggregator.export_to_json("traces.json")
+
+# Import from JSON (in another session)
+new_aggregator = TracAggregator()
+new_aggregator.import_from_json("traces.json")
+print(f"Loaded {len(new_aggregator.get_all_traces())} traces")
 ```
 
 ## Testing
@@ -286,240 +313,208 @@ agg.clear()
 Run the test suite:
 
 ```bash
-cd python/TracAgg
 python test_TracAgg.py
-```
-
-Or run specific test classes:
-
-```bash
-python test_TracAgg.py TestTracAggBasic
-python test_TracAgg.py TestServiceDependencies
-python test_TracAgg.py TestQueryCapabilities
 ```
 
 ## Implementation Notes
 
 - **Thread-safe**: All operations use locks for concurrent access
-- **In-memory storage**: Traces stored locally for fast access
-- **Retention management**: Automatic cleanup of old traces
-- **Span correlation**: Automatic parent-child relationship tracking
-- **Dependency tracking**: Tracks client-server relationships via tags
-- **No external dependencies**: Pure Python implementation
+- **In-memory storage**: Traces stored locally for fast analysis
+- **No external dependencies**: Uses only Python standard library
+- **Flexible span model**: Compatible with various tracing formats
+- **Efficient aggregation**: O(1) trace lookup, O(n) analysis operations
 
 ## API Reference
 
-### TracAgg Class
-
-**Constructor:**
-```python
-TracAgg(retention_seconds: int = 3600)
-```
+### TracAggregator
 
 **Methods:**
-- `ingest_span(span_data: Dict) -> str`: Ingest a span and return trace ID
-- `get_trace(trace_id: str) -> Optional[Trace]`: Retrieve a trace by ID
-- `query_traces(**filters) -> List[Trace]`: Query traces with filters
-- `get_service_dependencies() -> List[ServiceDependency]`: Get all service dependencies
-- `get_service_graph() -> Dict[str, List[str]]`: Get dependency graph
-- `get_service_stats(service_name: Optional[str]) -> Dict`: Get service statistics
-- `find_bottlenecks(percentile: float) -> List[Dict]`: Find performance bottlenecks
-- `cleanup_old_traces() -> int`: Remove old traces and return count
-- `get_trace_count() -> int`: Get total number of traces
-- `export_trace(trace_id: str) -> Optional[Dict]`: Export trace as JSON
-- `clear()`: Clear all traces and statistics
+- `ingest_span(span)` - Add a single span to the aggregator
+- `ingest_spans(spans)` - Add multiple spans at once
+- `get_trace(trace_id)` - Retrieve a specific trace
+- `get_all_traces()` - Get all traces
+- `search_traces(**criteria)` - Search traces with filters
+- `get_service_metrics(service_name)` - Get metrics for a service
+- `get_all_service_metrics()` - Get metrics for all services
+- `get_service_dependencies()` - Get service dependency graph
+- `get_slowest_operations(limit)` - Find slowest operations
+- `get_error_prone_operations(limit)` - Find error-prone operations
+- `analyze_trace(trace_id)` - Detailed trace analysis
+- `get_summary_statistics()` - Overall system statistics
+- `export_to_json(filename)` - Export traces to JSON
+- `import_from_json(filename)` - Import traces from JSON
+- `clear()` - Clear all data
 
-### Helper Functions
+### Span
 
-**create_span_data:**
+**Attributes:**
+- `trace_id` - Unique trace identifier
+- `span_id` - Unique span identifier
+- `parent_span_id` - Parent span ID (None for root)
+- `service_name` - Name of the service
+- `operation_name` - Name of the operation
+- `start_time` - Start timestamp
+- `duration` - Duration in seconds
+- `status` - StatusCode (OK or ERROR)
+- `kind` - SpanKind (SERVER, CLIENT, etc.)
+- `attributes` - Additional metadata
+- `error_message` - Error description if failed
+
+### Trace
+
+**Attributes:**
+- `trace_id` - Unique trace identifier
+- `spans` - List of spans in the trace
+- `start_time` - Trace start time
+- `duration` - Total trace duration
+- `service_count` - Number of unique services
+- `span_count` - Number of spans
+- `error_count` - Number of failed spans
+- `services` - Set of service names
+
+**Methods:**
+- `add_span(span)` - Add a span to the trace
+- `get_root_span()` - Get the root span
+- `get_critical_path()` - Calculate critical path
+
+### ServiceMetrics
+
+**Attributes:**
+- `service_name` - Name of the service
+- `request_count` - Total requests
+- `error_count` - Total errors
+- `total_duration` - Sum of all durations
+
+**Methods:**
+- `get_error_rate()` - Calculate error rate
+- `get_avg_duration()` - Calculate average duration
+- `get_percentile(percentile)` - Calculate duration percentile
+
+## Use Cases
+
+### Microservice Performance Monitoring
+
+Use TracAgg to monitor the performance of your microservices architecture:
+
 ```python
-create_span_data(
-    trace_id: str,
-    span_id: str,
-    service_name: str,
-    operation_name: str,
-    parent_span_id: Optional[str] = None,
-    duration_ms: Optional[float] = None,
-    status_code: int = 200,
-    kind: str = "internal",
-    tags: Optional[Dict[str, Any]] = None
-) -> Dict[str, Any]
+# Continuously ingest spans from your services
+# Periodically check for slow services
+metrics = aggregator.get_all_service_metrics()
+for service_name, metrics in metrics.items():
+    if metrics.get_percentile(95) > 1.0:  # P95 > 1 second
+        print(f"Warning: {service_name} is slow!")
 ```
 
-## Example Use Cases
+### Debugging Distributed Transactions
 
-### Microservice Request Tracing
+Find and analyze problematic traces:
 
 ```python
-from TracAgg import TracAgg, create_span_data
+# Find traces with errors
+error_traces = aggregator.search_traces(has_errors=True)
+for trace in error_traces:
+    analysis = aggregator.analyze_trace(trace.trace_id)
+    print(f"Trace {trace.trace_id} failed:")
+    print(f"  Services involved: {', '.join(analysis['services'])}")
+    print(f"  Duration: {analysis['total_duration']:.2f}s")
+```
+
+### Capacity Planning
+
+Analyze service load and dependencies:
+
+```python
+# Understand which services handle the most load
+all_metrics = aggregator.get_all_service_metrics()
+sorted_services = sorted(
+    all_metrics.items(),
+    key=lambda x: x[1].request_count,
+    reverse=True
+)
+
+print("Services by load:")
+for service_name, metrics in sorted_services:
+    print(f"  {service_name}: {metrics.request_count} requests")
+```
+
+### Service Dependency Visualization
+
+Map your service architecture:
+
+```python
+dependencies = aggregator.get_service_dependencies()
+print("digraph services {")
+for service, deps in dependencies.items():
+    for dep in deps:
+        print(f'  "{service}" -> "{dep}";')
+print("}")
+```
+
+## Differences from Production Tracing Systems
+
+- **No real-time streaming**: Spans must be explicitly ingested
+- **In-memory only**: No persistent storage (use export/import)
+- **No distributed collection**: No agent/collector infrastructure
+- **Manual instrumentation**: No automatic trace generation
+- **Limited sampling**: No complex sampling strategies
+- **No alerting**: Analysis only, no built-in alerts
+
+## Example Integration
+
+```python
+# Example: Integrate with your application
+from TracAgg import TracAggregator, create_span, StatusCode
 import time
 
-agg = TracAgg()
+aggregator = TracAggregator()
 
-def handle_user_request(user_id: str):
-    """Simulate handling a user request across services"""
-    trace_id = f"trace-{int(time.time())}"
-    
-    # API Gateway receives request
-    gateway_span = create_span_data(
-        trace_id=trace_id,
-        span_id='gateway-1',
-        service_name='api-gateway',
-        operation_name='GET /user/profile',
-        duration_ms=250.0,
-        kind='server',
-        tags={'http.method': 'GET', 'user_id': user_id}
-    )
-    agg.ingest_span(gateway_span)
-    
-    # Call to Auth Service
-    auth_span = create_span_data(
-        trace_id=trace_id,
-        span_id='auth-1',
-        parent_span_id='gateway-1',
-        service_name='auth-service',
-        operation_name='verify_token',
-        duration_ms=50.0,
-        kind='client',
-        tags={'peer.service': 'auth-service'}
-    )
-    agg.ingest_span(auth_span)
-    
-    # Call to User Service
-    user_span = create_span_data(
-        trace_id=trace_id,
-        span_id='user-1',
-        parent_span_id='gateway-1',
-        service_name='user-service',
-        operation_name='get_profile',
-        duration_ms=150.0,
-        kind='client',
-        tags={'peer.service': 'user-service', 'user_id': user_id}
-    )
-    agg.ingest_span(user_span)
-    
-    # Database query
-    db_span = create_span_data(
-        trace_id=trace_id,
-        span_id='db-1',
-        parent_span_id='user-1',
-        service_name='postgres',
-        operation_name='SELECT FROM users',
-        duration_ms=80.0,
-        tags={'db.system': 'postgresql', 'db.statement': 'SELECT * FROM users WHERE id = $1'}
-    )
-    agg.ingest_span(db_span)
-    
-    return trace_id
+def trace_request(service_name, operation_name, trace_id, parent_span_id=None):
+    """Decorator to trace function calls"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            span_id = f"{service_name}-{operation_name}-{time.time()}"
+            start_time = time.time()
+            
+            try:
+                result = func(*args, **kwargs)
+                duration = time.time() - start_time
+                
+                span = create_span(
+                    trace_id=trace_id,
+                    span_id=span_id,
+                    parent_span_id=parent_span_id,
+                    service_name=service_name,
+                    operation_name=operation_name,
+                    start_time=start_time,
+                    duration=duration,
+                    status=StatusCode.OK
+                )
+                aggregator.ingest_span(span)
+                return result
+                
+            except Exception as e:
+                duration = time.time() - start_time
+                
+                span = create_span(
+                    trace_id=trace_id,
+                    span_id=span_id,
+                    parent_span_id=parent_span_id,
+                    service_name=service_name,
+                    operation_name=operation_name,
+                    start_time=start_time,
+                    duration=duration,
+                    status=StatusCode.ERROR,
+                    error_message=str(e)
+                )
+                aggregator.ingest_span(span)
+                raise
+        
+        return wrapper
+    return decorator
 
-# Handle request
-trace_id = handle_user_request('user-123')
-
-# Analyze the trace
-trace = agg.get_trace(trace_id)
-print(f"Total duration: {trace.duration_ms}ms")
-print(f"Services: {trace.services}")
-print(f"Critical path: {len(trace.get_critical_path())} spans")
+# Usage
+@trace_request("user-service", "get_user", "trace-123")
+def get_user(user_id):
+    # Your business logic
+    return {"id": user_id, "name": "Alice"}
 ```
-
-### Real-Time Monitoring Dashboard
-
-```python
-from TracAgg import TracAgg
-import time
-
-agg = TracAgg()
-
-def generate_dashboard():
-    """Generate real-time monitoring dashboard"""
-    print("=== Distributed Tracing Dashboard ===\n")
-    
-    # Overall stats
-    print(f"Total Traces: {agg.get_trace_count()}")
-    
-    # Service statistics
-    print("\n--- Service Statistics ---")
-    stats = agg.get_service_stats()
-    for service, data in stats.items():
-        print(f"\n{service}:")
-        print(f"  Requests: {data['span_count']}")
-        if data.get('avg_duration_ms'):
-            print(f"  Avg Latency: {data['avg_duration_ms']:.2f}ms")
-        if data.get('error_rate'):
-            print(f"  Error Rate: {data['error_rate']:.2%}")
-    
-    # Top bottlenecks
-    print("\n--- Top Bottlenecks (P95) ---")
-    bottlenecks = agg.find_bottlenecks(percentile=0.95)
-    for i, bottleneck in enumerate(bottlenecks[:5], 1):
-        print(f"{i}. {bottleneck['service']}.{bottleneck['operation']}")
-        print(f"   P95: {bottleneck['p95_duration_ms']:.2f}ms")
-    
-    # Service dependencies
-    print("\n--- Service Dependencies ---")
-    graph = agg.get_service_graph()
-    for service, downstream in graph.items():
-        print(f"{service} -> {', '.join(downstream)}")
-
-# Run dashboard
-generate_dashboard()
-```
-
-### Error Analysis
-
-```python
-from TracAgg import TracAgg
-
-agg = TracAgg()
-
-def analyze_errors():
-    """Analyze error patterns in traces"""
-    error_traces = agg.query_traces(has_error=True)
-    
-    print(f"Found {len(error_traces)} traces with errors\n")
-    
-    # Group errors by service
-    service_errors = {}
-    for trace in error_traces:
-        for span in trace.spans:
-            if span.status_code >= 400:
-                service = span.service_name
-                if service not in service_errors:
-                    service_errors[service] = []
-                service_errors[service].append({
-                    'trace_id': trace.trace_id,
-                    'operation': span.operation_name,
-                    'status': span.status_code
-                })
-    
-    # Print error summary
-    for service, errors in service_errors.items():
-        print(f"{service}: {len(errors)} errors")
-        for error in errors[:5]:  # Show first 5
-            print(f"  - {error['operation']}: {error['status']}")
-
-analyze_errors()
-```
-
-## Performance Considerations
-
-- **Memory**: Traces stored in-memory; configure retention_seconds appropriately
-- **Cleanup**: Call cleanup_old_traces() periodically to manage memory
-- **Concurrency**: Thread-safe operations, suitable for concurrent ingestion
-- **Indexing**: Queries scan all traces; consider external storage for large volumes
-- **Sampling**: Consider implementing sampling at the span creation level
-
-## Best Practices
-
-1. **Use consistent trace IDs**: Propagate trace IDs across service boundaries
-2. **Set appropriate retention**: Balance memory usage with analysis needs
-3. **Tag client spans**: Use 'peer.service' tag for dependency tracking
-4. **Include metadata**: Add relevant tags for better analysis
-5. **Set status codes**: Use standard HTTP codes for errors
-6. **Regular cleanup**: Schedule periodic cleanup_old_traces() calls
-7. **Export important traces**: Export and store critical traces externally
-8. **Monitor bottlenecks**: Regular bottleneck analysis for optimization
-
-## License
-
-This implementation is part of the Emu-Soft project and is original code written from scratch.

@@ -1,500 +1,670 @@
 """
-Developed by PowerShield
+Developed by PowerShield, as a distributed tracing aggregator
+
+Tests for TracAgg - Distributed Tracing Aggregator
+
+This test suite validates the core functionality of TracAgg.
 """
 
-#!/usr/bin/env python3
-"""
-Test suite for TracAgg - Distributed Tracing Aggregator
-
-Tests core functionality including:
-- Span ingestion
-- Trace reconstruction
-- Service dependency mapping
-- Performance analysis
-- Query capabilities
-"""
-
-import unittest
+import sys
+import os
 import time
-from TracAgg import TracAgg, create_span_data, SpanKind, TraceStatus
+import json
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from TracAgg import (
+    TracAggregator, Span, Trace, ServiceMetrics, SpanKind, StatusCode,
+    create_span, create_aggregator
+)
 
 
-class TestTracAggBasic(unittest.TestCase):
-    """Test basic trace aggregation"""
+def test_span_creation():
+    """Test span creation"""
+    print("Testing span creation...")
     
-    def setUp(self):
-        """Set up test aggregator"""
-        self.agg = TracAgg()
+    span = create_span(
+        trace_id="trace-1",
+        span_id="span-1",
+        service_name="api",
+        operation_name="handle_request",
+        start_time=1000.0,
+        duration=0.5
+    )
     
-    def test_ingest_single_span(self):
-        """Test ingesting a single span"""
-        span_data = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='api-gateway',
-            operation_name='GET /users',
-            duration_ms=100.0
-        )
-        
-        trace_id = self.agg.ingest_span(span_data)
-        self.assertEqual(trace_id, 'trace1')
-        
-        trace = self.agg.get_trace('trace1')
-        self.assertIsNotNone(trace)
-        self.assertEqual(len(trace.spans), 1)
-        self.assertEqual(trace.trace_id, 'trace1')
+    assert span.trace_id == "trace-1"
+    assert span.span_id == "span-1"
+    assert span.service_name == "api"
+    assert span.operation_name == "handle_request"
+    assert span.start_time == 1000.0
+    assert span.duration == 0.5
+    assert span.status == StatusCode.OK
     
-    def test_ingest_multiple_spans_same_trace(self):
-        """Test ingesting multiple spans in the same trace"""
-        # Root span
-        span1 = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='api-gateway',
-            operation_name='GET /users',
-            duration_ms=200.0
-        )
-        
-        # Child span
-        span2 = create_span_data(
-            trace_id='trace1',
-            span_id='span2',
-            parent_span_id='span1',
-            service_name='user-service',
-            operation_name='query_users',
-            duration_ms=150.0
-        )
-        
-        self.agg.ingest_span(span1)
-        self.agg.ingest_span(span2)
-        
-        trace = self.agg.get_trace('trace1')
-        self.assertEqual(len(trace.spans), 2)
-        self.assertEqual(len(trace.services), 2)
-        self.assertIn('api-gateway', trace.services)
-        self.assertIn('user-service', trace.services)
-    
-    def test_trace_count(self):
-        """Test getting trace count"""
-        self.assertEqual(self.agg.get_trace_count(), 0)
-        
-        span1 = create_span_data('trace1', 'span1', 'service1', 'op1')
-        span2 = create_span_data('trace2', 'span2', 'service1', 'op2')
-        
-        self.agg.ingest_span(span1)
-        self.assertEqual(self.agg.get_trace_count(), 1)
-        
-        self.agg.ingest_span(span2)
-        self.assertEqual(self.agg.get_trace_count(), 2)
+    print("✓ Span creation works")
 
 
-class TestTraceReconstruction(unittest.TestCase):
-    """Test trace reconstruction"""
+def test_span_with_error():
+    """Test span with error status"""
+    print("Testing span with error...")
     
-    def setUp(self):
-        """Set up test aggregator"""
-        self.agg = TracAgg()
+    span = create_span(
+        trace_id="trace-1",
+        span_id="span-1",
+        service_name="api",
+        operation_name="process",
+        start_time=1000.0,
+        duration=0.1,
+        status=StatusCode.ERROR,
+        error_message="Database connection failed"
+    )
     
-    def test_trace_timing(self):
-        """Test trace timing calculation"""
-        # Create spans at different times
-        span1 = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='service1',
-            operation_name='op1',
-            duration_ms=100.0
-        )
-        
-        time.sleep(0.01)
-        
-        span2 = create_span_data(
-            trace_id='trace1',
-            span_id='span2',
-            parent_span_id='span1',
-            service_name='service2',
-            operation_name='op2',
-            duration_ms=50.0
-        )
-        
-        self.agg.ingest_span(span1)
-        self.agg.ingest_span(span2)
-        
-        trace = self.agg.get_trace('trace1')
-        self.assertIsNotNone(trace.start_time)
-        self.assertIsNotNone(trace.end_time)
-        self.assertIsNotNone(trace.duration_ms)
-        self.assertGreater(trace.duration_ms, 0)
+    assert span.status == StatusCode.ERROR
+    assert span.error_message == "Database connection failed"
     
-    def test_trace_status_complete(self):
-        """Test trace status when all spans complete"""
-        span = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='service1',
-            operation_name='op1',
-            duration_ms=100.0,
-            status_code=200
-        )
-        
-        self.agg.ingest_span(span)
-        trace = self.agg.get_trace('trace1')
-        
-        self.assertTrue(trace.is_complete())
-        self.assertEqual(trace.status, TraceStatus.COMPLETE)
-    
-    def test_trace_status_error(self):
-        """Test trace status when spans have errors"""
-        span = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='service1',
-            operation_name='op1',
-            duration_ms=100.0,
-            status_code=500
-        )
-        
-        self.agg.ingest_span(span)
-        trace = self.agg.get_trace('trace1')
-        
-        self.assertEqual(trace.status, TraceStatus.ERROR)
-        self.assertEqual(trace.error_count, 1)
-    
-    def test_critical_path(self):
-        """Test critical path calculation"""
-        # Create a trace with branching
-        # span1 (100ms)
-        #   -> span2 (50ms)
-        #   -> span3 (80ms)
-        #      -> span4 (40ms)
-        
-        spans = [
-            create_span_data('trace1', 'span1', 'svc1', 'op1', duration_ms=100.0),
-            create_span_data('trace1', 'span2', 'svc2', 'op2', parent_span_id='span1', duration_ms=50.0),
-            create_span_data('trace1', 'span3', 'svc3', 'op3', parent_span_id='span1', duration_ms=80.0),
-            create_span_data('trace1', 'span4', 'svc4', 'op4', parent_span_id='span3', duration_ms=40.0),
-        ]
-        
-        for span in spans:
-            self.agg.ingest_span(span)
-        
-        trace = self.agg.get_trace('trace1')
-        critical_path = trace.get_critical_path()
-        
-        # Critical path should be span1 -> span3 -> span4
-        self.assertEqual(len(critical_path), 3)
-        self.assertEqual(critical_path[0].span_id, 'span1')
-        self.assertEqual(critical_path[1].span_id, 'span3')
-        self.assertEqual(critical_path[2].span_id, 'span4')
+    print("✓ Span with error works")
 
 
-class TestServiceDependencies(unittest.TestCase):
+def test_span_to_dict():
+    """Test span serialization"""
+    print("Testing span to_dict...")
+    
+    span = create_span(
+        trace_id="trace-1",
+        span_id="span-1",
+        service_name="api",
+        operation_name="handle",
+        start_time=1000.0,
+        duration=0.5,
+        attributes={"http.method": "GET", "http.status": 200}
+    )
+    
+    span_dict = span.to_dict()
+    assert span_dict['trace_id'] == "trace-1"
+    assert span_dict['service_name'] == "api"
+    assert span_dict['attributes']['http.method'] == "GET"
+    
+    print("✓ Span serialization works")
+
+
+def test_trace_creation():
+    """Test trace creation and span addition"""
+    print("Testing trace creation...")
+    
+    trace = Trace(trace_id="trace-1")
+    assert trace.trace_id == "trace-1"
+    assert trace.span_count == 0
+    assert trace.service_count == 0
+    
+    span1 = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5)
+    trace.add_span(span1)
+    
+    assert trace.span_count == 1
+    assert trace.service_count == 1
+    assert "api" in trace.services
+    
+    span2 = create_span("trace-1", "span-2", "db", "query", 1000.1, 0.2)
+    trace.add_span(span2)
+    
+    assert trace.span_count == 2
+    assert trace.service_count == 2
+    assert "db" in trace.services
+    
+    print("✓ Trace creation works")
+
+
+def test_trace_timing():
+    """Test trace timing calculation"""
+    print("Testing trace timing...")
+    
+    trace = Trace(trace_id="trace-1")
+    
+    span1 = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5)
+    span2 = create_span("trace-1", "span-2", "db", "query", 1000.2, 0.3)
+    
+    trace.add_span(span1)
+    trace.add_span(span2)
+    
+    # Start time should be the earliest span start
+    assert trace.start_time == 1000.0
+    
+    # Duration should cover all spans
+    # span2 ends at 1000.2 + 0.3 = 1000.5
+    # trace starts at 1000.0
+    # so duration should be 0.5
+    assert trace.duration == 0.5
+    
+    print("✓ Trace timing works")
+
+
+def test_trace_root_span():
+    """Test getting root span"""
+    print("Testing root span retrieval...")
+    
+    trace = Trace(trace_id="trace-1")
+    
+    span1 = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5)
+    span2 = create_span("trace-1", "span-2", "db", "query", 1000.1, 0.2, parent_span_id="span-1")
+    
+    trace.add_span(span1)
+    trace.add_span(span2)
+    
+    root = trace.get_root_span()
+    assert root is not None
+    assert root.span_id == "span-1"
+    assert root.parent_span_id is None
+    
+    print("✓ Root span retrieval works")
+
+
+def test_trace_critical_path():
+    """Test critical path calculation"""
+    print("Testing critical path calculation...")
+    
+    trace = Trace(trace_id="trace-1")
+    
+    # Create a tree of spans
+    span1 = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.1)
+    span2 = create_span("trace-1", "span-2", "user", "get", 1000.1, 0.3, parent_span_id="span-1")
+    span3 = create_span("trace-1", "span-3", "cache", "get", 1000.15, 0.05, parent_span_id="span-1")
+    span4 = create_span("trace-1", "span-4", "db", "query", 1000.2, 0.2, parent_span_id="span-2")
+    
+    trace.add_span(span1)
+    trace.add_span(span2)
+    trace.add_span(span3)
+    trace.add_span(span4)
+    
+    critical_path = trace.get_critical_path()
+    
+    # Critical path should be: span1 -> span2 -> span4
+    assert len(critical_path) == 3
+    assert critical_path[0].span_id == "span-1"
+    assert critical_path[1].span_id == "span-2"
+    assert critical_path[2].span_id == "span-4"
+    
+    print("✓ Critical path calculation works")
+
+
+def test_aggregator_creation():
+    """Test aggregator creation"""
+    print("Testing aggregator creation...")
+    
+    aggregator = create_aggregator()
+    assert aggregator is not None
+    assert len(aggregator.get_all_traces()) == 0
+    
+    print("✓ Aggregator creation works")
+
+
+def test_aggregator_ingest_span():
+    """Test ingesting spans"""
+    print("Testing span ingestion...")
+    
+    aggregator = TracAggregator()
+    
+    span = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5)
+    aggregator.ingest_span(span)
+    
+    trace = aggregator.get_trace("trace-1")
+    assert trace is not None
+    assert trace.span_count == 1
+    
+    print("✓ Span ingestion works")
+
+
+def test_aggregator_ingest_multiple_spans():
+    """Test ingesting multiple spans"""
+    print("Testing multiple span ingestion...")
+    
+    aggregator = TracAggregator()
+    
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5),
+        create_span("trace-1", "span-2", "db", "query", 1000.1, 0.2),
+        create_span("trace-2", "span-3", "api", "handle", 2000.0, 0.3),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    assert len(aggregator.get_all_traces()) == 2
+    
+    trace1 = aggregator.get_trace("trace-1")
+    assert trace1.span_count == 2
+    
+    trace2 = aggregator.get_trace("trace-2")
+    assert trace2.span_count == 1
+    
+    print("✓ Multiple span ingestion works")
+
+
+def test_service_metrics():
+    """Test service metrics calculation"""
+    print("Testing service metrics...")
+    
+    aggregator = TracAggregator()
+    
+    # Add spans for a service
+    for i in range(10):
+        span = create_span(
+            f"trace-{i}",
+            f"span-{i}",
+            "api",
+            "handle",
+            float(i * 100),
+            0.1 + i * 0.01,
+            status=StatusCode.ERROR if i % 5 == 0 else StatusCode.OK
+        )
+        aggregator.ingest_span(span)
+    
+    metrics = aggregator.get_service_metrics("api")
+    assert metrics is not None
+    assert metrics.request_count == 10
+    assert metrics.error_count == 2  # i=0 and i=5
+    assert metrics.get_error_rate() == 0.2  # 2/10
+    
+    avg_duration = metrics.get_avg_duration()
+    assert avg_duration > 0
+    
+    print("✓ Service metrics work")
+
+
+def test_service_metrics_percentiles():
+    """Test service metrics percentile calculation"""
+    print("Testing service metrics percentiles...")
+    
+    metrics = ServiceMetrics(service_name="test")
+    
+    # Add durations
+    for i in range(100):
+        metrics.add_request(duration=float(i) / 100.0)
+    
+    p50 = metrics.get_percentile(50)
+    p95 = metrics.get_percentile(95)
+    p99 = metrics.get_percentile(99)
+    
+    assert p50 < p95 < p99
+    assert p50 >= 0.0
+    
+    print("✓ Service metrics percentiles work")
+
+
+def test_service_dependencies():
     """Test service dependency tracking"""
+    print("Testing service dependencies...")
     
-    def setUp(self):
-        """Set up test aggregator"""
-        self.agg = TracAgg()
+    aggregator = TracAggregator()
     
-    def test_dependency_detection(self):
-        """Test detecting service dependencies"""
-        # Client span from api-gateway to user-service
-        span = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='api-gateway',
-            operation_name='call_user_service',
-            duration_ms=100.0,
-            kind='client',
-            tags={'peer.service': 'user-service'}
+    # Create a trace with service dependencies
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5),
+        create_span("trace-1", "span-2", "user", "get", 1000.1, 0.2, parent_span_id="span-1"),
+        create_span("trace-1", "span-3", "order", "list", 1000.15, 0.15, parent_span_id="span-1"),
+        create_span("trace-1", "span-4", "db", "query", 1000.2, 0.1, parent_span_id="span-2"),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    dependencies = aggregator.get_service_dependencies()
+    
+    # api should call user and order
+    assert "user" in dependencies["api"]
+    assert "order" in dependencies["api"]
+    
+    # user should call db
+    assert "db" in dependencies["user"]
+    
+    print("✓ Service dependencies work")
+
+
+def test_search_traces_by_service():
+    """Test searching traces by service"""
+    print("Testing trace search by service...")
+    
+    aggregator = TracAggregator()
+    
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5),
+        create_span("trace-2", "span-2", "user", "get", 2000.0, 0.3),
+        create_span("trace-3", "span-3", "api", "process", 3000.0, 0.2),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    api_traces = aggregator.search_traces(service_name="api")
+    assert len(api_traces) == 2
+    
+    user_traces = aggregator.search_traces(service_name="user")
+    assert len(user_traces) == 1
+    
+    print("✓ Trace search by service works")
+
+
+def test_search_traces_by_duration():
+    """Test searching traces by duration"""
+    print("Testing trace search by duration...")
+    
+    aggregator = TracAggregator()
+    
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.1),
+        create_span("trace-2", "span-2", "api", "handle", 2000.0, 0.5),
+        create_span("trace-3", "span-3", "api", "handle", 3000.0, 1.0),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    slow_traces = aggregator.search_traces(min_duration=0.4)
+    assert len(slow_traces) == 2
+    
+    fast_traces = aggregator.search_traces(max_duration=0.2)
+    assert len(fast_traces) == 1
+    
+    print("✓ Trace search by duration works")
+
+
+def test_search_traces_by_errors():
+    """Test searching traces by error status"""
+    print("Testing trace search by errors...")
+    
+    aggregator = TracAggregator()
+    
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5, status=StatusCode.OK),
+        create_span("trace-2", "span-2", "api", "handle", 2000.0, 0.3, status=StatusCode.ERROR),
+        create_span("trace-3", "span-3", "api", "handle", 3000.0, 0.2, status=StatusCode.OK),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    error_traces = aggregator.search_traces(has_errors=True)
+    assert len(error_traces) == 1
+    
+    success_traces = aggregator.search_traces(has_errors=False)
+    assert len(success_traces) == 2
+    
+    print("✓ Trace search by errors works")
+
+
+def test_slowest_operations():
+    """Test finding slowest operations"""
+    print("Testing slowest operations...")
+    
+    aggregator = TracAggregator()
+    
+    # Add various operations with different durations
+    spans = [
+        create_span("trace-1", "span-1", "api", "slow_op", 1000.0, 1.0),
+        create_span("trace-2", "span-2", "api", "slow_op", 2000.0, 0.9),
+        create_span("trace-3", "span-3", "api", "fast_op", 3000.0, 0.1),
+        create_span("trace-4", "span-4", "user", "medium_op", 4000.0, 0.5),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    slowest = aggregator.get_slowest_operations(limit=2)
+    assert len(slowest) == 2
+    
+    # First should be slow_op
+    assert slowest[0][1] == "slow_op"
+    assert slowest[0][2] > slowest[1][2]  # First is slower than second
+    
+    print("✓ Slowest operations work")
+
+
+def test_error_prone_operations():
+    """Test finding error-prone operations"""
+    print("Testing error-prone operations...")
+    
+    aggregator = TracAggregator()
+    
+    # Add operations with different error rates
+    for i in range(10):
+        aggregator.ingest_span(create_span(
+            f"trace-{i}",
+            f"span-{i}",
+            "api",
+            "risky_op",
+            float(i * 100),
+            0.1,
+            status=StatusCode.ERROR if i % 2 == 0 else StatusCode.OK
+        ))
+    
+    for i in range(10, 20):
+        aggregator.ingest_span(create_span(
+            f"trace-{i}",
+            f"span-{i}",
+            "api",
+            "safe_op",
+            float(i * 100),
+            0.1,
+            status=StatusCode.OK
+        ))
+    
+    error_prone = aggregator.get_error_prone_operations(limit=2)
+    
+    # risky_op should be first with 50% error rate
+    assert error_prone[0][1] == "risky_op"
+    assert error_prone[0][2] == 0.5  # 50% error rate
+    
+    print("✓ Error-prone operations work")
+
+
+def test_analyze_trace():
+    """Test trace analysis"""
+    print("Testing trace analysis...")
+    
+    aggregator = TracAggregator()
+    
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5),
+        create_span("trace-1", "span-2", "user", "get", 1000.1, 0.2, parent_span_id="span-1"),
+        create_span("trace-1", "span-3", "db", "query", 1000.15, 0.15, parent_span_id="span-2"),
+    ]
+    
+    aggregator.ingest_spans(spans)
+    
+    analysis = aggregator.analyze_trace("trace-1")
+    
+    assert analysis is not None
+    assert analysis['trace_id'] == "trace-1"
+    assert analysis['span_count'] == 3
+    assert analysis['service_count'] == 3
+    assert len(analysis['services']) == 3
+    assert 'critical_path' in analysis
+    assert 'service_breakdown' in analysis
+    
+    # Check service breakdown
+    assert 'api' in analysis['service_breakdown']
+    assert 'user' in analysis['service_breakdown']
+    assert 'db' in analysis['service_breakdown']
+    
+    print("✓ Trace analysis works")
+
+
+def test_summary_statistics():
+    """Test summary statistics"""
+    print("Testing summary statistics...")
+    
+    aggregator = TracAggregator()
+    
+    # Add multiple traces
+    for i in range(50):
+        span = create_span(
+            f"trace-{i}",
+            f"span-{i}",
+            f"service-{i % 3}",
+            "operation",
+            float(i * 100),
+            0.1 + i * 0.01
         )
-        
-        self.agg.ingest_span(span)
-        
-        deps = self.agg.get_service_dependencies()
-        self.assertEqual(len(deps), 1)
-        self.assertEqual(deps[0].from_service, 'api-gateway')
-        self.assertEqual(deps[0].to_service, 'user-service')
-        self.assertEqual(deps[0].call_count, 1)
+        aggregator.ingest_span(span)
     
-    def test_dependency_metrics(self):
-        """Test dependency metrics calculation"""
-        # Multiple calls with different latencies
-        for i in range(5):
-            span = create_span_data(
-                trace_id=f'trace{i}',
-                span_id=f'span{i}',
-                service_name='api-gateway',
-                operation_name='call_user_service',
-                duration_ms=100.0 + i * 10,
-                kind='client',
-                tags={'peer.service': 'user-service'}
-            )
-            self.agg.ingest_span(span)
-        
-        # Add an error
-        error_span = create_span_data(
-            trace_id='trace_error',
-            span_id='span_error',
-            service_name='api-gateway',
-            operation_name='call_user_service',
-            duration_ms=200.0,
-            kind='client',
-            status_code=500,
-            tags={'peer.service': 'user-service'}
-        )
-        self.agg.ingest_span(error_span)
-        
-        deps = self.agg.get_service_dependencies()
-        self.assertEqual(len(deps), 1)
-        
-        dep = deps[0]
-        self.assertEqual(dep.call_count, 6)
-        self.assertEqual(dep.error_count, 1)
-        self.assertAlmostEqual(dep.error_rate(), 1/6, places=2)
-        self.assertGreater(dep.average_latency_ms(), 0)
+    stats = aggregator.get_summary_statistics()
     
-    def test_service_graph(self):
-        """Test service dependency graph generation"""
-        # Create a simple graph: A -> B -> C
-        #                         A -> D
-        spans = [
-            create_span_data('t1', 's1', 'A', 'op1', kind='client', 
-                           tags={'peer.service': 'B'}),
-            create_span_data('t2', 's2', 'B', 'op2', kind='client', 
-                           tags={'peer.service': 'C'}),
-            create_span_data('t3', 's3', 'A', 'op3', kind='client', 
-                           tags={'peer.service': 'D'}),
-        ]
-        
-        for span in spans:
-            self.agg.ingest_span(span)
-        
-        graph = self.agg.get_service_graph()
-        
-        self.assertIn('A', graph)
-        self.assertIn('B', graph['A'])
-        self.assertIn('D', graph['A'])
-        self.assertIn('B', graph)
-        self.assertIn('C', graph['B'])
+    assert stats['total_traces'] == 50
+    assert stats['total_spans'] == 50
+    assert stats['service_count'] == 3
+    assert stats['avg_trace_duration'] > 0
+    assert 'p50_trace_duration' in stats
+    assert 'p95_trace_duration' in stats
+    assert 'p99_trace_duration' in stats
+    
+    print("✓ Summary statistics work")
 
 
-class TestQueryCapabilities(unittest.TestCase):
-    """Test trace query capabilities"""
+def test_export_import_json():
+    """Test export and import to JSON"""
+    print("Testing JSON export/import...")
     
-    def setUp(self):
-        """Set up test aggregator with sample data"""
-        self.agg = TracAgg()
-        
-        # Create diverse traces
-        traces_data = [
-            ('trace1', 'service1', 'op1', 50.0, 200),
-            ('trace2', 'service1', 'op2', 150.0, 200),
-            ('trace3', 'service2', 'op1', 100.0, 500),
-            ('trace4', 'service2', 'op3', 200.0, 200),
-            ('trace5', 'service1', 'op1', 75.0, 404),
-        ]
-        
-        for trace_id, service, op, duration, status in traces_data:
-            span = create_span_data(
-                trace_id=trace_id,
-                span_id=f'{trace_id}_span',
-                service_name=service,
-                operation_name=op,
-                duration_ms=duration,
-                status_code=status
-            )
-            self.agg.ingest_span(span)
+    aggregator = TracAggregator()
     
-    def test_query_by_service(self):
-        """Test querying traces by service"""
-        traces = self.agg.query_traces(service_name='service1')
-        self.assertEqual(len(traces), 3)
-        
-        for trace in traces:
-            self.assertIn('service1', trace.services)
+    spans = [
+        create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5),
+        create_span("trace-1", "span-2", "db", "query", 1000.1, 0.2),
+    ]
     
-    def test_query_by_operation(self):
-        """Test querying traces by operation"""
-        traces = self.agg.query_traces(operation_name='op1')
-        self.assertEqual(len(traces), 3)
-        
-        for trace in traces:
-            ops = [s.operation_name for s in trace.spans]
-            self.assertIn('op1', ops)
+    aggregator.ingest_spans(spans)
     
-    def test_query_by_duration(self):
-        """Test querying traces by duration"""
-        traces = self.agg.query_traces(min_duration_ms=100.0, max_duration_ms=200.0)
-        
-        for trace in traces:
-            self.assertGreaterEqual(trace.duration_ms, 100.0)
-            self.assertLessEqual(trace.duration_ms, 200.0)
+    # Export to file
+    filename = "/tmp/test_traces.json"
+    aggregator.export_to_json(filename)
     
-    def test_query_with_errors(self):
-        """Test querying traces with errors"""
-        error_traces = self.agg.query_traces(has_error=True)
-        self.assertEqual(len(error_traces), 2)
-        
-        for trace in error_traces:
-            self.assertGreater(trace.error_count, 0)
-        
-        success_traces = self.agg.query_traces(has_error=False)
-        for trace in success_traces:
-            self.assertEqual(trace.error_count, 0)
+    # Verify file exists and is valid JSON
+    assert os.path.exists(filename)
     
-    def test_query_limit(self):
-        """Test query result limiting"""
-        traces = self.agg.query_traces(limit=2)
-        self.assertLessEqual(len(traces), 2)
+    with open(filename, 'r') as f:
+        data = json.load(f)
+        assert 'traces' in data
+        assert len(data['traces']) == 1
+    
+    # Import into new aggregator
+    new_aggregator = TracAggregator()
+    new_aggregator.import_from_json(filename)
+    
+    assert len(new_aggregator.get_all_traces()) == 1
+    trace = new_aggregator.get_trace("trace-1")
+    assert trace.span_count == 2
+    
+    # Cleanup
+    os.remove(filename)
+    
+    print("✓ JSON export/import works")
 
 
-class TestAnalytics(unittest.TestCase):
-    """Test analytics capabilities"""
+def test_clear():
+    """Test clearing aggregator"""
+    print("Testing clear...")
     
-    def setUp(self):
-        """Set up test aggregator"""
-        self.agg = TracAgg()
+    aggregator = TracAggregator()
     
-    def test_service_statistics(self):
-        """Test service statistics calculation"""
-        # Create spans for service
+    span = create_span("trace-1", "span-1", "api", "handle", 1000.0, 0.5)
+    aggregator.ingest_span(span)
+    
+    assert len(aggregator.get_all_traces()) == 1
+    
+    aggregator.clear()
+    
+    assert len(aggregator.get_all_traces()) == 0
+    assert len(aggregator.get_all_service_metrics()) == 0
+    
+    print("✓ Clear works")
+
+
+def test_thread_safety():
+    """Test thread safety of aggregator"""
+    print("Testing thread safety...")
+    
+    import threading
+    
+    aggregator = TracAggregator()
+    
+    def ingest_spans_thread(thread_id):
         for i in range(10):
-            span = create_span_data(
-                trace_id=f'trace{i}',
-                span_id=f'span{i}',
-                service_name='test-service',
-                operation_name='test-op',
-                duration_ms=100.0 + i * 10,
-                status_code=200 if i < 8 else 500
+            span = create_span(
+                f"trace-{thread_id}-{i}",
+                f"span-{thread_id}-{i}",
+                f"service-{thread_id}",
+                "operation",
+                float(i * 100),
+                0.1
             )
-            self.agg.ingest_span(span)
-        
-        stats = self.agg.get_service_stats('test-service')
-        
-        self.assertEqual(stats['span_count'], 10)
-        self.assertEqual(stats['error_count'], 2)
-        self.assertAlmostEqual(stats['error_rate'], 0.2, places=2)
-        self.assertGreater(stats['avg_duration_ms'], 0)
+            aggregator.ingest_span(span)
     
-    def test_all_services_statistics(self):
-        """Test getting statistics for all services"""
-        services = ['service1', 'service2', 'service3']
-        
-        for service in services:
-            span = create_span_data(
-                trace_id=f'trace_{service}',
-                span_id=f'span_{service}',
-                service_name=service,
-                operation_name='op',
-                duration_ms=100.0
-            )
-            self.agg.ingest_span(span)
-        
-        all_stats = self.agg.get_service_stats()
-        
-        self.assertEqual(len(all_stats), 3)
-        for service in services:
-            self.assertIn(service, all_stats)
-            self.assertEqual(all_stats[service]['span_count'], 1)
+    # Create multiple threads
+    threads = []
+    for i in range(5):
+        t = threading.Thread(target=ingest_spans_thread, args=(i,))
+        threads.append(t)
+        t.start()
     
-    def test_bottleneck_detection(self):
-        """Test bottleneck detection"""
-        # Create spans with varying durations
-        for i in range(100):
-            duration = 100.0 if i < 95 else 500.0  # 5% are slow
-            span = create_span_data(
-                trace_id=f'trace{i}',
-                span_id=f'span{i}',
-                service_name='service1',
-                operation_name='slow_op',
-                duration_ms=duration
-            )
-            self.agg.ingest_span(span)
-        
-        bottlenecks = self.agg.find_bottlenecks(percentile=0.95)
-        
-        self.assertGreater(len(bottlenecks), 0)
-        self.assertEqual(bottlenecks[0]['service'], 'service1')
-        self.assertEqual(bottlenecks[0]['operation'], 'slow_op')
-        self.assertGreater(bottlenecks[0]['p95_duration_ms'], 400.0)
+    # Wait for all threads
+    for t in threads:
+        t.join()
+    
+    # Should have 50 traces (5 threads * 10 spans each)
+    assert len(aggregator.get_all_traces()) == 50
+    
+    # Should have 5 services
+    assert len(aggregator.get_all_service_metrics()) == 5
+    
+    print("✓ Thread safety works")
 
 
-class TestTraceExport(unittest.TestCase):
-    """Test trace export functionality"""
+def run_all_tests():
+    """Run all test functions"""
+    print("=" * 60)
+    print("Running TracAgg Tests")
+    print("=" * 60)
+    print()
     
-    def setUp(self):
-        """Set up test aggregator"""
-        self.agg = TracAgg()
+    test_functions = [
+        test_span_creation,
+        test_span_with_error,
+        test_span_to_dict,
+        test_trace_creation,
+        test_trace_timing,
+        test_trace_root_span,
+        test_trace_critical_path,
+        test_aggregator_creation,
+        test_aggregator_ingest_span,
+        test_aggregator_ingest_multiple_spans,
+        test_service_metrics,
+        test_service_metrics_percentiles,
+        test_service_dependencies,
+        test_search_traces_by_service,
+        test_search_traces_by_duration,
+        test_search_traces_by_errors,
+        test_slowest_operations,
+        test_error_prone_operations,
+        test_analyze_trace,
+        test_summary_statistics,
+        test_export_import_json,
+        test_clear,
+        test_thread_safety,
+    ]
     
-    def test_export_trace(self):
-        """Test exporting a trace"""
-        span = create_span_data(
-            trace_id='trace1',
-            span_id='span1',
-            service_name='service1',
-            operation_name='op1',
-            duration_ms=100.0,
-            tags={'key': 'value'}
-        )
-        
-        self.agg.ingest_span(span)
-        
-        exported = self.agg.export_trace('trace1')
-        
-        self.assertIsNotNone(exported)
-        self.assertEqual(exported['trace_id'], 'trace1')
-        self.assertEqual(len(exported['spans']), 1)
-        self.assertEqual(exported['spans'][0]['service_name'], 'service1')
-        self.assertEqual(exported['spans'][0]['tags']['key'], 'value')
+    passed = 0
+    failed = 0
     
-    def test_export_nonexistent_trace(self):
-        """Test exporting a non-existent trace"""
-        exported = self.agg.export_trace('nonexistent')
-        self.assertIsNone(exported)
+    for test_func in test_functions:
+        try:
+            test_func()
+            passed += 1
+        except AssertionError as e:
+            print(f"✗ {test_func.__name__} failed: {e}")
+            failed += 1
+        except Exception as e:
+            print(f"✗ {test_func.__name__} error: {e}")
+            failed += 1
+        print()
+    
+    print("=" * 60)
+    print(f"Results: {passed} passed, {failed} failed")
+    print("=" * 60)
+    
+    return failed == 0
 
 
-class TestCleanup(unittest.TestCase):
-    """Test cleanup functionality"""
-    
-    def test_cleanup_old_traces(self):
-        """Test cleaning up old traces"""
-        agg = TracAgg(retention_seconds=1)
-        
-        # Create an old trace
-        span = create_span_data(
-            trace_id='old_trace',
-            span_id='span1',
-            service_name='service1',
-            operation_name='op1',
-            duration_ms=100.0
-        )
-        agg.ingest_span(span)
-        
-        # Verify trace exists
-        self.assertEqual(agg.get_trace_count(), 1)
-        
-        # Wait for retention period
-        time.sleep(1.1)
-        
-        # Cleanup
-        removed = agg.cleanup_old_traces()
-        
-        self.assertGreater(removed, 0)
-        self.assertEqual(agg.get_trace_count(), 0)
-    
-    def test_clear(self):
-        """Test clearing all data"""
-        span = create_span_data('trace1', 'span1', 'service1', 'op1')
-        self.agg = TracAgg()
-        self.agg.ingest_span(span)
-        
-        self.assertEqual(self.agg.get_trace_count(), 1)
-        
-        self.agg.clear()
-        
-        self.assertEqual(self.agg.get_trace_count(), 0)
-        self.assertEqual(len(self.agg.get_service_dependencies()), 0)
-
-
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == "__main__":
+    success = run_all_tests()
+    sys.exit(0 if success else 1)

@@ -1,297 +1,482 @@
 # PerProVis - Performance Profiling Visualizer
 
-A pure Python implementation of an advanced performance profiling visualizer without external dependencies, going beyond basic Prometheus metrics.
+A pure Python performance profiling and visualization tool without external dependencies.
 
-## What This Provides
+## What This Tool Does
 
-**Purpose:** Advanced performance profiling with flame graphs, hotspot detection, and memory leak analysis
-**Use Case:** In-depth performance analysis and optimization of Python applications
+**Purpose:** PerProVis profiles application performance, tracks function execution times, identifies bottlenecks, and visualizes performance data through various formats.
 
 ## Features
 
-- **CPU Profiling** with stack trace collection
-- **Hotspot Detection** identifying performance bottlenecks
-- **Flame Graph Generation** for visualization
-- **Call Graph Analysis** showing function relationships
-- **Memory Profiling** with leak detection
-- **Time-Series Metrics** tracking performance over time
-- **Profile Comparison** (diff between profiles)
-- **Manual and Automatic** sampling modes
-- **Thread-safe** concurrent profiling
-- **Zero External Dependencies** - pure Python
+- **Function-Level Profiling** - Track execution time and call counts
+- **Decorator Support** - Easy `@profile` decorator for functions
+- **Context Manager** - Profile code blocks with `with profile_block()`
+- **Call Stack Tracking** - Track nested function calls
+- **Statistical Analysis** - Mean, median, percentiles, standard deviation
+- **Hotspot Detection** - Identify slowest functions automatically
+- **Flame Graph Generation** - Text-based flame graphs
+- **Timeline Visualization** - Visualize execution timeline
+- **Multiple Export Formats** - JSON, CSV, and text reports
+- **Thread-safe** - Works with multi-threaded applications
+- **Zero Dependencies** - Uses only Python standard library
 
 ## Core Components
 
-- **PerProVis.py**: Main implementation
-  - `PerProVis`: Main profiler class
-  - `StackFrame`: Represents a single stack frame
-  - `Sample`: Profiling sample with stack trace
-  - `Hotspot`: Performance hotspot with metrics
-  - `MemorySnapshot`: Memory usage snapshot
-  - `FlameGraphNode`: Node in flame graph structure
+- **PerformanceProfiler**: Main profiler class
+- **FunctionCall**: Represents a single function execution
+- **FunctionStats**: Aggregated statistics for a function
+- **profile()**: Decorator for profiling functions
+- **profile_block()**: Context manager for profiling code blocks
 
 ## Usage
 
-### Basic Profiling (Manual Sampling)
+### Basic Function Profiling
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
 
-# Initialize profiler
-profiler = PerProVis(sampling_interval_ms=10)
+@profile
+def slow_function():
+    total = 0
+    for i in range(1000000):
+        total += i
+    return total
 
-# Add samples manually
-stack_trace = [
-    ('main', 'app.py', 10),
-    ('process_request', 'handlers.py', 45),
-    ('query_database', 'db.py', 123)
-]
+@profile
+def fast_function():
+    return sum(range(100))
 
-profiler.add_sample(stack_trace)
+# Run functions
+result1 = slow_function()
+result2 = fast_function()
 
-# Continue adding samples...
-for i in range(100):
-    profiler.add_sample(stack_trace)
-
-# Get sample count
-print(f"Collected {profiler.get_sample_count()} samples")
+# Get profiling report
+profiler = get_profiler()
+profiler.print_report()
 ```
 
-### Automatic Profiling
+### Profiling Code Blocks
 
 ```python
-from PerProVis import PerProVis
-import time
+from PerProVis import profile_block, get_profiler
 
-profiler = PerProVis(sampling_interval_ms=10)
+def process_data():
+    with profile_block("data_loading"):
+        # Simulate data loading
+        data = list(range(100000))
+    
+    with profile_block("data_processing"):
+        # Simulate processing
+        processed = [x * 2 for x in data]
+    
+    with profile_block("data_saving"):
+        # Simulate saving
+        result = sum(processed)
+    
+    return result
 
-# Start profiling
-profiler.start_profiling()
+# Run function
+result = process_data()
 
-# Run your code
+# Print report
+profiler = get_profiler()
+profiler.print_report()
+```
+
+### Custom Profiler Instance
+
+```python
+from PerProVis import create_profiler
+
+# Create a dedicated profiler
+profiler = create_profiler()
+
+@profiler.profile_function
 def my_function():
-    time.sleep(0.1)
-    return "result"
+    return sum(range(10000))
 
-for i in range(10):
-    my_function()
+# Run and analyze
+my_function()
+my_function()
+my_function()
 
-# Stop profiling
-profiler.stop_profiling()
-
-print(f"Profiled for {profiler.get_profiling_duration():.2f} seconds")
-print(f"Collected {profiler.get_sample_count()} samples")
+stats = profiler.get_function_stats("my_function")
+print(f"Called {stats.call_count} times")
+print(f"Average time: {stats.get_avg_time()*1000:.2f}ms")
+print(f"Total time: {stats.total_time:.4f}s")
 ```
 
-### Finding Hotspots
+### Finding Performance Hotspots
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
 
-profiler = PerProVis()
+@profile
+def expensive_operation():
+    result = 0
+    for i in range(1000000):
+        result += i ** 2
+    return result
 
-# Add samples (from your profiling)
-# ... profiling code here ...
+@profile
+def cheap_operation():
+    return sum(range(100))
 
-# Find top 10 hotspots
-hotspots = profiler.find_hotspots(top_n=10)
+# Run multiple times
+for _ in range(10):
+    expensive_operation()
+    cheap_operation()
+
+# Find hotspots
+profiler = get_profiler()
+hotspots = profiler.get_hotspots(limit=5)
 
 print("Performance Hotspots:")
-for i, hotspot in enumerate(hotspots, 1):
-    print(f"\n{i}. {hotspot.function_name} ({hotspot.filename})")
-    print(f"   Sample Count: {hotspot.sample_count}")
-    print(f"   Percentage: {hotspot.percentage:.2f}%")
-    print(f"   Total Time: {hotspot.total_time_ms:.2f}ms")
-    print(f"   Avg Time: {hotspot.average_time_ms():.2f}ms")
+for name, total_time, call_count in hotspots:
+    print(f"  {name}: {total_time:.4f}s ({call_count} calls)")
 ```
 
-### Generating Flame Graphs
+### Statistical Analysis
 
 ```python
-from PerProVis import PerProVis
-import json
+from PerProVis import profile, get_profiler
+import random
+import time
 
-profiler = PerProVis()
+@profile
+def variable_function():
+    # Simulate variable execution time
+    time.sleep(random.uniform(0.001, 0.01))
 
-# Add samples
-# ... profiling code here ...
+# Run multiple times
+for _ in range(50):
+    variable_function()
+
+# Get statistics
+profiler = get_profiler()
+stats = profiler.get_function_stats("variable_function")
+
+print(f"Statistics for variable_function:")
+print(f"  Call count: {stats.call_count}")
+print(f"  Average: {stats.get_avg_time()*1000:.2f}ms")
+print(f"  Median: {stats.get_median_time()*1000:.2f}ms")
+print(f"  Min: {stats.min_time*1000:.2f}ms")
+print(f"  Max: {stats.max_time*1000:.2f}ms")
+print(f"  P95: {stats.get_percentile(95)*1000:.2f}ms")
+print(f"  P99: {stats.get_percentile(99)*1000:.2f}ms")
+print(f"  Std Dev: {stats.get_std_dev()*1000:.2f}ms")
+```
+
+### Flame Graph Visualization
+
+```python
+from PerProVis import profile, get_profiler
+
+@profile
+def task_a():
+    sum(range(100000))
+
+@profile
+def task_b():
+    sum(range(500000))
+
+@profile
+def task_c():
+    sum(range(1000000))
+
+# Run tasks multiple times
+for _ in range(10):
+    task_a()
+    task_b()
+    task_c()
 
 # Generate flame graph
-flame_graph = profiler.generate_flame_graph()
-
-# Export as JSON
-flame_json = profiler.get_flame_graph_json()
-print(flame_json)
-
-# Or access the structure directly
-print(f"Root node: {flame_graph.name}")
-print(f"Total samples: {flame_graph.value}")
-print(f"Direct children: {len(flame_graph.children)}")
-
-# Convert to dict for further processing
-graph_dict = flame_graph.to_dict()
+profiler = get_profiler()
+flame_graph = profiler.generate_flame_graph_text(width=80)
+print(flame_graph)
 ```
 
-### Call Graph Analysis
-
-```python
-from PerProVis import PerProVis
-
-profiler = PerProVis()
-
-# Add samples with nested calls
-profiler.add_sample([
-    ('main', 'app.py', 10),
-    ('process', 'handlers.py', 20),
-    ('helper', 'utils.py', 30)
-])
-
-# Get call graph
-call_graph = profiler.get_call_graph()
-
-print("Call Graph:")
-for caller, callees in call_graph.items():
-    print(f"{caller} calls:")
-    for callee in callees:
-        print(f"  - {callee}")
+Output example:
+```
+Performance Flame Graph (Horizontal)
+task_c                    ████████████████████████████████  55.2% (10 calls)
+task_b                    ████████████████  27.6% (10 calls)
+task_a                    █████  9.2% (10 calls)
 ```
 
-### Time-Series Performance
+### Timeline Visualization
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
+import time
 
-profiler = PerProVis()
+@profile
+def step_1():
+    time.sleep(0.01)
 
-# Add samples over time
-# ... profiling code here ...
+@profile
+def step_2():
+    time.sleep(0.02)
 
-# Get time-series data (100ms buckets)
-time_series = profiler.get_time_series(bucket_size_ms=100)
+@profile
+def step_3():
+    time.sleep(0.015)
 
-print("Performance Over Time:")
-for bucket in time_series:
-    print(f"Time: {bucket['time_ms']}ms, Samples: {bucket['sample_count']}")
+# Execute steps
+step_1()
+step_2()
+step_3()
+
+# Generate timeline
+profiler = get_profiler()
+timeline = profiler.generate_timeline_text(limit=50)
+print(timeline)
 ```
 
-### Memory Profiling
+### Profiling Nested Function Calls
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
 
-profiler = PerProVis()
+@profile
+def level_3():
+    return sum(range(10000))
 
-# Add memory snapshots
-profiler.add_memory_snapshot(
-    total_bytes=10 * 1024 * 1024,  # 10 MB
-    allocations={
-        'data_processing': 5 * 1024 * 1024,
-        'cache': 3 * 1024 * 1024,
-        'buffers': 2 * 1024 * 1024
-    },
-    stack_trace=[('process_data', 'app.py', 100)]
-)
+@profile
+def level_2():
+    result = 0
+    for _ in range(3):
+        result += level_3()
+    return result
 
-# Track memory over time
-for i in range(10):
-    # ... application code ...
-    profiler.add_memory_snapshot(
-        total_bytes=(10 + i) * 1024 * 1024
-    )
+@profile
+def level_1():
+    result = 0
+    for _ in range(2):
+        result += level_2()
+    return result
 
-# Get memory usage over time
-memory_usage = profiler.get_memory_usage_over_time()
-for snapshot in memory_usage:
-    print(f"Time: {snapshot['timestamp']:.2f}, Memory: {snapshot['total_mb']:.2f} MB")
+# Run nested calls
+level_1()
+
+# View call tree
+profiler = get_profiler()
+call_tree = profiler.get_call_tree()
+print("Call Tree:", call_tree)
+
+# Get all calls with stack information
+all_calls = profiler.get_all_calls()
+for call in all_calls[:5]:
+    print(f"{call.name}: depth={len(call.call_stack)}, duration={call.duration*1000:.2f}ms")
 ```
 
-### Memory Leak Detection
+### Export to JSON
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
 
-profiler = PerProVis()
+@profile
+def my_function():
+    return sum(range(100000))
 
-# Simulate growing memory usage
-for i in range(20):
-    allocations = {
-        'leaky_cache': i * 500 * 1024,  # Growing
-        'stable_buffer': 1024 * 1024     # Stable
-    }
-    profiler.add_memory_snapshot(
-        total_bytes=sum(allocations.values()),
-        allocations=allocations
-    )
+# Run multiple times
+for _ in range(10):
+    my_function()
 
-# Detect leaks
-leaks = profiler.find_memory_leaks()
-
-print("Potential Memory Leaks:")
-for leak in leaks:
-    print(f"\nAllocation Site: {leak['allocation_site']}")
-    print(f"  Initial: {leak['initial_bytes'] / 1024 / 1024:.2f} MB")
-    print(f"  Final: {leak['final_bytes'] / 1024 / 1024:.2f} MB")
-    print(f"  Growth: {leak['growth_mb']:.2f} MB")
-    print(f"  Samples: {leak['sample_count']}")
+# Export to JSON
+profiler = get_profiler()
+profiler.export_to_json("performance_report.json")
+print("Report exported to performance_report.json")
 ```
 
-### Profile Comparison
+### Export to CSV
 
 ```python
-from PerProVis import PerProVis
+from PerProVis import profile, get_profiler
 
-# Baseline profile
-baseline = PerProVis()
-# ... collect baseline samples ...
-for i in range(100):
-    baseline.add_sample([('func_a', 'module.py', 10)])
+@profile
+def function_a():
+    return sum(range(10000))
 
-# Current profile (after optimization)
-current = PerProVis()
-# ... collect current samples ...
-for i in range(50):
-    current.add_sample([('func_a', 'module.py', 10)])
-for i in range(50):
-    current.add_sample([('func_b', 'module.py', 20)])
+@profile
+def function_b():
+    return sum(range(50000))
 
-# Compare profiles
-comparison = baseline.compare_profiles(current)
+# Run functions
+for _ in range(20):
+    function_a()
+    function_b()
 
-print(f"Baseline samples: {comparison['baseline_samples']}")
-print(f"Current samples: {comparison['current_samples']}")
-print("\nSignificant Differences:")
-
-for diff in comparison['differences'][:10]:  # Top 10
-    print(f"\n{diff['function']}")
-    print(f"  Baseline: {diff['baseline_percentage']:.2f}%")
-    print(f"  Current: {diff['current_percentage']:.2f}%")
-    print(f"  Difference: {diff['difference']:+.2f}%")
-    if 'status' in diff:
-        print(f"  Status: {diff['status']}")
+# Export to CSV
+profiler = get_profiler()
+profiler.export_to_csv("performance_stats.csv")
+print("Statistics exported to performance_stats.csv")
 ```
 
-### Exporting Profiles
+### Getting Summary Statistics
 
 ```python
-from PerProVis import PerProVis
-import json
+from PerProVis import profile, get_profiler
 
-profiler = PerProVis()
+@profile
+def task():
+    sum(range(50000))
 
-# ... profiling code here ...
+# Run tasks
+for _ in range(100):
+    task()
 
-# Export complete profile
-profile_data = profiler.export_profile()
+# Get summary
+profiler = get_profiler()
+summary = profiler.get_summary()
 
-# Save to file
-with open('profile.json', 'w') as f:
-    json.dump(profile_data, f, indent=2)
+print("Profiling Summary:")
+print(f"  Total functions profiled: {summary['total_functions']}")
+print(f"  Total function calls: {summary['total_calls']}")
+print(f"  Total execution time: {summary['total_time']:.4f}s")
+print(f"  Average call time: {summary['avg_call_time']*1000:.2f}ms")
+print(f"  Median call time: {summary['median_call_time']*1000:.2f}ms")
+print(f"  P95 call time: {summary['p95_call_time']*1000:.2f}ms")
+```
 
-# Access exported data
-print(f"Total samples: {profile_data['sample_count']}")
-print(f"Duration: {profile_data['duration_seconds']:.2f}s")
-print(f"Top hotspots: {len(profile_data['hotspots'])}")
-print(f"Flame graph nodes: {profile_data['flame_graph']['value']}")
+### Finding Slowest Individual Calls
+
+```python
+from PerProVis import profile, get_profiler
+import random
+import time
+
+@profile
+def sometimes_slow():
+    # Occasionally take longer
+    delay = random.uniform(0.001, 0.05)
+    time.sleep(delay)
+
+# Run multiple times
+for _ in range(20):
+    sometimes_slow()
+
+# Find slowest calls
+profiler = get_profiler()
+slowest = profiler.get_slowest_calls(limit=5)
+
+print("Slowest Individual Calls:")
+for name, duration in slowest:
+    print(f"  {name}: {duration*1000:.2f}ms")
+```
+
+### Profiling with Metadata
+
+```python
+from PerProVis import profile_block, get_profiler
+
+def process_user_request(user_id, action):
+    with profile_block("process_request", user_id=user_id, action=action):
+        # Simulate processing
+        result = sum(range(100000))
+        return result
+
+# Process requests
+process_user_request(user_id=123, action="create")
+process_user_request(user_id=456, action="update")
+
+# Access call metadata
+profiler = get_profiler()
+calls = profiler.get_all_calls()
+for call in calls:
+    if call.metadata:
+        print(f"Call: {call.name}, Metadata: {call.metadata}")
+```
+
+### Enable/Disable Profiling
+
+```python
+from PerProVis import create_profiler
+
+profiler = create_profiler(enabled=True)
+
+@profiler.profile_function
+def my_function():
+    return sum(range(100000))
+
+# Profile this call
+my_function()
+
+# Disable profiling
+profiler.disable()
+
+# This call won't be profiled
+my_function()
+
+# Re-enable profiling
+profiler.enable()
+
+# Profile this call
+my_function()
+
+stats = profiler.get_function_stats("my_function")
+print(f"Total calls recorded: {stats.call_count}")  # Should be 2
+```
+
+### Clear Profiling Data
+
+```python
+from PerProVis import profile, get_profiler
+
+@profile
+def my_function():
+    return sum(range(100000))
+
+# First batch
+for _ in range(10):
+    my_function()
+
+profiler = get_profiler()
+print(f"Calls before clear: {profiler.get_function_stats('my_function').call_count}")
+
+# Clear data
+profiler.clear()
+
+# Second batch
+for _ in range(5):
+    my_function()
+
+print(f"Calls after clear: {profiler.get_function_stats('my_function').call_count}")
+```
+
+### Multi-threaded Profiling
+
+```python
+from PerProVis import profile, get_profiler
+import threading
+
+@profile
+def worker_task(worker_id):
+    result = 0
+    for i in range(100000):
+        result += i
+    return result
+
+# Create threads
+threads = []
+for i in range(5):
+    t = threading.Thread(target=worker_task, args=(i,))
+    threads.append(t)
+    t.start()
+
+# Wait for completion
+for t in threads:
+    t.join()
+
+# Analyze results
+profiler = get_profiler()
+stats = profiler.get_function_stats("worker_task")
+print(f"Worker task called {stats.call_count} times across threads")
+
+# View per-thread data
+all_calls = profiler.get_all_calls()
+thread_ids = set(call.thread_id for call in all_calls)
+print(f"Total threads: {len(thread_ids)}")
 ```
 
 ## Testing
@@ -299,200 +484,145 @@ print(f"Flame graph nodes: {profile_data['flame_graph']['value']}")
 Run the test suite:
 
 ```bash
-cd python/PerProVis
 python test_PerProVis.py
-```
-
-Or run specific test classes:
-
-```bash
-python test_PerProVis.py TestHotspotDetection
-python test_PerProVis.py TestMemoryProfiling
-python test_PerProVis.py TestFlameGraph
 ```
 
 ## Implementation Notes
 
-- **Thread-safe**: All operations use locks for concurrent access
-- **Manual or Automatic**: Supports both manual sample addition and automatic profiling
-- **Efficient**: Caches computed results (hotspots, flame graphs)
-- **Flexible**: Customizable sampling intervals and bucket sizes
-- **Zero Dependencies**: No external libraries required
-- **Memory Efficient**: Configurable sample retention
+- **Thread-safe**: All operations protected by locks
+- **Low overhead**: Minimal performance impact when disabled
+- **High precision**: Uses `time.perf_counter()` for accurate timing
+- **Memory efficient**: Stores only essential profiling data
+- **No dependencies**: Pure Python standard library implementation
 
 ## API Reference
 
-### PerProVis Class
+### PerformanceProfiler
 
 **Constructor:**
-```python
-PerProVis(sampling_interval_ms: int = 10)
-```
+- `PerformanceProfiler(enabled=True)` - Create profiler instance
 
 **Methods:**
-- `start_profiling()`: Start automatic profiling
-- `stop_profiling()`: Stop automatic profiling
-- `add_sample(stack_trace, metrics=None)`: Add manual profiling sample
-- `add_memory_snapshot(total_bytes, allocations=None, stack_trace=None)`: Add memory snapshot
-- `get_sample_count() -> int`: Get number of samples collected
-- `get_profiling_duration() -> float`: Get profiling duration in seconds
-- `find_hotspots(top_n=10) -> List[Hotspot]`: Find performance hotspots
-- `generate_flame_graph() -> FlameGraphNode`: Generate flame graph
-- `get_flame_graph_json() -> str`: Get flame graph as JSON
-- `get_call_graph() -> Dict[str, List[str]]`: Get function call relationships
-- `get_time_series(bucket_size_ms=100) -> List[Dict]`: Get time-series data
-- `get_memory_usage_over_time() -> List[Dict]`: Get memory usage history
-- `find_memory_leaks() -> List[Dict]`: Detect memory leaks
-- `compare_profiles(other) -> Dict`: Compare with another profile
-- `export_profile() -> Dict`: Export complete profile data
-- `clear()`: Clear all profiling data
+- `enable()` - Enable profiling
+- `disable()` - Disable profiling
+- `clear()` - Clear all profiling data
+- `profile_function(func, name)` - Decorator for profiling
+- `profile_block(name, **metadata)` - Context manager for profiling
+- `get_function_stats(name)` - Get stats for a function
+- `get_all_function_stats()` - Get stats for all functions
+- `get_all_calls()` - Get all recorded calls
+- `get_hotspots(limit)` - Get performance hotspots
+- `get_slowest_calls(limit)` - Get slowest individual calls
+- `get_call_tree()` - Build call tree
+- `generate_flame_graph_text(width)` - Generate text flame graph
+- `generate_timeline_text(limit)` - Generate timeline visualization
+- `get_summary()` - Get summary statistics
+- `export_to_json(filename)` - Export to JSON
+- `export_to_csv(filename)` - Export to CSV
+- `print_report(top_n)` - Print formatted report
 
-### Data Classes
+### FunctionStats
 
-**StackFrame:**
-- `function_name`: Function name
-- `filename`: Source file
-- `line_number`: Line number
-- `module`: Module name
+**Attributes:**
+- `name` - Function name
+- `call_count` - Number of calls
+- `total_time` - Total execution time
+- `min_time` - Minimum execution time
+- `max_time` - Maximum execution time
+- `durations` - List of all durations
 
-**Hotspot:**
-- `function_name`: Function name
-- `filename`: Source file
-- `total_time_ms`: Total time spent
-- `sample_count`: Number of samples
-- `percentage`: Percentage of total samples
-- `callers`: Set of calling functions
-- `callees`: Set of called functions
+**Methods:**
+- `get_avg_time()` - Get average time
+- `get_median_time()` - Get median time
+- `get_percentile(percentile)` - Get percentile time
+- `get_std_dev()` - Get standard deviation
 
-## Example Use Cases
+### FunctionCall
 
-### Profiling a Web Service
+**Attributes:**
+- `name` - Function name
+- `start_time` - Start timestamp
+- `end_time` - End timestamp
+- `duration` - Execution duration
+- `call_stack` - Call stack at time of call
+- `thread_id` - Thread ID
+- `metadata` - Additional metadata
+
+### Global Functions
+
+- `get_profiler()` - Get global profiler instance
+- `profile(func, name)` - Global profiling decorator
+- `profile_block(name, **metadata)` - Global profiling context manager
+- `create_profiler(enabled)` - Create new profiler instance
+
+## Use Cases
+
+### Web Application Performance
 
 ```python
-from PerProVis import PerProVis
-import time
-
-profiler = PerProVis(sampling_interval_ms=10)
-
+@profile
 def handle_request(request):
-    """Simulate request handling"""
-    # Manually add profile samples
-    profiler.add_sample([
-        ('handle_request', 'server.py', 10),
-        ('parse_request', 'parser.py', 25)
-    ])
+    with profile_block("authentication"):
+        user = authenticate(request)
     
-    time.sleep(0.01)  # Simulate work
+    with profile_block("database_query"):
+        data = fetch_user_data(user.id)
     
-    profiler.add_sample([
-        ('handle_request', 'server.py', 10),
-        ('query_database', 'db.py', 50)
-    ])
+    with profile_block("template_rendering"):
+        response = render_template(data)
     
-    time.sleep(0.02)  # Simulate DB query
-    
-    profiler.add_sample([
-        ('handle_request', 'server.py', 10),
-        ('render_response', 'templates.py', 75)
-    ])
-
-# Handle multiple requests
-for i in range(100):
-    handle_request({'path': '/api/users'})
-
-# Analyze performance
-hotspots = profiler.find_hotspots(top_n=5)
-print("\nTop Bottlenecks:")
-for hotspot in hotspots:
-    print(f"- {hotspot.function_name}: {hotspot.percentage:.1f}%")
+    return response
 ```
 
-### Detecting Performance Regressions
+### Algorithm Optimization
 
 ```python
-from PerProVis import PerProVis
+@profile
+def algorithm_v1(data):
+    # Original implementation
+    pass
 
-# Profile baseline version
-baseline_profiler = PerProVis()
-# ... run baseline code and collect samples ...
+@profile
+def algorithm_v2(data):
+    # Optimized implementation
+    pass
 
-# Profile new version
-new_profiler = PerProVis()
-# ... run new code and collect samples ...
+# Compare performance
+for _ in range(100):
+    algorithm_v1(test_data)
+    algorithm_v2(test_data)
 
-# Compare
-comparison = baseline_profiler.compare_profiles(new_profiler)
-
-print("Performance Regression Analysis:")
-for diff in comparison['differences']:
-    if diff['difference'] > 5.0:  # More than 5% increase
-        print(f"\nREGRESSION: {diff['function']}")
-        print(f"  Increase: +{diff['difference']:.2f}%")
+profiler.print_report()
 ```
 
-### Long-Running Application Monitoring
+### Continuous Profiling
 
 ```python
-from PerProVis import PerProVis
-import time
+profiler = create_profiler()
 
-profiler = PerProVis()
+# Profile production code
+@profiler.profile_function
+def critical_path():
+    # Business logic
+    pass
 
-def monitor_loop():
-    """Monitor application over time"""
-    start_time = time.time()
-    
-    while time.time() - start_time < 60:  # Monitor for 1 minute
-        # Collect sample
-        profiler.add_sample([
-            ('monitor_loop', 'app.py', 10),
-            ('process_events', 'events.py', 20)
-        ])
-        
-        # Check memory
-        import sys
-        memory_usage = sys.getsizeof({}) * 1000  # Simplified
-        profiler.add_memory_snapshot(memory_usage)
-        
-        time.sleep(0.1)
-    
-    # Analyze results
-    print("\nTime-Series Analysis:")
-    time_series = profiler.get_time_series(bucket_size_ms=10000)  # 10s buckets
-    for bucket in time_series:
-        print(f"  {bucket['time_ms']/1000:.0f}s: {bucket['sample_count']} samples")
-    
-    print("\nMemory Leak Check:")
-    leaks = profiler.find_memory_leaks()
-    if leaks:
-        print("  WARNING: Potential leaks detected!")
-        for leak in leaks:
-            print(f"    {leak['allocation_site']}: +{leak['growth_mb']:.2f} MB")
-    else:
-        print("  No leaks detected")
-
-monitor_loop()
+# Periodically export metrics
+import schedule
+schedule.every(1).hours.do(lambda: profiler.export_to_json("hourly_profile.json"))
 ```
 
-## Performance Considerations
+## Differences from Full Profilers
 
-- **Sampling Overhead**: Lower sampling intervals = higher accuracy but more overhead
-- **Memory Usage**: Samples stored in memory; clear periodically for long-running apps
-- **Lock Contention**: Thread-safe operations may contend under very high sampling rates
-- **Cache Invalidation**: Cache cleared on new samples; call `find_hotspots()` once then reuse
-- **Flame Graph Size**: Large applications may generate very large flame graphs
+- **No C-level profiling**: Python functions only
+- **Manual instrumentation**: Requires decorators/context managers
+- **Text-only visualization**: No graphical flame graphs
+- **Basic memory tracking**: Simplified memory measurements
+- **No line-level profiling**: Function-level only
 
-## Best Practices
+## Tips
 
-1. **Choose appropriate sampling interval**: 10-50ms for most applications
-2. **Clear old data**: Call `clear()` periodically in long-running apps
-3. **Export for analysis**: Export profiles for offline analysis and archival
-4. **Compare profiles**: Use profile comparison to track performance changes
-5. **Focus on hotspots**: Optimize functions appearing in top hotspots first
-6. **Monitor memory**: Track memory usage to detect leaks early
-7. **Use manual sampling**: For web services, add samples at request boundaries
-8. **Flame graphs for visualization**: Use flame graphs to understand call hierarchies
-
-## License
-
-This implementation is part of the Emu-Soft project and is original code written from scratch.
+1. **Use context managers** for profiling specific code blocks
+2. **Clear data periodically** to avoid memory buildup in long-running apps
+3. **Disable in production** if overhead is a concern
+4. **Export regularly** for historical analysis
+5. **Focus on hotspots** rather than trying to optimize everything

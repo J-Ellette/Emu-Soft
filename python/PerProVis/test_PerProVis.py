@@ -1,472 +1,694 @@
 """
-Developed by PowerShield
+Developed by PowerShield, as a performance profiling visualizer
+
+Tests for PerProVis - Performance Profiling Visualizer
+
+This test suite validates the core functionality of PerProVis.
 """
 
-#!/usr/bin/env python3
-"""
-Test suite for PerProVis - Performance Profiling Visualizer
-
-Tests core functionality including:
-- Sample collection
-- Hotspot detection
-- Flame graph generation
-- Memory profiling
-- Profile comparison
-"""
-
-import unittest
+import sys
+import os
 import time
-from PerProVis import PerProVis, StackFrame, Hotspot
+import threading
+import json
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from PerProVis import (
+    PerformanceProfiler, FunctionCall, FunctionStats,
+    profile, profile_block, get_profiler, create_profiler
+)
 
 
-class TestBasicProfiling(unittest.TestCase):
-    """Test basic profiling functionality"""
+def test_function_call_creation():
+    """Test function call creation"""
+    print("Testing function call creation...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis(sampling_interval_ms=10)
+    call = FunctionCall(
+        name="test_func",
+        start_time=1000.0,
+        end_time=1000.5,
+        duration=0.5,
+        call_stack=["main", "test_func"]
+    )
     
-    def test_initialization(self):
-        """Test profiler initialization"""
-        self.assertEqual(self.profiler.sampling_interval_ms, 10)
-        self.assertEqual(self.profiler.get_sample_count(), 0)
-        self.assertFalse(self.profiler.is_profiling)
+    assert call.name == "test_func"
+    assert call.duration == 0.5
+    assert len(call.call_stack) == 2
     
-    def test_manual_sample_addition(self):
-        """Test manually adding samples"""
-        stack = [
-            ('main', 'test.py', 10),
-            ('process', 'test.py', 20),
-            ('compute', 'test.py', 30)
-        ]
-        
-        self.profiler.add_sample(stack)
-        self.assertEqual(self.profiler.get_sample_count(), 1)
-        
-        self.profiler.add_sample(stack)
-        self.assertEqual(self.profiler.get_sample_count(), 2)
-    
-    def test_profiling_duration(self):
-        """Test profiling duration tracking"""
-        self.profiler.start_time = time.time()
-        time.sleep(0.1)
-        self.profiler.end_time = time.time()
-        
-        duration = self.profiler.get_profiling_duration()
-        self.assertGreater(duration, 0.09)
-        self.assertLess(duration, 0.2)
-    
-    def test_clear_data(self):
-        """Test clearing profiling data"""
-        stack = [('func1', 'file1.py', 10)]
-        self.profiler.add_sample(stack)
-        self.assertEqual(self.profiler.get_sample_count(), 1)
-        
-        self.profiler.clear()
-        self.assertEqual(self.profiler.get_sample_count(), 0)
+    print("✓ Function call creation works")
 
 
-class TestHotspotDetection(unittest.TestCase):
-    """Test hotspot detection"""
+def test_function_call_to_dict():
+    """Test function call serialization"""
+    print("Testing function call to_dict...")
     
-    def setUp(self):
-        """Set up test profiler with sample data"""
-        self.profiler = PerProVis()
-        self.profiler.start_time = time.time()
-        
-        # Add samples simulating a program with hotspots
-        # Function A appears in 50% of samples
-        # Function B appears in 30% of samples
-        # Function C appears in 20% of samples
-        
-        for i in range(50):
-            self.profiler.add_sample([
-                ('main', 'main.py', 10),
-                ('function_a', 'module.py', 20)
-            ])
-        
-        for i in range(30):
-            self.profiler.add_sample([
-                ('main', 'main.py', 10),
-                ('function_b', 'module.py', 30)
-            ])
-        
-        for i in range(20):
-            self.profiler.add_sample([
-                ('main', 'main.py', 10),
-                ('function_c', 'module.py', 40)
-            ])
-        
-        self.profiler.end_time = time.time()
+    call = FunctionCall(
+        name="test_func",
+        start_time=1000.0,
+        end_time=1000.5,
+        duration=0.5,
+        metadata={"key": "value"}
+    )
     
-    def test_find_hotspots(self):
-        """Test finding performance hotspots"""
-        hotspots = self.profiler.find_hotspots(top_n=5)
-        
-        self.assertGreater(len(hotspots), 0)
-        self.assertLessEqual(len(hotspots), 5)
-        
-        # Hotspots should be sorted by sample count
-        for i in range(len(hotspots) - 1):
-            self.assertGreaterEqual(
-                hotspots[i].sample_count,
-                hotspots[i + 1].sample_count
-            )
+    call_dict = call.to_dict()
+    assert call_dict['name'] == "test_func"
+    assert call_dict['duration'] == 0.5
+    assert call_dict['metadata']['key'] == "value"
     
-    def test_hotspot_percentages(self):
-        """Test hotspot percentage calculation"""
-        hotspots = self.profiler.find_hotspots(top_n=10)
-        
-        # Main should appear in all 100 samples
-        main_hotspot = next((h for h in hotspots if h.function_name == 'main'), None)
-        self.assertIsNotNone(main_hotspot)
-        self.assertEqual(main_hotspot.sample_count, 100)
-        self.assertAlmostEqual(main_hotspot.percentage, 100.0, places=1)
-    
-    def test_hotspot_timing(self):
-        """Test hotspot timing calculations"""
-        hotspots = self.profiler.find_hotspots(top_n=10)
-        
-        for hotspot in hotspots:
-            self.assertGreater(hotspot.total_time_ms, 0)
-            self.assertGreater(hotspot.sample_count, 0)
-            avg_time = hotspot.average_time_ms()
-            self.assertGreater(avg_time, 0)
+    print("✓ Function call serialization works")
 
 
-class TestFlameGraph(unittest.TestCase):
-    """Test flame graph generation"""
+def test_function_stats_creation():
+    """Test function stats creation"""
+    print("Testing function stats creation...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis()
+    stats = FunctionStats(name="test_func")
+    assert stats.name == "test_func"
+    assert stats.call_count == 0
+    assert stats.total_time == 0.0
     
-    def test_flame_graph_generation(self):
-        """Test generating flame graph"""
-        # Add samples with nested calls
-        self.profiler.add_sample([
-            ('main', 'main.py', 1),
-            ('func_a', 'module.py', 10),
-            ('func_b', 'module.py', 20)
-        ])
-        
-        self.profiler.add_sample([
-            ('main', 'main.py', 1),
-            ('func_a', 'module.py', 10),
-            ('func_c', 'module.py', 30)
-        ])
-        
-        flame_graph = self.profiler.generate_flame_graph()
-        
-        self.assertEqual(flame_graph.name, 'root')
-        self.assertEqual(flame_graph.value, 2)  # 2 samples
-        self.assertGreater(len(flame_graph.children), 0)
-    
-    def test_flame_graph_json(self):
-        """Test flame graph JSON export"""
-        self.profiler.add_sample([
-            ('main', 'main.py', 1),
-            ('process', 'module.py', 10)
-        ])
-        
-        json_str = self.profiler.get_flame_graph_json()
-        self.assertIsInstance(json_str, str)
-        self.assertIn('root', json_str)
-        self.assertIn('value', json_str)
-    
-    def test_flame_graph_structure(self):
-        """Test flame graph structural properties"""
-        # Add multiple samples with same initial path
-        for i in range(10):
-            self.profiler.add_sample([
-                ('main', 'main.py', 1),
-                ('process', 'module.py', 10)
-            ])
-        
-        flame_graph = self.profiler.generate_flame_graph()
-        
-        # Root should have value equal to total samples
-        self.assertEqual(flame_graph.value, 10)
-        
-        # Convert to dict to check structure
-        graph_dict = flame_graph.to_dict()
-        self.assertIn('name', graph_dict)
-        self.assertIn('value', graph_dict)
+    print("✓ Function stats creation works")
 
 
-class TestCallGraph(unittest.TestCase):
-    """Test call graph generation"""
+def test_function_stats_add_call():
+    """Test adding calls to stats"""
+    print("Testing adding calls to stats...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis()
+    stats = FunctionStats(name="test_func")
     
-    def test_call_graph_generation(self):
-        """Test generating call graph"""
-        # Add samples showing call relationships
-        self.profiler.add_sample([
-            ('main', 'main.py', 1),
-            ('process', 'module.py', 10),
-            ('helper', 'module.py', 20)
-        ])
-        
-        call_graph = self.profiler.get_call_graph()
-        
-        self.assertIsInstance(call_graph, dict)
-        self.assertGreater(len(call_graph), 0)
+    stats.add_call(duration=0.1)
+    assert stats.call_count == 1
+    assert abs(stats.total_time - 0.1) < 0.001
     
-    def test_call_graph_relationships(self):
-        """Test call graph caller-callee relationships"""
-        self.profiler.add_sample([
-            ('func_a', 'module.py', 10),
-            ('func_b', 'module.py', 20),
-            ('func_c', 'module.py', 30)
-        ])
-        
-        call_graph = self.profiler.get_call_graph()
-        
-        # func_a should call func_b
-        func_a_key = 'func_a (module.py:10)'
-        self.assertIn(func_a_key, call_graph)
-        
-        callees = call_graph[func_a_key]
-        self.assertIsInstance(callees, list)
+    stats.add_call(duration=0.2)
+    assert stats.call_count == 2
+    assert abs(stats.total_time - 0.3) < 0.001
+    
+    print("✓ Adding calls to stats works")
 
 
-class TestTimeSeries(unittest.TestCase):
-    """Test time-series data generation"""
+def test_function_stats_calculations():
+    """Test stats calculations"""
+    print("Testing stats calculations...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis()
+    stats = FunctionStats(name="test_func")
     
-    def test_time_series_generation(self):
-        """Test generating time-series data"""
-        # Add samples at different times
-        base_time = time.time()
-        
-        for i in range(10):
-            self.profiler.add_sample([('func', 'file.py', 1)])
-        
-        time_series = self.profiler.get_time_series(bucket_size_ms=100)
-        
-        self.assertIsInstance(time_series, list)
-        self.assertGreater(len(time_series), 0)
+    # Add multiple calls
+    for i in range(10):
+        stats.add_call(duration=float(i) / 10.0)
     
-    def test_time_series_buckets(self):
-        """Test time-series bucket structure"""
-        self.profiler.add_sample([('func', 'file.py', 1)])
-        
-        time_series = self.profiler.get_time_series(bucket_size_ms=50)
-        
-        for bucket in time_series:
-            self.assertIn('time_ms', bucket)
-            self.assertIn('sample_count', bucket)
-            self.assertGreaterEqual(bucket['sample_count'], 0)
+    avg_time = stats.get_avg_time()
+    assert avg_time > 0
+    
+    median_time = stats.get_median_time()
+    assert median_time >= 0
+    
+    p95 = stats.get_percentile(95)
+    assert p95 >= median_time
+    
+    std_dev = stats.get_std_dev()
+    assert std_dev >= 0
+    
+    print("✓ Stats calculations work")
 
 
-class TestMemoryProfiling(unittest.TestCase):
-    """Test memory profiling functionality"""
+def test_profiler_creation():
+    """Test profiler creation"""
+    print("Testing profiler creation...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis()
+    profiler = create_profiler()
+    assert profiler is not None
+    assert profiler.enabled is True
     
-    def test_memory_snapshot_addition(self):
-        """Test adding memory snapshots"""
-        self.profiler.add_memory_snapshot(
-            total_bytes=1024 * 1024,
-            allocations={'site1': 512 * 1024, 'site2': 512 * 1024}
-        )
-        
-        self.assertEqual(len(self.profiler.memory_snapshots), 1)
+    profiler_disabled = create_profiler(enabled=False)
+    assert profiler_disabled.enabled is False
     
-    def test_memory_usage_over_time(self):
-        """Test memory usage tracking"""
-        # Add snapshots with increasing memory
-        for i in range(5):
-            self.profiler.add_memory_snapshot(
-                total_bytes=(i + 1) * 1024 * 1024
-            )
-        
-        usage = self.profiler.get_memory_usage_over_time()
-        
-        self.assertEqual(len(usage), 5)
-        
-        # Memory should be increasing
-        for i in range(len(usage) - 1):
-            self.assertLess(usage[i]['total_bytes'], usage[i + 1]['total_bytes'])
-    
-    def test_memory_leak_detection(self):
-        """Test memory leak detection"""
-        # Simulate a memory leak
-        for i in range(10):
-            allocations = {
-                'leaky_function': i * 200 * 1024,  # Growing
-                'stable_function': 100 * 1024       # Stable
-            }
-            self.profiler.add_memory_snapshot(
-                total_bytes=sum(allocations.values()),
-                allocations=allocations
-            )
-        
-        leaks = self.profiler.find_memory_leaks()
-        
-        self.assertGreater(len(leaks), 0)
-        
-        # leaky_function should be detected
-        leak_sites = [leak['allocation_site'] for leak in leaks]
-        self.assertIn('leaky_function', leak_sites)
-    
-    def test_memory_leak_threshold(self):
-        """Test memory leak detection threshold"""
-        # Add small growth (under threshold)
-        for i in range(5):
-            self.profiler.add_memory_snapshot(
-                total_bytes=1024 * 1024,
-                allocations={'small_growth': i * 1024}
-            )
-        
-        leaks = self.profiler.find_memory_leaks()
-        
-        # Should not detect small growth
-        self.assertEqual(len(leaks), 0)
+    print("✓ Profiler creation works")
 
 
-class TestProfileComparison(unittest.TestCase):
-    """Test profile comparison"""
+def test_profiler_enable_disable():
+    """Test enabling and disabling profiler"""
+    print("Testing enable/disable...")
     
-    def setUp(self):
-        """Set up test profilers"""
-        self.baseline = PerProVis()
-        self.current = PerProVis()
-        
-        # Baseline profile
-        for i in range(100):
-            self.baseline.add_sample([
-                ('main', 'main.py', 1),
-                ('func_a', 'module.py', 10)
-            ])
-        
-        # Current profile with different distribution
-        for i in range(50):
-            self.current.add_sample([
-                ('main', 'main.py', 1),
-                ('func_a', 'module.py', 10)
-            ])
-        
-        for i in range(50):
-            self.current.add_sample([
-                ('main', 'main.py', 1),
-                ('func_b', 'module.py', 20)
-            ])
+    profiler = create_profiler(enabled=True)
+    assert profiler.enabled is True
     
-    def test_profile_comparison(self):
-        """Test comparing two profiles"""
-        comparison = self.baseline.compare_profiles(self.current)
-        
-        self.assertIn('baseline_samples', comparison)
-        self.assertIn('current_samples', comparison)
-        self.assertIn('differences', comparison)
-        
-        self.assertEqual(comparison['baseline_samples'], 100)
-        self.assertEqual(comparison['current_samples'], 100)
+    profiler.disable()
+    assert profiler.enabled is False
     
-    def test_comparison_differences(self):
-        """Test detecting differences in profiles"""
-        comparison = self.baseline.compare_profiles(self.current)
-        
-        differences = comparison['differences']
-        self.assertGreater(len(differences), 0)
-        
-        # func_b should be marked as new
-        func_b_diff = next(
-            (d for d in differences if 'func_b' in d['function']),
-            None
-        )
-        self.assertIsNotNone(func_b_diff)
-        if func_b_diff:
-            self.assertEqual(func_b_diff.get('status'), 'new')
+    profiler.enable()
+    assert profiler.enabled is True
+    
+    print("✓ Enable/disable works")
 
 
-class TestExport(unittest.TestCase):
-    """Test profile export"""
+def test_profile_block():
+    """Test profiling code blocks"""
+    print("Testing profile_block...")
     
-    def setUp(self):
-        """Set up test profiler"""
-        self.profiler = PerProVis()
-        self.profiler.start_time = time.time()
-        
-        # Add some samples
-        for i in range(10):
-            self.profiler.add_sample([
-                ('main', 'main.py', 1),
-                ('process', 'module.py', 10)
-            ])
-        
-        self.profiler.end_time = time.time()
+    profiler = create_profiler()
     
-    def test_export_profile(self):
-        """Test exporting complete profile"""
-        exported = self.profiler.export_profile()
-        
-        self.assertIn('sample_count', exported)
-        self.assertIn('duration_seconds', exported)
-        self.assertIn('hotspots', exported)
-        self.assertIn('flame_graph', exported)
-        self.assertIn('time_series', exported)
-        
-        self.assertEqual(exported['sample_count'], 10)
-        self.assertGreater(exported['duration_seconds'], 0)
+    with profiler.profile_block("test_block"):
+        # Simulate work
+        sum(range(1000))
     
-    def test_export_hotspots(self):
-        """Test exported hotspot data"""
-        exported = self.profiler.export_profile()
-        
-        hotspots = exported['hotspots']
-        self.assertIsInstance(hotspots, list)
-        self.assertGreater(len(hotspots), 0)
-        
-        for hotspot in hotspots:
-            self.assertIn('function', hotspot)
-            self.assertIn('filename', hotspot)
-            self.assertIn('sample_count', hotspot)
-            self.assertIn('percentage', hotspot)
+    stats = profiler.get_function_stats("test_block")
+    assert stats is not None
+    assert stats.call_count == 1
+    assert stats.total_time > 0
+    
+    print("✓ Profile block works")
 
 
-class TestStackFrame(unittest.TestCase):
-    """Test StackFrame class"""
+def test_profile_block_nested():
+    """Test nested profiling blocks"""
+    print("Testing nested profile blocks...")
     
-    def test_stack_frame_equality(self):
-        """Test stack frame equality"""
-        frame1 = StackFrame('func', 'file.py', 10)
-        frame2 = StackFrame('func', 'file.py', 10)
-        frame3 = StackFrame('func', 'file.py', 20)
-        
-        self.assertEqual(frame1, frame2)
-        self.assertNotEqual(frame1, frame3)
+    profiler = create_profiler()
     
-    def test_stack_frame_hash(self):
-        """Test stack frame hashing"""
-        frame1 = StackFrame('func', 'file.py', 10)
-        frame2 = StackFrame('func', 'file.py', 10)
+    with profiler.profile_block("outer"):
+        sum(range(1000))
         
-        # Same frames should have same hash
-        self.assertEqual(hash(frame1), hash(frame2))
-        
-        # Can be used in sets
-        frame_set = {frame1, frame2}
-        self.assertEqual(len(frame_set), 1)
+        with profiler.profile_block("inner"):
+            sum(range(1000))
     
-    def test_stack_frame_to_string(self):
-        """Test stack frame string representation"""
-        frame = StackFrame('my_function', 'module.py', 42)
-        string_repr = frame.to_string()
-        
-        self.assertIn('my_function', string_repr)
-        self.assertIn('module.py', string_repr)
-        self.assertIn('42', string_repr)
+    outer_stats = profiler.get_function_stats("outer")
+    inner_stats = profiler.get_function_stats("inner")
+    
+    assert outer_stats is not None
+    assert inner_stats is not None
+    assert outer_stats.call_count == 1
+    assert inner_stats.call_count == 1
+    
+    print("✓ Nested profile blocks work")
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_profile_decorator():
+    """Test profile decorator"""
+    print("Testing profile decorator...")
+    
+    profiler = create_profiler()
+    
+    @profiler.profile_function
+    def test_function():
+        return sum(range(1000))
+    
+    # Call function
+    result = test_function()
+    assert result > 0
+    
+    # Check stats
+    stats = profiler.get_function_stats("test_function")
+    assert stats is not None
+    assert stats.call_count == 1
+    
+    print("✓ Profile decorator works")
+
+
+def test_profile_decorator_multiple_calls():
+    """Test decorator with multiple calls"""
+    print("Testing decorator with multiple calls...")
+    
+    profiler = create_profiler()
+    
+    @profiler.profile_function
+    def test_function():
+        return sum(range(1000))
+    
+    # Call multiple times
+    for _ in range(5):
+        test_function()
+    
+    stats = profiler.get_function_stats("test_function")
+    assert stats.call_count == 5
+    assert stats.total_time > 0
+    
+    print("✓ Decorator with multiple calls works")
+
+
+def test_profile_decorator_with_custom_name():
+    """Test decorator with custom name"""
+    print("Testing decorator with custom name...")
+    
+    profiler = create_profiler()
+    
+    @profiler.profile_function(name="custom_name")
+    def test_function():
+        return sum(range(1000))
+    
+    test_function()
+    
+    stats = profiler.get_function_stats("custom_name")
+    assert stats is not None
+    assert stats.call_count == 1
+    
+    print("✓ Decorator with custom name works")
+
+
+def test_get_all_function_stats():
+    """Test getting all function stats"""
+    print("Testing get all function stats...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("func1"):
+        sum(range(100))
+    
+    with profiler.profile_block("func2"):
+        sum(range(100))
+    
+    all_stats = profiler.get_all_function_stats()
+    assert len(all_stats) == 2
+    assert "func1" in all_stats
+    assert "func2" in all_stats
+    
+    print("✓ Get all function stats works")
+
+
+def test_get_all_calls():
+    """Test getting all calls"""
+    print("Testing get all calls...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("test"):
+        sum(range(100))
+    
+    with profiler.profile_block("test"):
+        sum(range(100))
+    
+    all_calls = profiler.get_all_calls()
+    assert len(all_calls) == 2
+    
+    print("✓ Get all calls works")
+
+
+def test_get_hotspots():
+    """Test getting performance hotspots"""
+    print("Testing get hotspots...")
+    
+    profiler = create_profiler()
+    
+    # Create functions with different performance
+    with profiler.profile_block("slow"):
+        sum(range(100000))
+    
+    with profiler.profile_block("fast"):
+        sum(range(100))
+    
+    hotspots = profiler.get_hotspots(limit=5)
+    assert len(hotspots) > 0
+    
+    # Slow should be first
+    assert hotspots[0][0] == "slow"
+    
+    print("✓ Get hotspots works")
+
+
+def test_get_slowest_calls():
+    """Test getting slowest calls"""
+    print("Testing get slowest calls...")
+    
+    profiler = create_profiler()
+    
+    # Create calls with varying durations
+    for i in range(5):
+        with profiler.profile_block("varying"):
+            sum(range(i * 10000))
+    
+    slowest = profiler.get_slowest_calls(limit=3)
+    assert len(slowest) == 3
+    
+    # Should be sorted by duration
+    assert slowest[0][1] >= slowest[1][1]
+    assert slowest[1][1] >= slowest[2][1]
+    
+    print("✓ Get slowest calls works")
+
+
+def test_get_summary():
+    """Test getting summary statistics"""
+    print("Testing get summary...")
+    
+    profiler = create_profiler()
+    
+    # Profile some functions
+    for _ in range(10):
+        with profiler.profile_block("test"):
+            sum(range(1000))
+    
+    summary = profiler.get_summary()
+    assert summary['total_calls'] == 10
+    assert summary['total_functions'] == 1
+    assert summary['total_time'] > 0
+    assert summary['avg_call_time'] > 0
+    
+    print("✓ Get summary works")
+
+
+def test_clear():
+    """Test clearing profiler data"""
+    print("Testing clear...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("test"):
+        sum(range(1000))
+    
+    assert len(profiler.get_all_calls()) == 1
+    
+    profiler.clear()
+    
+    assert len(profiler.get_all_calls()) == 0
+    assert len(profiler.get_all_function_stats()) == 0
+    
+    print("✓ Clear works")
+
+
+def test_disabled_profiler():
+    """Test that disabled profiler doesn't record"""
+    print("Testing disabled profiler...")
+    
+    profiler = create_profiler(enabled=False)
+    
+    with profiler.profile_block("test"):
+        sum(range(1000))
+    
+    assert len(profiler.get_all_calls()) == 0
+    
+    print("✓ Disabled profiler works")
+
+
+def test_flame_graph_generation():
+    """Test flame graph text generation"""
+    print("Testing flame graph generation...")
+    
+    profiler = create_profiler()
+    
+    # Create some profiled functions
+    for _ in range(5):
+        with profiler.profile_block("func1"):
+            sum(range(10000))
+        with profiler.profile_block("func2"):
+            sum(range(5000))
+    
+    flame_graph = profiler.generate_flame_graph_text(width=80)
+    assert len(flame_graph) > 0
+    assert "Flame Graph" in flame_graph
+    
+    print("✓ Flame graph generation works")
+
+
+def test_timeline_generation():
+    """Test timeline text generation"""
+    print("Testing timeline generation...")
+    
+    profiler = create_profiler()
+    
+    # Create sequential calls
+    with profiler.profile_block("step1"):
+        sum(range(1000))
+    
+    with profiler.profile_block("step2"):
+        sum(range(1000))
+    
+    timeline = profiler.generate_timeline_text(limit=10)
+    assert len(timeline) > 0
+    assert "Timeline" in timeline
+    
+    print("✓ Timeline generation works")
+
+
+def test_export_to_json():
+    """Test JSON export"""
+    print("Testing JSON export...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("test"):
+        sum(range(1000))
+    
+    filename = "/tmp/test_profile.json"
+    profiler.export_to_json(filename)
+    
+    assert os.path.exists(filename)
+    
+    with open(filename, 'r') as f:
+        data = json.load(f)
+        assert 'summary' in data
+        assert 'function_stats' in data
+        assert 'calls' in data
+    
+    os.remove(filename)
+    
+    print("✓ JSON export works")
+
+
+def test_export_to_csv():
+    """Test CSV export"""
+    print("Testing CSV export...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("test"):
+        sum(range(1000))
+    
+    filename = "/tmp/test_profile.csv"
+    profiler.export_to_csv(filename)
+    
+    assert os.path.exists(filename)
+    
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        assert len(lines) >= 2  # Header + at least one data row
+    
+    os.remove(filename)
+    
+    print("✓ CSV export works")
+
+
+def test_global_profiler():
+    """Test global profiler functions"""
+    print("Testing global profiler...")
+    
+    # Get global profiler
+    profiler = get_profiler()
+    profiler.clear()  # Clear any previous data
+    
+    @profile
+    def global_test():
+        return sum(range(1000))
+    
+    global_test()
+    
+    stats = profiler.get_function_stats("global_test")
+    assert stats is not None
+    assert stats.call_count == 1
+    
+    print("✓ Global profiler works")
+
+
+def test_global_profile_block():
+    """Test global profile_block"""
+    print("Testing global profile_block...")
+    
+    profiler = get_profiler()
+    profiler.clear()
+    
+    with profile_block("global_block"):
+        sum(range(1000))
+    
+    stats = profiler.get_function_stats("global_block")
+    assert stats is not None
+    assert stats.call_count == 1
+    
+    print("✓ Global profile_block works")
+
+
+def test_profile_with_metadata():
+    """Test profiling with metadata"""
+    print("Testing profile with metadata...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("test", user_id=123, action="create"):
+        sum(range(1000))
+    
+    calls = profiler.get_all_calls()
+    assert len(calls) == 1
+    assert calls[0].metadata['user_id'] == 123
+    assert calls[0].metadata['action'] == "create"
+    
+    print("✓ Profile with metadata works")
+
+
+def test_thread_safety():
+    """Test thread safety"""
+    print("Testing thread safety...")
+    
+    profiler = create_profiler()
+    
+    @profiler.profile_function
+    def worker():
+        sum(range(10000))
+    
+    # Create threads
+    threads = []
+    for _ in range(5):
+        t = threading.Thread(target=worker)
+        threads.append(t)
+        t.start()
+    
+    # Wait for completion
+    for t in threads:
+        t.join()
+    
+    stats = profiler.get_function_stats("worker")
+    assert stats.call_count == 5
+    
+    print("✓ Thread safety works")
+
+
+def test_call_stack_tracking():
+    """Test call stack tracking"""
+    print("Testing call stack tracking...")
+    
+    profiler = create_profiler()
+    
+    with profiler.profile_block("outer"):
+        with profiler.profile_block("inner"):
+            sum(range(1000))
+    
+    calls = profiler.get_all_calls()
+    
+    # Find inner call
+    inner_call = next(c for c in calls if c.name == "inner")
+    assert len(inner_call.call_stack) == 2
+    assert "outer" in inner_call.call_stack
+    assert "inner" in inner_call.call_stack
+    
+    print("✓ Call stack tracking works")
+
+
+def test_multiple_profiler_instances():
+    """Test multiple independent profiler instances"""
+    print("Testing multiple profiler instances...")
+    
+    profiler1 = create_profiler()
+    profiler2 = create_profiler()
+    
+    @profiler1.profile_function
+    def func1():
+        return sum(range(1000))
+    
+    @profiler2.profile_function
+    def func2():
+        return sum(range(1000))
+    
+    func1()
+    func2()
+    
+    # Each profiler should have its own data
+    assert len(profiler1.get_all_function_stats()) == 1
+    assert len(profiler2.get_all_function_stats()) == 1
+    assert "func1" in profiler1.get_all_function_stats()
+    assert "func2" in profiler2.get_all_function_stats()
+    
+    print("✓ Multiple profiler instances work")
+
+
+def test_print_report():
+    """Test print_report (just ensure it doesn't crash)"""
+    print("Testing print_report...")
+    
+    profiler = create_profiler()
+    
+    @profiler.profile_function
+    def test_func():
+        return sum(range(10000))
+    
+    for _ in range(3):
+        test_func()
+    
+    # This should not raise an exception
+    import io
+    from contextlib import redirect_stdout
+    
+    f = io.StringIO()
+    with redirect_stdout(f):
+        profiler.print_report(top_n=5)
+    
+    output = f.getvalue()
+    assert len(output) > 0
+    assert "Performance Profiling Report" in output
+    
+    print("✓ Print report works")
+
+
+def run_all_tests():
+    """Run all test functions"""
+    print("=" * 60)
+    print("Running PerProVis Tests")
+    print("=" * 60)
+    print()
+    
+    test_functions = [
+        test_function_call_creation,
+        test_function_call_to_dict,
+        test_function_stats_creation,
+        test_function_stats_add_call,
+        test_function_stats_calculations,
+        test_profiler_creation,
+        test_profiler_enable_disable,
+        test_profile_block,
+        test_profile_block_nested,
+        test_profile_decorator,
+        test_profile_decorator_multiple_calls,
+        test_profile_decorator_with_custom_name,
+        test_get_all_function_stats,
+        test_get_all_calls,
+        test_get_hotspots,
+        test_get_slowest_calls,
+        test_get_summary,
+        test_clear,
+        test_disabled_profiler,
+        test_flame_graph_generation,
+        test_timeline_generation,
+        test_export_to_json,
+        test_export_to_csv,
+        test_global_profiler,
+        test_global_profile_block,
+        test_profile_with_metadata,
+        test_thread_safety,
+        test_call_stack_tracking,
+        test_multiple_profiler_instances,
+        test_print_report,
+    ]
+    
+    passed = 0
+    failed = 0
+    
+    for test_func in test_functions:
+        try:
+            test_func()
+            passed += 1
+        except AssertionError as e:
+            print(f"✗ {test_func.__name__} failed: {e}")
+            failed += 1
+        except Exception as e:
+            print(f"✗ {test_func.__name__} error: {e}")
+            failed += 1
+        print()
+    
+    print("=" * 60)
+    print(f"Results: {passed} passed, {failed} failed")
+    print("=" * 60)
+    
+    return failed == 0
+
+
+if __name__ == "__main__":
+    success = run_all_tests()
+    sys.exit(0 if success else 1)
