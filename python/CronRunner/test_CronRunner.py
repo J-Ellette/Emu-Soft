@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to APScheduler
+"""
+
+"""
 Tests for APScheduler emulator.
 """
 

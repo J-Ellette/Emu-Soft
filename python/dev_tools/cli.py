@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Development Tools
+"""
+
 """Command-line interface for CMS development.
 
 Provides CLI tools for scaffolding and managing CMS components:

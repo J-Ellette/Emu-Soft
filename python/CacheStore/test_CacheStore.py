@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Redis Python client
+"""
+
+"""
 Tests for Redis emulator
 
 Comprehensive test suite for Redis client emulator functionality.

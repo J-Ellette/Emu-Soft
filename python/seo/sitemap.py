@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django SEO
+"""
+
 """Sitemap generation for search engine optimization."""
 
 from typing import List, Optional, Dict, Any

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Development Tools
+"""
+
+"""
 Coverage.py emulator - Code coverage tracking using sys.settrace().
 Emulates coverage.py functionality without external dependencies.
 

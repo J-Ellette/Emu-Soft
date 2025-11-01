@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Frontend
+"""
+
 """USWDS (United States Web Design System) integration for frontend, admin, and settings.
 
 This module provides utilities for integrating USWDS components and styles

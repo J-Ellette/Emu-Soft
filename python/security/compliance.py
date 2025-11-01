@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Compliance features for data protection regulations (GDPR, etc.)."""
 
 from dataclasses import dataclass, field

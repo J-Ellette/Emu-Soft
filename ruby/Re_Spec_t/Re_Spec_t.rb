@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# Developed by PowerShield, as an alternative to RSpec
+
 # RSpec Testing Framework Emulator
 # Emulates core RSpec testing functionality
 

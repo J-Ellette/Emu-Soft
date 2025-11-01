@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Development Tools
+"""
+
+"""
 pytest emulator - Test discovery, fixtures, and assertion rewriting.
 Emulates pytest functionality without external dependencies.
 

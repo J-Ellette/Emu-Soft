@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """Authorization and permission checking."""
 
 from typing import Callable, Optional

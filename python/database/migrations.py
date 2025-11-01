@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Database
+"""
+
 """Database migration system."""
 
 from typing import List

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Admin
+"""
+
 """Configuration management for the admin interface.
 
 This module provides a system for managing site-wide configuration

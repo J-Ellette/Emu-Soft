@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django REST Framework
+"""
+
 """API permission checking and access control."""
 
 from typing import Callable, Optional

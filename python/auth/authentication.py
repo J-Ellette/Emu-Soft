@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """Authentication logic for login and logout."""
 
 from typing import Optional

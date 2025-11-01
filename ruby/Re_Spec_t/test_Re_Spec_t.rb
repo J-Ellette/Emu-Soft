@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# Developed by PowerShield, as an alternative to RSpec
+
 require_relative 'Re_Spec_t'
 
 describe 'Basic Math' do

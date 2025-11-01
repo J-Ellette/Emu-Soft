@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to sqlite3
+"""
+
+"""
 Test suite for SQLite3 emulator enhancements
 """
 

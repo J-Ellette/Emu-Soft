@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Assurance Case Fragments (ACF) system following CertGATE principles.
 
 Provides self-contained arguments for individual components or subsystems

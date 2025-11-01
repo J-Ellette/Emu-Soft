@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 Accessibility Scorer
 
 Calculates comprehensive accessibility scores and provides actionable insights.

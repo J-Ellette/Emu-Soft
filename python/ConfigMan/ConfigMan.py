@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Ansible
+"""
+
 #!/usr/bin/env python3
 """
 Ansible Emulator - Configuration Management and Automation

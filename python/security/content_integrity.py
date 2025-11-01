@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Content Integrity Verification System.
 
 This module provides hash-based checksums and blockchain-style audit trails for

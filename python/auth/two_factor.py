@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """Two-Factor Authentication (2FA) system for enhanced security.
 
 This module implements TOTP-based two-factor authentication without external

@@ -1,3 +1,5 @@
+# Developed by PowerShield, as an alternative to Sidekiq
+
 require_relative 'SideKick'
 
 puts "=== Sidekiq Emulator Tests ===\n\n"

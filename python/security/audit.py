@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Audit logging system for tracking security-relevant events."""
 
 from dataclasses import dataclass, field

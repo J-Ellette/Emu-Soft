@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Development Tools
+"""
+
 """Live reload development server.
 
 Provides file watching and automatic reload capabilities for development,

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to structlog
+"""
+
+"""
 Test suite for structlog emulator
 
 Tests structured logging functionality including:

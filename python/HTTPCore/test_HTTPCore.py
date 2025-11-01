@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to urllib3
+"""
+
+"""
 Test suite for urllib3 emulator.
 
 Tests the core functionality including:

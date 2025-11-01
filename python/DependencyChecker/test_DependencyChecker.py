@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Safety
+"""
+
+"""
 Test suite for Safety Emulator
 """
 

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Gunicorn
+"""
+
+"""
 Tests for Gunicorn Emulator
 """
 

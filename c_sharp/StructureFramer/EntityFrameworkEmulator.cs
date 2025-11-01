@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to Entity Framework
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

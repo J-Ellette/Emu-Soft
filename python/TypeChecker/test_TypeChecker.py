@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to mypy
+"""
+
+"""
 Tests for MyPy Emulator
 """
 

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 WCAG Compliance Checker
 
 Comprehensive WCAG 2.1 and 2.2 compliance checking with live preview capabilities.

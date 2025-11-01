@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to MkDocs
+"""
+
 #!/usr/bin/env python3
 """
 Tests for MkDocs Emulator

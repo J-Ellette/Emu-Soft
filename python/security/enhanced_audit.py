@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Enhanced audit logging with persistent storage and detailed tracking.
 
 Extends the base audit system with database persistence, advanced querying,

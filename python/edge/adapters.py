@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Edge Computing
+"""
+
 """Adapters for various edge computing platforms (Workers, Lambda, etc.).
 
 This module provides platform-specific adapters for deploying edge functions

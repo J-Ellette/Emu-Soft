@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to SAML
+"""
+
+"""
 SAML Authentication Provider Emulator
 
 Emulates core SAML 2.0 authentication and authorization functionality for

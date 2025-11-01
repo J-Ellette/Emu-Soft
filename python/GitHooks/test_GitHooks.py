@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to pre-commit
+"""
+
+"""
 Tests for pre-commit emulator
 
 This test suite validates the pre-commit hook framework functionality.

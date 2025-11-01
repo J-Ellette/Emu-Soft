@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Cache
+"""
+
 """Cache backend implementations."""
 
 from abc import ABC, abstractmethod

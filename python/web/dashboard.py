@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Django Web
+"""
+
+"""
 Web dashboard for CIV-ARCOS quality metrics and assurance cases.
 Custom HTML generation without template engines (no Jinja2/Django templates).
 Now using United States Web Design System (USWDS) for accessibility and consistency.

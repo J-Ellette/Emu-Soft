@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to aiohttp
+"""
+
+"""
 Test suite for aiohttp emulator.
 
 Tests the core functionality including:

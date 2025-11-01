@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield
+"""
+
 #!/usr/bin/env python3
 """
 Test script to verify all emu-soft modules can be imported and instantiated.

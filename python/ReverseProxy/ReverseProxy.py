@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Nginx
+"""
+
 #!/usr/bin/env python3
 """
 Nginx Emulator - Web Server and Reverse Proxy

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield
+"""
+
 #!/usr/bin/env python
 """CMS CLI entry point."""
 

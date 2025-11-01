@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Cache
+"""
+
 """Advanced caching features including cache invalidation, warming, and monitoring."""
 
 from typing import Any, Callable, Dict, List, Optional, Set

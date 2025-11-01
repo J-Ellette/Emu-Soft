@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django
+"""
+
 """HTTP Response handling module."""
 
 from typing import Any, Dict, List, Optional, Tuple, Union

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Sentry SDK
+"""
+
+"""
 Tests for Sentry SDK Emulator
 
 This test suite validates the core functionality of the Sentry SDK emulator.

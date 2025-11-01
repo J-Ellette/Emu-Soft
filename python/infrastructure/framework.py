@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Infrastructure
+"""
+
+"""
 Minimal web framework for CIV-ARCOS.
 Emulates FastAPI/Flask without external dependencies.
 """

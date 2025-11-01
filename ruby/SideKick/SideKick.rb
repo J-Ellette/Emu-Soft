@@ -1,3 +1,5 @@
+# Developed by PowerShield, as an alternative to Sidekiq
+
 require 'json'
 require 'thread'
 require 'securerandom'

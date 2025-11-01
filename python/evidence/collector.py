@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Evidence Collection
+"""
+
+"""
 Evidence collection engine base classes.
 Implements the core evidence collection system similar to RACK.
 """

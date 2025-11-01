@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to OpenCensus
+"""
+
+"""
 Tests for OpenCensus Emulator
 
 This test suite validates the core functionality of the OpenCensus emulator.

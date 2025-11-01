@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Code Analysis
+"""
+
+"""
 Economic Impact Measurement - ROI Calculator
 
 Quantifies the concrete cost savings and risk reduction value from using CIV-ARCOS.

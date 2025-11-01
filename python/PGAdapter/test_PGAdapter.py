@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to psycopg2
+"""
+
+"""
 Test suite for psycopg2 emulator
 """
 

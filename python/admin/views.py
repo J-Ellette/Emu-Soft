@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Admin
+"""
+
 """Admin views for handling HTTP requests.
 
 This module provides view functions for the admin interface,

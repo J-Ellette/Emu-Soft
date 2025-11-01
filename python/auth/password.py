@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """Password hashing and validation using bcrypt."""
 
 import bcrypt

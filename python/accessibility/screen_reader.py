@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 Screen Reader Simulator
 
 Simulates how screen readers interpret and announce web content,

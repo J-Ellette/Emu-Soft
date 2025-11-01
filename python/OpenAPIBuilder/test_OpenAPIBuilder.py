@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to apispec
+"""
+
+"""
 Tests for APISpec Emulator
 
 Comprehensive test suite for OpenAPI specification generation.

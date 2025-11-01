@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to OAuth 2.0/OIDC
+"""
+
 #!/usr/bin/env python3
 """
 Tests for OAuth 2.0/OIDC Server Emulator

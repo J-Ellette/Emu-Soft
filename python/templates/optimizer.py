@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Template performance optimization system.
 
 This module provides utilities for optimizing template rendering performance,

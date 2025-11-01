@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to flake8
+"""
+
+"""
 Tests for Flake8 Emulator
 """
 

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Database
+"""
+
 """Basic ORM implementation for database models."""
 
 from typing import Any, Dict, List, Optional, Type, TypeVar

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Dependency Tracker following CAID-tools principles.
 
 Tracks dependencies across different types of tools and storage,

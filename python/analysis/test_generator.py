@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Code Analysis
+"""
+
+"""
 Test generation module for automated test case creation.
 Provides code-driven test generation with optional AI support.
 """

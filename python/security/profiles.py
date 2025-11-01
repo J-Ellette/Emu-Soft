@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Security hardening profiles for different deployment environments.
 
 This module provides predefined security configurations for various deployment

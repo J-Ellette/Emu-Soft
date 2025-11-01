@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Edge Computing
+"""
+
 """Edge-compatible code generation and rendering for serverless environments.
 
 This module provides edge-compatible rendering capabilities, optimized for

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Django Web
+"""
+
+"""
 Badge generation system for quality metrics.
 Generates SVG badges similar to shields.io.
 """

@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to Hibernate
+ */
+
 package hibernate_emulator;
 
 import java.util.*;

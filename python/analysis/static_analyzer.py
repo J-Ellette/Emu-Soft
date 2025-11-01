@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Code Analysis
+"""
+
+"""
 Static analysis module for code quality metrics.
 Emulates tools like ESLint, Pylint, and SonarQube without external dependencies.
 """

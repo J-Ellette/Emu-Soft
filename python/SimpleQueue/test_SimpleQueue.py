@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to RQ
+"""
+
+"""
 Tests for RQ (Redis Queue) emulator.
 """
 

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Code Analysis
+"""
+
+"""
 Security scanning module for SAST (Static Application Security Testing).
 Implements basic security checks without external dependencies.
 """

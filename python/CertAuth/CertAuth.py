@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Certificate Authority
+"""
+
 #!/usr/bin/env python3
 """
 Certificate Authority (CA) Emulator - X.509 Certificate Management

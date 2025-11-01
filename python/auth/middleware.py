@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """Authentication middleware for request processing."""
 
 from typing import Any

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """AI-powered template generation helpers.
 
 This module provides utilities for AI-assisted template generation,

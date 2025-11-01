@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Grafana
+"""
+
 #!/usr/bin/env python3
 """
 Grafana Emulator - Visualization and Monitoring

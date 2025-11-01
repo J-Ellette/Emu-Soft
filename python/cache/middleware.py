@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Cache
+"""
+
 """Cache middleware for HTTP caching."""
 
 from typing import Any, Callable, Dict, Optional

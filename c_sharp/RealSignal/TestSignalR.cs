@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to SignalR
+ */
+
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;

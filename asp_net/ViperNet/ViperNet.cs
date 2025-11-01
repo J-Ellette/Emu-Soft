@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to ASP.NET Core
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

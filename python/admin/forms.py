@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Admin
+"""
+
 """Form handling for admin interface.
 
 This module provides form handling capabilities for the admin interface,

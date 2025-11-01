@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Pika
+"""
+
+"""
 Tests for Pika Emulator
 
 Comprehensive test suite for RabbitMQ client functionality.
