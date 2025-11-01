@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to Maven
+ */
+
 package maven_emulator;
 
 import java.util.*;

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield
+"""
+
+"""
 Demo script for SecureSign (itsdangerous) and CryptoLib (cryptography) emulators
 
 This script demonstrates the key features of both emulators:

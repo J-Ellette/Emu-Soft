@@ -1,3 +1,7 @@
+/**
+ * Developed by PowerShield, as an alternative to Gradle
+ */
+
 package gradle_emulator;
 
 import java.util.*;

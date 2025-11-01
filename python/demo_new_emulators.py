@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield
+"""
+
 #!/usr/bin/env python3
 """
 Demo script showing the new emulators in action
