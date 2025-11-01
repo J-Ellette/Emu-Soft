@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Vulture
+"""
+
+"""
 Tests for vulture emulator
 
 This test suite validates the dead code finder functionality.

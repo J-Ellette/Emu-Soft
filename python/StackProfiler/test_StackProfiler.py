@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to py-spy
+"""
+
+"""
 Test suite for py-spy emulator.
 """
 

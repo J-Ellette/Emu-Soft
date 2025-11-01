@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Admin
+"""
+
 """Admin interface core logic.
 
 This module provides the core admin interface functionality including

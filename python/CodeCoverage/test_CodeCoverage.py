@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to coverage
+"""
+
+"""
 Comprehensive tests for coverage emulator functionality.
 Tests line coverage tracking, branch coverage, and reporting.
 """

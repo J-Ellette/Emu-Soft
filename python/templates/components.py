@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Component-based templating system for React-like component development in Python.
 
 This module provides a component-based architecture for building reusable

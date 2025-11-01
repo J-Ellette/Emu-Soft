@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django SEO
+"""
+
 """URL optimization utilities for SEO-friendly URLs."""
 
 import re

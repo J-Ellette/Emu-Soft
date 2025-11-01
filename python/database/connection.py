@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Database
+"""
+
 """Database connection management."""
 
 from typing import Any, Dict, Optional

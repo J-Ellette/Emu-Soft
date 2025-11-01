@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Real-time template collaboration infrastructure.
 
 This module provides collaborative editing capabilities for templates,

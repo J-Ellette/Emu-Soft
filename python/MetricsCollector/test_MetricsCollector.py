@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Prometheus client
+"""
+
+"""
 Tests for MetricsCollector (Prometheus Client Emulator)
 
 This test suite validates the core functionality of the Prometheus client emulator.

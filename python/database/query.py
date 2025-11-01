@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Database
+"""
+
 """Query builder for constructing SQL queries programmatically."""
 
 from typing import Any, Dict, List, Optional

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to httpx
+"""
+
+"""
 Test suite for httpx emulator.
 
 Tests the core functionality including:

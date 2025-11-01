@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to memory_profiler
+"""
+
+"""
 Test suite for memory_profiler emulator.
 """
 

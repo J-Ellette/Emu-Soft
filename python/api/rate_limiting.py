@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django REST Framework
+"""
+
 """Advanced API rate limiting with multiple strategies and token bucket algorithm."""
 
 from typing import Any, Callable, Dict, Optional

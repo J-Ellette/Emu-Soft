@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 Keyboard Navigation Tester
 
 Tests and validates keyboard navigation accessibility,

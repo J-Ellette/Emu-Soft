@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django SEO
+"""
+
 """Analytics integration for tracking and measuring SEO performance."""
 
 from typing import Dict, Any, Optional, List

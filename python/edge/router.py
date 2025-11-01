@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Edge Computing
+"""
+
 """Geographic routing logic for intelligent edge request distribution.
 
 This module provides geographic routing capabilities to direct requests to

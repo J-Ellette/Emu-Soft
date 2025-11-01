@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Edge Computing
+"""
+
 """Edge caching strategies for optimal performance at edge locations.
 
 This module provides sophisticated caching strategies optimized for edge computing,

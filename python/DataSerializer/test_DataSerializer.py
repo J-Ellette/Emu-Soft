@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Marshmallow
+"""
+
+"""
 Tests for Marshmallow Emulator
 
 Comprehensive test suite for object serialization/deserialization.

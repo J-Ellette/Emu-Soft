@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Database
+"""
+
 """Database optimization tools including query tracking, indexing, and performance monitoring."""
 
 from typing import Any, Callable, Dict, List, Optional

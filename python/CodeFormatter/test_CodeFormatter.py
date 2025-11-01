@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Black
+"""
+
+"""
 Comprehensive tests for Black formatter emulator.
 Tests code formatting, AST transformation, and style enforcement.
 """

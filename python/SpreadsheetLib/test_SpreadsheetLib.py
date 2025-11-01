@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to openpyxl
+"""
+
+"""
 Test suite for openpyxl emulator
 
 Tests Excel file manipulation functionality including:

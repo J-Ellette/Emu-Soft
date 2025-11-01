@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Edge Computing
+"""
+
 """Serverless function deployment utilities for edge platforms.
 
 This module provides utilities for deploying edge functions to various

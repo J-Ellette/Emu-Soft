@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 ARIA Attribute Validator
 
 Validates ARIA (Accessible Rich Internet Applications) attributes for proper usage.

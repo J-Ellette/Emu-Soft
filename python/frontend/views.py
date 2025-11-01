@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Frontend
+"""
+
 """Public-facing views for pages and posts."""
 
 from typing import Any, Optional

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Example application demonstrating security hardening profiles.
 
 This example shows how to use the security hardening profiles feature including:

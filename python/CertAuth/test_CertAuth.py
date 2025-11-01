@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Certificate Authority
+"""
+
 #!/usr/bin/env python3
 """
 Tests for Certificate Authority Emulator

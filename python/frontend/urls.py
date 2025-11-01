@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Frontend
+"""
+
 """URL routing configuration for frontend views."""
 
 from typing import Optional

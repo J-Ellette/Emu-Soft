@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django SEO
+"""
+
 """Meta tag management for SEO optimization."""
 
 from typing import Dict, List, Optional, Any

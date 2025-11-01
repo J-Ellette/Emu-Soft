@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Assurance case management and construction.
 Provides tools to build and manage digital assurance cases.
 """

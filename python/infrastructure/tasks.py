@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Infrastructure
+"""
+
+"""
 Background task processor for asynchronous evidence collection.
 Emulates Celery functionality without external dependencies.
 """

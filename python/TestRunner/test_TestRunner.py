@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to pytest
+"""
+
+"""
 Comprehensive tests for pytest emulator functionality.
 Tests the test discovery, fixtures, and execution features.
 """

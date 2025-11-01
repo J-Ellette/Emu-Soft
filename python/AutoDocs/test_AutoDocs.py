@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to pdoc
+"""
+
 #!/usr/bin/env python3
 """
 Tests for pdoc Emulator

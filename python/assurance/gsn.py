@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Goal Structuring Notation (GSN) implementation.
 Provides the core node types for building assurance arguments.
 """

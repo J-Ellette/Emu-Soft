@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Infrastructure
+"""
+
+"""
 Graph-based evidence storage system.
 Emulates Neo4j-style graph database for storing evidence relationships.
 """

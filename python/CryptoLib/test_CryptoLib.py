@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to cryptography
+"""
+
+"""
 Test suite for cryptography emulator
 """
 

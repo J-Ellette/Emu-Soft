@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# Developed by PowerShield, as an alternative to Ruby on Rails
+
 require_relative 'GemTracks'
 
 puts "=== Rails Emulator Tests ===\n\n"

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
 #!/usr/bin/env python3
 """
 Example usage of the assurance case modules.

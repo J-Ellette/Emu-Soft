@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Integration example for Content Integrity Verification System.
 
 This demonstrates how to integrate content integrity verification

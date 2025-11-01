@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Admin
+"""
+
 """Dashboard functionality for the admin interface.
 
 This module provides dashboard widgets and statistics for the admin interface.

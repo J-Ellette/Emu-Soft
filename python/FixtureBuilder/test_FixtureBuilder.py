@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Factory Boy
+"""
+
 #!/usr/bin/env python3
 """
 Tests for factory_boy emulator

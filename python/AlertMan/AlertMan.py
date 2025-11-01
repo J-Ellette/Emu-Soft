@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to AlertManager
+"""
+
 #!/usr/bin/env python3
 """
 AlertManager Emulator - Alert Routing and Management

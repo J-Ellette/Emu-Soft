@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Architecture Mapper following A-CERT principles.
 
 Infers system architecture from implementation, maps against intended design,

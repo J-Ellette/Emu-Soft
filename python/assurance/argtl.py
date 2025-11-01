@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 ArgTL - Argument Transformation Language.
 
 Domain-specific language (DSL) for assembling and transforming

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django REST Framework
+"""
+
 """API Framework for building RESTful endpoints."""
 
 from typing import Any, Callable, Dict, List, Optional

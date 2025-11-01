@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django REST Framework
+"""
+
 """Result pagination for API responses."""
 
 from typing import Any, Dict, List, Optional, TypeVar, Generic

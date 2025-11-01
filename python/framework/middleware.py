@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django
+"""
+
 """Middleware pipeline for request/response processing."""
 
 from typing import Any, List

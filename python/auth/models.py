@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Auth
+"""
+
 """User, Role, and Permission models for authentication and authorization."""
 
 from typing import Any, List

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Docker
+"""
+
 #!/usr/bin/env python3
 """
 Test suite for Docker Emulator

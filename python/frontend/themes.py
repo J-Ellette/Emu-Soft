@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Frontend
+"""
+
 """Theme management system for MyCMS.
 
 Provides functionality to manage and switch between different visual themes

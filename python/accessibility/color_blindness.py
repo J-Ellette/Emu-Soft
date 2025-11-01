@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 Color Blindness Simulation
 
 Simulates various types of color vision deficiencies to preview how users

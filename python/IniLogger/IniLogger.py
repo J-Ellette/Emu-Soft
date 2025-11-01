@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Jenkins
+"""
+
 #!/usr/bin/env python3
 """
 Jenkins Emulator - CI/CD Automation Server

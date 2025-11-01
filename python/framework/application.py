@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django
+"""
+
 """Main ASGI application class."""
 
 from typing import Any, Dict

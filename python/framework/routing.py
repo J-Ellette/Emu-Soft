@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django
+"""
+
 """URL routing system with pattern matching and decorators."""
 
 from typing import Callable, Dict, List, Optional, Pattern, Tuple

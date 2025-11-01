@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Template engine for rendering templates with variables and control structures."""
 
 import re

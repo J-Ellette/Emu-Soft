@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Template loader for loading templates from the filesystem."""
 
 from pathlib import Path

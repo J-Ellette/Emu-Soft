@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Security
+"""
+
 """Security middleware for protecting the application."""
 
 from typing import Any, Optional, Dict, Set

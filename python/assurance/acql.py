@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 ACQL - Assurance Case Query Language.
 
 A formal language for interrogating and assessing assurance cases,

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
 #!/usr/bin/env python
 """
 Accessibility Simulation Tools Demo

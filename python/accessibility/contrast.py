@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Accessibility Testing
+"""
+
+"""
 Contrast Analyzer
 
 Analyzes color contrast ratios for accessibility compliance with WCAG guidelines.

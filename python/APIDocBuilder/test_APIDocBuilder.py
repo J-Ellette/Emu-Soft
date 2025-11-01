@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Sphinx
+"""
+
+"""
 Tests for Sphinx emulator
 
 This test suite validates the documentation generator functionality.

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Kubernetes Orchestrator
+"""
+
 #!/usr/bin/env python3
 """
 Kubernetes Orchestrator Emulator - Container Orchestration

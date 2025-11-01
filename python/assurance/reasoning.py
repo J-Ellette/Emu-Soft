@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to ARCOS Assurance
+"""
+
+"""
 Reasoning Engine for assurance cases following CLARISSA s(CASP) principles.
 
 Provides semantic reasoning over assurance cases including theories,

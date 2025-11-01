@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# Developed by PowerShield, as an alternative to Ruby on Rails
+
 # Rails Framework Emulator
 # Emulates core Ruby on Rails web framework functionality
 

@@ -1,4 +1,8 @@
 """
+Developed by PowerShield, as an alternative to Infrastructure
+"""
+
+"""
 Cache layer for real-time updates and performance optimization.
 Emulates Redis functionality without external dependencies.
 """

@@ -1,3 +1,7 @@
+"""
+Developed by PowerShield, as an alternative to Django Templates
+"""
+
 """Template context management for passing data to templates."""
 
 from typing import Any, Dict, Optional
